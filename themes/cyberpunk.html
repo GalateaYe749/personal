@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galatea · 赛博</title>
+  <title>Galatea · 绯色</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Share+Tech+Mono&display=swap');
 
     :root {
-      --bg: #0a0a12;
-      --bg2: #12101e;
-      --cyan: #00f0ff;
-      --pink: #ff3cac;
-      --hotpink: #ff6bcb;
-      --purple: #784ba0;
-      --darkpink: #2a0a1e;
-      --grid: rgba(0, 240, 255, 0.04);
-      --text: #e0d8f0;
-      --text-dim: #7868a0;
-      --glow-cyan: 0 0 20px rgba(0,240,255,0.3);
-      --glow-pink: 0 0 20px rgba(255,60,172,0.3);
+      --bg: #0a0808;
+      --bg2: #120e0e;
+      --crimson: #dc143c;
+      --warm-pink: #ff8a8a;
+      --pale-pink: #ffbfbf;
+      --rose: #ff6080;
+      --gold: #d4a050;
+      --grid: rgba(220, 20, 60, 0.04);
+      --text: #e8d8d0;
+      --text-dim: #887078;
+      --glow-warm: 0 0 24px rgba(255,138,138,0.25);
+      --glow-crimson: 0 0 20px rgba(220,20,60,0.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +33,16 @@
       overflow-x: hidden;
     }
 
-    /* ===== BG Layers ===== */
+    /* ===== BG ===== */
+    .bg-mist {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 120% 60% at 30% 0%, rgba(220,20,60,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 50% at 70% 100%, rgba(255,138,138,0.04) 0%, transparent 50%),
+        radial-gradient(circle 30% 30% at 20% 50%, rgba(212,160,80,0.02) 0%, transparent 50%);
+    }
+
     .bg-grid {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background-image:
@@ -41,370 +50,336 @@
         linear-gradient(90deg, var(--grid) 1px, transparent 1px);
       background-size: 40px 40px;
       z-index: 0; pointer-events: none;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent 80%);
     }
 
-    .bg-glow {
+    /* ===== Spasmodic-inspired slash decoration ===== */
+    .slash-deco {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       z-index: 0; pointer-events: none;
+      overflow: hidden;
     }
-    .bg-glow::before {
-      content: ""; position: absolute;
-      width: 600px; height: 600px; border-radius: 50%;
-      top: -10%; left: -10%;
-      background: radial-gradient(circle, rgba(255,60,172,0.08) 0%, transparent 70%);
+    .slash-deco::before {
+      content: "";
+      position: absolute; top: -20%; right: -10%;
+      width: 300px; height: 200%;
+      background: linear-gradient(180deg, transparent, rgba(220,20,60,0.06), transparent);
+      transform: rotate(25deg);
     }
-    .bg-glow::after {
-      content: ""; position: absolute;
-      width: 500px; height: 500px; border-radius: 50%;
-      bottom: -10%; right: -5%;
-      background: radial-gradient(circle, rgba(0,240,255,0.06) 0%, transparent 70%);
-    }
-
-    .scanline {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,240,255,0.015) 2px,
-        rgba(0,240,255,0.015) 4px
-      );
+    .slash-deco::after {
+      content: "";
+      position: absolute; bottom: -10%; left: -5%;
+      width: 200px; height: 150%;
+      background: linear-gradient(0deg, transparent, rgba(255,138,138,0.04), transparent);
+      transform: rotate(-15deg);
     }
 
-    .container { max-width: 720px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 1; }
+    .container { max-width: 720px; margin: 0 auto; padding: 56px 24px; position: relative; z-index: 1; }
 
     /* ===== Header ===== */
-    .header { text-align: center; margin-bottom: 48px; position: relative; }
+    .header { text-align: center; margin-bottom: 44px; position: relative; }
 
-    .avatar-ring {
-      width: 90px; height: 90px; margin: 0 auto 20px; position: relative;
+    .avatar-wrap {
+      width: 88px; height: 88px; margin: 0 auto 18px; position: relative;
     }
-    .avatar-ring .ring {
-      position: absolute; inset: 0;
+    .avatar-wrap .glow-ring {
+      position: absolute; inset: -4px;
       border-radius: 50%;
-      border: 2px solid transparent;
-      background: linear-gradient(135deg, var(--cyan), var(--pink), var(--cyan)) border-box;
-      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      animation: spin 6s linear infinite;
+      background: linear-gradient(135deg, var(--crimson), var(--warm-pink), var(--gold));
+      opacity: 0.4;
+      filter: blur(6px);
+      animation: pulse-glow 3s ease-in-out infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .avatar-ring .inner {
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+    .avatar-wrap .inner {
       width: 100%; height: 100%; border-radius: 50%;
-      background: linear-gradient(135deg, var(--darkpink), #0a0a20);
+      background: linear-gradient(135deg, #1a0808, #0a0606);
+      border: 2px solid rgba(255,138,138,0.2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 26px; color: var(--hotpink); font-weight: 700;
+      font-size: 28px; font-weight: 700; color: var(--pale-pink);
       font-family: "Share Tech Mono", monospace;
-      box-shadow: var(--glow-pink);
+      position: relative; z-index: 1;
+      text-shadow: 0 0 16px rgba(255,138,138,0.4);
     }
 
     h1 {
-      font-size: 28px; font-weight: 700; letter-spacing: 8px;
-      background: linear-gradient(90deg, var(--cyan), var(--hotpink), var(--cyan));
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 3s ease-in-out infinite;
+      font-size: 30px; font-weight: 700; letter-spacing: 10px;
+      color: var(--pale-pink);
+      text-shadow: 0 0 30px rgba(255,191,191,0.15);
+      position: relative;
+      display: inline-block;
     }
-    @keyframes shimmer {
-      0%, 100% { background-position: 0% center; }
-      50% { background-position: 100% center; }
+    h1::after {
+      content: "";
+      position: absolute; bottom: -2px; left: 10%; width: 80%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose), transparent);
     }
 
     .subtitle {
       font-family: "Share Tech Mono", monospace;
-      font-size: 12px; color: var(--text-dim);
-      letter-spacing: 4px; margin-top: 6px;
+      font-size: 11px; color: var(--text-dim);
+      letter-spacing: 6px; margin-top: 8px;
     }
 
-    .divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 16px auto; max-width: 280px;
+    .divider-line {
+      width: 40px; height: 2px;
+      background: linear-gradient(90deg, var(--crimson), var(--gold));
+      margin: 12px auto;
+      border-radius: 1px;
     }
-    .divider-line { flex: 1; height: 1px; }
-    .divider-line:first-child { background: linear-gradient(90deg, transparent, var(--cyan)); }
-    .divider-line:last-child { background: linear-gradient(90deg, var(--pink), transparent); }
-    .divider-dot { width: 4px; height: 4px; background: var(--hotpink); border-radius: 50%; box-shadow: var(--glow-pink); }
 
     .bio {
       font-size: 14px; color: var(--text-dim);
-      margin-top: 12px; font-weight: 300;
+      font-weight: 300; letter-spacing: 2px;
     }
 
-    /* ===== Sections ===== */
-    section { margin-bottom: 28px; }
+    /* ===== Color Blocks: Spasmodic-inspired ===== */
+    .hero-blocks {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+      margin-bottom: 28px; height: 80px;
+    }
+    .hero-blocks .block {
+      border-radius: 2px;
+      position: relative; overflow: hidden;
+    }
+    .hb-1 { background: linear-gradient(135deg, #1a0808, rgba(220,20,60,0.08)); border: 1px solid rgba(220,20,60,0.12); }
+    .hb-2 { background: linear-gradient(135deg, rgba(220,20,60,0.12), rgba(255,138,138,0.06)); border: 1px solid rgba(255,138,138,0.12); }
+    .hb-3 { background: linear-gradient(135deg, rgba(255,138,138,0.06), rgba(212,160,80,0.08)); border: 1px solid rgba(212,160,80,0.10); }
+    .hb-4 { background: linear-gradient(135deg, rgba(212,160,80,0.06), #1a0808); border: 1px solid rgba(220,20,60,0.06); }
+
+    /* ===== Info Cards ===== */
+    section { margin-bottom: 24px; }
 
     .sec-title {
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; letter-spacing: 3px;
-      color: var(--cyan); margin-bottom: 10px;
-      display: flex; align-items: center; gap: 8px;
+      font-size: 10px; letter-spacing: 4px;
+      color: var(--rose); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .sec-title .line {
-      flex: 1; height: 1px;
-      background: linear-gradient(90deg, rgba(0,240,255,0.3), transparent);
-    }
-    .sec-title .tag {
-      display: inline-block; padding: 1px 8px;
-      background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.2);
-      font-size: 9px; letter-spacing: 1px;
-    }
+    .sec-title .hr { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,96,128,0.3), transparent); }
 
-    .card {
-      background: rgba(18,16,30,0.8); border-radius: 4px; padding: 16px 20px;
-      border: 1px solid rgba(255,60,172,0.12); margin-bottom: 8px;
-      backdrop-filter: blur(4px);
-      position: relative; overflow: hidden;
-      transition: all 0.3s;
-    }
-    .card::before {
-      content: ""; position: absolute; top: 0; left: 0;
-      width: 3px; height: 100%;
-      background: linear-gradient(180deg, var(--cyan), var(--pink));
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .card:hover { border-color: rgba(255,60,172,0.3); transform: translateX(4px); }
-    .card:hover::before { opacity: 1; }
-
-    .card .accent-block {
-      position: absolute; top: -20px; right: -20px;
-      width: 60px; height: 60px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,240,255,0.06), transparent);
-      pointer-events: none;
-    }
-
-    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .card p { font-size: 13px; color: var(--text-dim); font-weight: 300; }
-    .card .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-    .card .tag {
-      font-size: 11px; padding: 1px 8px; border-radius: 2px;
+    .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tag-item {
       font-family: "Share Tech Mono", monospace;
+      font-size: 10px; padding: 3px 10px; letter-spacing: 1px;
     }
-    .tag-cyan { background: rgba(0,240,255,0.1); color: var(--cyan); border: 1px solid rgba(0,240,255,0.2); }
-    .tag-pink { background: rgba(255,60,172,0.1); color: var(--hotpink); border: 1px solid rgba(255,60,172,0.2); }
-    .tag-purple { background: rgba(120,75,160,0.15); color: #b080e0; border: 1px solid rgba(120,75,160,0.2); }
-
-    /* ===== Color Block Section ===== */
-    .color-blocks {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-      margin-bottom: 28px;
+    .tag-item.def {
+      background: rgba(220,20,60,0.08); color: var(--warm-pink);
+      border: 1px solid rgba(220,20,60,0.15);
     }
-    .color-block {
-      padding: 20px; border-radius: 4px; position: relative; overflow: hidden;
-      min-height: 90px; display: flex; flex-direction: column; justify-content: flex-end;
+    .tag-item.gold {
+      background: rgba(212,160,80,0.08); color: var(--gold);
+      border: 1px solid rgba(212,160,80,0.12);
     }
-    .color-block .label {
-      font-size: 11px; font-family: "Share Tech Mono", monospace;
-      letter-spacing: 1px; opacity: 0.7;
-    }
-    .color-block .value {
-      font-size: 20px; font-weight: 700;
-      font-family: "Share Tech Mono", monospace;
-      letter-spacing: 2px;
-    }
-    .cb-cyan {
-      background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(0,240,255,0.03));
-      border: 1px solid rgba(0,240,255,0.15);
-      color: var(--cyan);
-    }
-    .cb-pink {
-      background: linear-gradient(135deg, rgba(255,60,172,0.12), rgba(255,60,172,0.03));
-      border: 1px solid rgba(255,60,172,0.15);
-      color: var(--hotpink);
-    }
-    .cb-purple {
-      background: linear-gradient(135deg, rgba(120,75,160,0.15), rgba(120,75,160,0.03));
-      border: 1px solid rgba(120,75,160,0.15);
-      color: #b080e0;
-    }
-    .cb-border {
-      background: transparent;
-      border: 1px solid rgba(255,60,172,0.2);
+    .tag-item.outline {
+      border: 1px solid rgba(255,138,138,0.12);
       color: var(--text-dim);
     }
 
-    /* ===== Key Section ===== */
-    .key-area {
-      margin-top: 36px; padding: 24px;
-      border: 1px solid rgba(0,240,255,0.1);
-      background: rgba(0,240,255,0.02);
-      border-radius: 4px; text-align: center;
+    .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .card {
+      background: rgba(12,8,8,0.7); border-radius: 2px; padding: 16px;
+      border: 1px solid rgba(220,20,60,0.08);
+      position: relative; overflow: hidden;
+      transition: all 0.35s;
+      backdrop-filter: blur(2px);
     }
-    .key-area .lock-icon { font-size: 24px; margin-bottom: 8px; }
-    .key-area p { font-size: 13px; color: var(--text-dim); font-weight: 300; margin-bottom: 10px; }
+    .card::before {
+      content: "";
+      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,138,138,0.04), transparent);
+      transition: left 0.6s;
+    }
+    .card:hover { border-color: rgba(255,138,138,0.2); }
+    .card:hover::before { left: 100%; }
+
+    .card .accent {
+      position: absolute; top: 0; right: 0;
+      width: 40px; height: 40px;
+      background: radial-gradient(circle at top right, rgba(220,20,60,0.06), transparent);
+      pointer-events: none;
+    }
+    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .card p { font-size: 12px; color: var(--text-dim); font-weight: 300; }
+
+    /* ===== Stats Row ===== */
+    .stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+      margin-bottom: 24px;
+    }
+    .stat-item {
+      text-align: center; padding: 12px 8px;
+      border: 1px solid rgba(220,20,60,0.06);
+      background: rgba(12,8,8,0.4);
+    }
+    .stat-item .num {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 20px; font-weight: 700;
+      background: linear-gradient(180deg, var(--pale-pink), var(--rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-item .lbl {
+      font-size: 10px; color: var(--text-dim);
+      font-family: "Share Tech Mono", monospace;
+      letter-spacing: 2px; margin-top: 2px;
+    }
+
+    /* ===== Key Area ===== */
+    .key-area {
+      margin-top: 32px;
+      border: 1px solid rgba(220,20,60,0.1);
+      background: rgba(220,20,60,0.02);
+      padding: 24px; text-align: center; position: relative; overflow: hidden;
+    }
+    .key-area::before {
+      content: "";
+      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--rose), var(--gold), transparent);
+    }
+    .key-area p { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; }
     .key-box { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
     .key-box input {
       flex: 1; padding: 8px 14px;
-      background: rgba(0,0,0,0.4); border: 1px solid rgba(0,240,255,0.2);
-      border-radius: 4px; font-size: 14px; color: var(--cyan);
-      outline: none; font-family: "Share Tech Mono", monospace;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,138,138,0.15);
+      color: var(--pale-pink); font-size: 14px; outline: none;
+      font-family: "Share Tech Mono", monospace;
     }
-    .key-box input:focus { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,60,172,0.2); }
+    .key-box input:focus { border-color: var(--rose); box-shadow: 0 0 16px rgba(255,96,128,0.15); }
     .key-box button {
       padding: 8px 20px;
-      background: linear-gradient(135deg, var(--pink), var(--purple));
-      color: #fff; border: none; border-radius: 4px; cursor: pointer;
-      font-size: 13px; font-family: "Share Tech Mono", monospace;
-      letter-spacing: 2px; transition: all 0.3s;
+      background: linear-gradient(135deg, var(--crimson), var(--rose));
+      color: #fff; border: none; cursor: pointer;
+      font-family: "Share Tech Mono", monospace;
+      font-size: 12px; letter-spacing: 2px;
+      transition: all 0.3s;
     }
-    .key-box button:hover {
-      box-shadow: var(--glow-pink);
-      transform: translateY(-1px);
-    }
-    .key-err { color: var(--pink); font-size: 13px; display: none; margin-top: 6px; font-family: "Share Tech Mono", monospace; }
-    .key-ok { color: var(--cyan); font-size: 13px; display: none; margin-top: 6px; }
+    .key-box button:hover { box-shadow: var(--glow-crimson); transform: translateY(-1px); }
+    .key-err { color: var(--rose); font-size: 12px; display: none; margin-top: 6px; font-family: "Share Tech Mono", monospace; }
 
     /* ===== Footer ===== */
     .footer {
-      margin-top: 48px; padding-top: 20px; text-align: center;
-      border-top: 1px solid rgba(255,60,172,0.1);
+      margin-top: 40px; padding-top: 16px; text-align: center;
+      border-top: 1px solid rgba(220,20,60,0.06);
     }
-    .footer-links { display: flex; gap: 16px; justify-content: center; margin-bottom: 8px; }
-    .footer-links a {
-      color: var(--text-dim); text-decoration: none; font-size: 13px;
-      font-family: "Share Tech Mono", monospace; transition: color 0.2s;
+    .footer a {
+      color: var(--text-dim); text-decoration: none;
+      font-size: 12px; font-family: "Share Tech Mono", monospace;
+      margin: 0 10px; transition: color 0.2s;
     }
-    .footer-links a:hover { color: var(--hotpink); }
-    .footer p { color: rgba(120,104,160,0.5); font-size: 11px; font-family: "Share Tech Mono", monospace; }
+    .footer a:hover { color: var(--warm-pink); }
+    .footer p { color: rgba(136,112,120,0.4); font-size: 11px; font-family: "Share Tech Mono", monospace; margin-top: 6px; }
 
-    /* ===== Glitch Text ===== */
-    .glitch-text {
-      display: inline-block;
-      position: relative;
-    }
-    .glitch-text::before,
-    .glitch-text::after {
-      content: attr(data-text);
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      opacity: 0;
-    }
-    .glitch-text:hover::before {
-      opacity: 0.7; color: var(--cyan);
-      transform: translate(-2px, 0);
-      clip-path: inset(20% 0 60% 0);
-      animation: glitch1 0.3s ease;
-    }
-    .glitch-text:hover::after {
-      opacity: 0.7; color: var(--pink);
-      transform: translate(2px, 0);
-      clip-path: inset(60% 0 10% 0);
-      animation: glitch2 0.3s ease;
-    }
-    @keyframes glitch1 { 0% { transform: translate(0); } 50% { transform: translate(-3px, 1px); } }
-    @keyframes glitch2 { 0% { transform: translate(0); } 50% { transform: translate(3px, -1px); } }
-
-    @media (max-width: 520px) {
-      .container { padding: 36px 16px; }
-      h1 { font-size: 22px; letter-spacing: 4px; }
-      .color-blocks { grid-template-columns: 1fr; }
+    /* ===== Responsive ===== */
+    @media (max-width: 560px) {
+      .container { padding: 32px 16px; }
+      h1 { font-size: 22px; letter-spacing: 6px; }
+      .hero-blocks { height: 50px; }
+      .project-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
+<div class="bg-mist"></div>
 <div class="bg-grid"></div>
-<div class="bg-glow"></div>
-<div class="scanline"></div>
+<div class="slash-deco"></div>
 
 <div class="container">
   <!-- Header -->
   <div class="header">
-    <div class="avatar-ring">
-      <div class="ring"></div>
+    <div class="avatar-wrap">
+      <div class="glow-ring"></div>
       <div class="inner">G</div>
     </div>
-    <h1 class="glitch-text" data-text="GALATEA">GALATEA</h1>
+    <h1>GALATEA</h1>
     <p class="subtitle">// STUDENT · LITERATURE · TECH</p>
-    <div class="divider">
-      <div class="divider-line"></div>
-      <div class="divider-dot"></div>
-      <div class="divider-line"></div>
-    </div>
+    <div class="divider-line"></div>
     <p class="bio">好读书，不求甚解。录所得、所思，与技术探索。</p>
   </div>
 
-  <!-- Color Blocks -->
-  <div class="color-blocks">
-    <div class="color-block cb-cyan">
-      <span class="label">文学</span>
-      <span class="value">唐诗</span>
-    </div>
-    <div class="color-block cb-pink">
-      <span class="label">技术</span>
-      <span class="value">自动化</span>
-    </div>
-    <div class="color-block cb-purple">
-      <span class="label">工具</span>
-      <span class="value">效率</span>
-    </div>
-    <div class="color-block cb-border">
-      <span class="label">STATUS</span>
-      <span class="value" style="font-size:14px;opacity:0.6">ONLINE</span>
-    </div>
+  <!-- Hero Color Blocks -->
+  <div class="hero-blocks">
+    <div class="block hb-1"></div>
+    <div class="block hb-2"></div>
+    <div class="block hb-3"></div>
+    <div class="block hb-4"></div>
+  </div>
+
+  <!-- Tags -->
+  <div class="tag-row">
+    <span class="tag-item def"># 唐诗</span>
+    <span class="tag-item def"># 古代文论</span>
+    <span class="tag-item gold"># 自动化</span>
+    <span class="tag-item outline"># 效率工具</span>
   </div>
 
   <!-- Projects -->
   <section>
     <div class="sec-title">
-      <span class="tag">PROJECTS</span>
-      <span class="line"></span>
+      <span>PROJECTS</span>
+      <span class="hr"></span>
     </div>
-
-    <div class="card">
-      <div class="accent-block"></div>
-      <h3>📚 图书馆座位预约</h3>
-      <p>ZJU 紫金港 · 实时监控 · 钉钉通知 · AES 加密</p>
-      <div class="tags">
-        <span class="tag tag-cyan">Node.js</span>
-        <span class="tag tag-pink">API</span>
-        <span class="tag tag-purple">自动化</span>
+    <div class="project-grid">
+      <div class="card">
+        <div class="accent"></div>
+        <h3>📚 座位预约</h3>
+        <p>ZJU图书馆 · AES加密 · 钉钉通知</p>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="accent-block"></div>
-      <h3>✍️ 学在浙大签到</h3>
-      <p>雷达签到 · 三点定位 · 守护进程</p>
-      <div class="tags">
-        <span class="tag tag-cyan">Python</span>
-        <span class="tag tag-pink">SSO</span>
+      <div class="card">
+        <div class="accent"></div>
+        <h3>✍️ 自动签到</h3>
+        <p>学在浙大 · 雷达定位 · 守护进程</p>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="accent-block"></div>
-      <h3>🌐 个人网站</h3>
-      <p>GitHub Pages · 暗色主题 · 持续更新</p>
-      <div class="tags">
-        <span class="tag tag-cyan">HTML/CSS</span>
-        <span class="tag tag-purple">静态站</span>
+      <div class="card">
+        <div class="accent"></div>
+        <h3>🌐 个人站</h3>
+        <p>GitHub Pages · 持续更新</p>
+      </div>
+      <div class="card">
+        <div class="accent"></div>
+        <h3>🔐 私藏笔记</h3>
+        <p>读书摘录 · 学习记录</p>
       </div>
     </div>
   </section>
 
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-item">
+      <div class="num">04</div>
+      <div class="lbl">PROJECTS</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">∞</div>
+      <div class="lbl">CURIOSITY</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">01</div>
+      <div class="lbl">SITE</div>
+    </div>
+  </div>
+
   <!-- Key Area -->
   <div class="key-area">
-    <div class="lock-icon">🔐</div>
-    <p>输入密钥解锁私藏区域</p>
+    <p>🔐 私藏区域</p>
     <div class="key-box">
       <input type="password" id="k" placeholder="ACCESS KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
       <button onclick="unlock()">UNLOCK</button>
     </div>
-    <p class="key-err" id="err">// ERROR: INVALID KEY</p>
-    <p class="key-ok" id="ok">// ACCESS GRANTED</p>
+    <p class="key-err" id="err">// KEY ERROR</p>
   </div>
 
   <!-- Footer -->
   <div class="footer">
-    <div class="footer-links">
-      <a href="https://github.com/GalateaYe749" target="_blank">[GitHub]</a>
-      <a href="mailto:galatea@zju.edu.cn">[Email]</a>
-    </div>
-    <p>© 2026 GALATEA · BUILT WITH ❤</p>
+    <a href="https://github.com/GalateaYe749" target="_blank">[GitHub]</a>
+    <a href="mailto:galatea@zju.edu.cn">[Email]</a>
+    <p>© 2026 GALATEA</p>
   </div>
 </div>
 
