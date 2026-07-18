@@ -10,14 +10,16 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #0b0713;
-      --pink: #ff2a8a;
-      --cyan: #00e0ff;
-      --purple: #8f46e8;
-      --light-pink: #ff82c0;
-      --yellow: #fde047;
+      --bg: #0d0716;
+      --pink: #ff3388;
+      --cyan: #00ddff;
+      --purple: #9955dd;
+      --light-pink: #ff99cc;
+      --accent: #ff66aa;
       --white: #f0f0ff;
-      --dim: rgba(240,240,255,0.35);
+      --dim-pink: rgba(255,51,136,0.4);
+      --dim-cyan: rgba(0,221,255,0.4);
+      --dim-purple: rgba(153,85,221,0.4);
     }
 
     body {
@@ -34,21 +36,19 @@
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
     }
 
-    /* ===== 虚化Spasmodic背景 ===== */
+    /* ===== Spasmodic虚化背景 ===== */
     .bg {
       position: fixed; inset: 0; z-index: -1;
       background:
-        radial-gradient(ellipse 60% 60% at 30% 20%, rgba(255,42,138,0.07), transparent 60%),
-        radial-gradient(ellipse 70% 50% at 80% 70%, rgba(0,224,255,0.05), transparent 60%),
-        radial-gradient(circle 40% at 10% 80%, rgba(143,70,232,0.05), transparent 60%),
-        radial-gradient(circle 30% at 70% 10%, rgba(253,224,71,0.03), transparent 50%),
-        linear-gradient(135deg, #090510, #0b0713);
+        linear-gradient(135deg, rgba(13,7,22,0.85), rgba(13,7,22,0.9)),
+        url('https://p.sda1.dev/19/a912b2e72d4be52c1a022e6f15a10e4b/130755436_p0_master1200.jpg') center/cover no-repeat;
+      filter: blur(6px) brightness(0.7);
     }
     .bg-grid {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(255,42,138,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,224,255,0.02) 1px, transparent 1px);
+        linear-gradient(rgba(255,51,136,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,221,255,0.015) 1px, transparent 1px);
       background-size: 40px 40px;
       mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
       -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
@@ -59,18 +59,18 @@
       position: fixed; z-index: 0; pointer-events: none;
       background: linear-gradient(90deg, transparent, var(--color), transparent);
       filter: blur(4px);
-      opacity: 0.3;
+      opacity: 0.35;
       animation: flicker 6s linear infinite;
     }
     .neon-tube.t-pink { --color: var(--pink); top: 5%; left: 10%; width: 80%; height: 2px; animation-delay: 0s; }
     .neon-tube.t-cyan { --color: var(--cyan); bottom: 8%; right: 10%; width: 75%; height: 2px; animation-delay: 2s; }
     .neon-tube.t-purple { --color: var(--purple); top: 15%; left: -5%; width: 2px; height: 70%; animation-delay: 1.5s; }
-    .neon-tube.t-yellow { --color: var(--yellow); bottom: 10%; right: 15%; width: 2px; height: 65%; animation-delay: 3.2s; }
+    .neon-tube.t-lightpink { --color: var(--light-pink); bottom: 10%; right: 15%; width: 2px; height: 65%; animation-delay: 3.2s; }
     @keyframes flicker {
-      0%, 100% { opacity: 0.25; }
-      25% { opacity: 0.4; }
-      50% { opacity: 0.15; }
-      75% { opacity: 0.35; }
+      0%, 100% { opacity: 0.3; }
+      25% { opacity: 0.45; }
+      50% { opacity: 0.2; }
+      75% { opacity: 0.4; }
     }
 
     /* ===== 侧栏霓虹标语 ===== */
@@ -81,7 +81,7 @@
       text-shadow: 0 0 6px var(--color);
       color: transparent; -webkit-text-stroke: 0.5px var(--color);
       writing-mode: vertical-rl;
-      opacity: 0.25;
+      opacity: 0.2;
     }
     .neon-sign.s-left { --color: var(--pink); left: 2%; top: 50%; transform: translateY(-50%); }
     .neon-sign.s-right { --color: var(--cyan); right: 2%; top: 50%; transform: translateY(-50%); }
@@ -95,13 +95,13 @@
     }
     .hero .title-wrap {
       position: relative;
-      background: linear-gradient(135deg, rgba(255,42,138,0.05), rgba(143,70,232,0.05));
-      border: 2px solid rgba(255,42,138,0.1);
+      background: linear-gradient(135deg, rgba(255,51,136,0.05), rgba(153,85,221,0.05));
+      border: 2px solid rgba(255,51,136,0.1);
       padding: 40px 24px 28px;
       border-radius: 8px;
       backdrop-filter: blur(8px);
       transform: rotate(-1deg);
-      box-shadow: 0 0 40px rgba(255,42,138,0.05), 0 0 60px rgba(0,224,255,0.03);
+      box-shadow: 0 0 40px rgba(255,51,136,0.05), 0 0 60px rgba(0,221,255,0.03);
     }
     .hero .title-wrap::before {
       content: "";
@@ -122,7 +122,7 @@
       color: transparent;
       background: linear-gradient(135deg, var(--pink), var(--light-pink), var(--cyan), var(--purple));
       background-clip: text; -webkit-background-clip: text;
-      text-shadow: 0 0 30px rgba(255,42,138,0.15), 0 0 50px rgba(0,224,255,0.08);
+      text-shadow: 0 0 30px rgba(255,51,136,0.15), 0 0 50px rgba(0,221,255,0.08);
       text-align: center;
       transform: skewX(2deg);
       line-height: 1;
@@ -140,13 +140,13 @@
     }
     .hero .sub {
       font-family: "Share Tech Mono", monospace;
-      font-size: 13px; letter-spacing: 10px; color: var(--cyan);
+      font-size: 13px; letter-spacing: 10px; color: var(--light-pink);
       text-align: center; margin-top: 12px;
       transform: skewX(2deg);
-      text-shadow: 0 0 15px rgba(0,224,255,0.4);
+      text-shadow: 0 0 15px rgba(255,153,204,0.35);
     }
     .hero .desc {
-      text-align: center; font-size: 16px; color: var(--dim);
+      text-align: center; font-size: 16px; color: var(--dim-pink);
       margin-top: 12px; transform: skewX(2deg);
     }
 
@@ -165,30 +165,29 @@
       transition: all 0.2s;
     }
     .tags .tag:hover { filter: brightness(1.4); }
-    .tag-pink { background: rgba(255,42,138,0.12); border: 1px solid rgba(255,42,138,0.25); color: var(--light-pink); }
-    .tag-cyan { background: rgba(0,224,255,0.12); border: 1px solid rgba(0,224,255,0.25); color: var(--cyan); }
-    .tag-purple { background: rgba(143,70,232,0.12); border: 1px solid rgba(143,70,232,0.25); color: #c4a5ff; }
-    .tag-yellow { background: rgba(253,224,71,0.12); border: 1px solid rgba(253,224,71,0.25); color: var(--yellow); }
+    .tag-pink { background: rgba(255,51,136,0.12); border: 1px solid rgba(255,51,136,0.25); color: var(--light-pink); }
+    .tag-cyan { background: rgba(0,221,255,0.12); border: 1px solid rgba(0,221,255,0.25); color: var(--cyan); }
+    .tag-purple { background: rgba(153,85,221,0.12); border: 1px solid rgba(153,85,221,0.25); color: #d4bbff; }
 
     /* ===== 项目卡片 ===== */
     .sec-title {
       font-family: "Share Tech Mono", monospace;
       font-size: 11px; letter-spacing: 8px;
-      color: var(--dim); margin-bottom: 12px;
+      color: var(--dim-cyan); margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px;
     }
     .sec-title::after {
       content: ""; flex: 1; height: 1px;
-      background: linear-gradient(90deg, rgba(255,42,138,0.3), transparent);
+      background: linear-gradient(90deg, rgba(255,51,136,0.3), transparent);
     }
 
     .card-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;
     }
     .card {
-      padding: 22px 20px;
+      padding: 20px;
       background: rgba(255,255,255,0.015);
-      border: 2px solid rgba(255,42,138,0.08);
+      border: 2px solid rgba(255,51,136,0.08);
       border-radius: 6px;
       text-decoration: none; color: inherit;
       position: relative;
@@ -197,9 +196,9 @@
       overflow: hidden;
     }
     .card:hover {
-      border-color: rgba(0,224,255,0.25);
+      border-color: rgba(0,221,255,0.25);
       transform: translateY(-6px);
-      box-shadow: 0 0 30px rgba(0,224,255,0.08);
+      box-shadow: 0 0 30px rgba(0,221,255,0.08);
     }
     .card:nth-child(odd) { transform: rotate(-1.2deg); }
     .card:nth-child(even) { transform: rotate(1.2deg); }
@@ -209,18 +208,17 @@
       content: "";
       position: absolute; top: -2px; left: -2px;
       width: 80px; height: 80px;
-      background: radial-gradient(circle at top left, rgba(255,42,138,0.05), transparent);
+      background: radial-gradient(circle at top left, rgba(255,51,136,0.05), transparent);
     }
     .card::after {
       content: "";
       position: absolute; bottom: -2px; right: -2px;
       width: 60px; height: 60px;
-      background: radial-gradient(circle at bottom right, rgba(0,224,255,0.05), transparent);
+      background: radial-gradient(circle at bottom right, rgba(0,221,255,0.05), transparent);
     }
 
-    .card .icon { font-size: 28px; margin-bottom: 6px; }
-    .card .name { font-size: 17px; font-weight: 600; }
-    .card .desc { font-size: 13px; color: var(--dim); margin-top: 2px; }
+    .card .name { font-size: 17px; font-weight: 600; color: var(--white); }
+    .card .desc { font-size: 13px; color: var(--dim-pink); margin-top: 4px; }
     .card .dots {
       position: absolute; top: 10px; right: 10px;
       display: flex; gap: 4px;
@@ -240,19 +238,19 @@
     }
     .stats .s {
       padding: 16px 8px; text-align: center;
-      border: 1px solid rgba(143,70,232,0.08);
-      background: rgba(143,70,232,0.03);
+      border: 1px solid rgba(153,85,221,0.08);
+      background: rgba(153,85,221,0.03);
       backdrop-filter: blur(4px);
     }
     .stats .s .num {
       font-family: "Share Tech Mono", monospace;
       font-size: 26px; font-weight: 700;
-      background: linear-gradient(135deg, var(--yellow), var(--pink));
+      background: linear-gradient(135deg, var(--light-pink), var(--pink));
       background-clip: text; -webkit-background-clip: text; color: transparent;
-      text-shadow: 0 0 15px rgba(253,224,71,0.08);
+      text-shadow: 0 0 15px rgba(255,153,204,0.08);
     }
     .stats .s .lbl {
-      font-size: 10px; color: var(--dim);
+      font-size: 10px; color: var(--dim-purple);
       font-family: "Share Tech Mono", monospace;
       letter-spacing: 2px; margin-top: 4px;
     }
@@ -260,8 +258,8 @@
     /* ===== 密码门 ===== */
     .door {
       margin-top: 20px;
-      border: 2px solid rgba(0,224,255,0.08);
-      background: rgba(0,224,255,0.03);
+      border: 2px solid rgba(0,221,255,0.08);
+      background: rgba(0,221,255,0.03);
       padding: 32px 24px; text-align: center;
       position: relative;
       transform: rotate(-0.5deg);
@@ -275,20 +273,20 @@
     }
     .door .hint {
       font-family: "Share Tech Mono", monospace;
-      font-size: 13px; color: var(--dim); margin-bottom: 16px;
+      font-size: 13px; color: var(--dim-cyan); margin-bottom: 16px;
     }
-    .door .hint span { color: var(--pink); text-shadow: 0 0 8px rgba(255,42,138,0.2); }
+    .door .hint span { color: var(--pink); text-shadow: 0 0 8px rgba(255,51,136,0.2); }
     .key-box { display: flex; gap: 8px; max-width: 420px; margin: 0 auto; }
     .key-box input {
       flex: 1; padding: 14px 18px;
       background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,42,138,0.1);
+      border: 1px solid rgba(255,51,136,0.1);
       color: var(--cyan); font-size: 17px; outline: none;
       font-family: "Share Tech Mono", monospace;
       letter-spacing: 6px;
     }
-    .key-box input:focus { border-color: var(--cyan); box-shadow: 0 0 18px rgba(0,224,255,0.12); }
-    .key-box input::placeholder { color: rgba(0,224,255,0.15); letter-spacing: 2px; }
+    .key-box input:focus { border-color: var(--cyan); box-shadow: 0 0 18px rgba(0,221,255,0.12); }
+    .key-box input::placeholder { color: rgba(0,221,255,0.15); letter-spacing: 2px; }
     .key-box button {
       padding: 14px 28px;
       background: linear-gradient(135deg, var(--pink), var(--purple));
@@ -297,7 +295,7 @@
       font-size: 13px; letter-spacing: 5px;
       transition: all 0.2s;
     }
-    .key-box button:hover { filter: brightness(1.3); box-shadow: 0 0 20px rgba(255,42,138,0.12); }
+    .key-box button:hover { filter: brightness(1.3); box-shadow: 0 0 20px rgba(255,51,136,0.12); }
     .key-err { font-family: "Share Tech Mono", monospace; font-size: 12px; color: var(--pink); display: none; margin-top: 8px; }
 
     /* ===== Footer ===== */
@@ -307,7 +305,7 @@
       border-top: 1px solid rgba(255,255,255,0.02);
     }
     .foot a {
-      color: var(--dim); text-decoration: none;
+      color: var(--dim-purple); text-decoration: none;
       font-family: "Share Tech Mono", monospace;
       font-size: 13px; margin-right: 20px; transition: color 0.2s;
     }
@@ -337,7 +335,7 @@
 <div class="neon-tube t-pink"></div>
 <div class="neon-tube t-cyan"></div>
 <div class="neon-tube t-purple"></div>
-<div class="neon-tube t-yellow"></div>
+<div class="neon-tube t-lightpink"></div>
 
 <!-- 侧栏霓虹标语 -->
 <div class="neon-sign s-left">✦ GALATEA ✦</div>
@@ -359,7 +357,6 @@
     <span class="tag tag-pink">#唐诗</span>
     <span class="tag tag-cyan">#古代文论</span>
     <span class="tag tag-purple">#自动化</span>
-    <span class="tag tag-yellow">#效率</span>
     <span class="tag tag-pink">#Node.js</span>
     <span class="tag tag-cyan">#API</span>
   </div>
@@ -369,25 +366,21 @@
   <div class="card-grid">
     <a class="card" href="#">
       <div class="dots"><span></span><span></span><span></span></div>
-      <div class="icon">📚</div>
       <div class="name">座位预约</div>
       <div class="desc">ZJU紫金港 · AES加密 · 钉钉通知</div>
     </a>
     <a class="card" href="#">
       <div class="dots"><span></span><span></span><span></span></div>
-      <div class="icon">✍️</div>
       <div class="name">自动签到</div>
       <div class="desc">学在浙大 · 雷达定位 · 守护进程</div>
     </a>
     <a class="card" href="#">
       <div class="dots"><span></span><span></span><span></span></div>
-      <div class="icon">🌐</div>
       <div class="name">个人网站</div>
       <div class="desc">GitHub Pages · 霓虹主题</div>
     </a>
     <a class="card" href="#">
       <div class="dots"><span></span><span></span><span></span></div>
-      <div class="icon">📖</div>
       <div class="name">私藏笔记</div>
       <div class="desc">读书摘录 · 学习记录</div>
     </a>
@@ -430,24 +423,23 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const particles = [];
-const particleCount = 120;
+const particleCount = 200; // 粒子数量加至200
 let mouse = { x: null, y: null };
 
 class Particle {
   constructor() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.8;
-    this.vy = (Math.random() - 0.5) * 0.8;
-    this.size = Math.random() * 2.5 + 0.5;
-    this.opacity = Math.random() * 0.7 + 0.2;
-    // 随机颜色
+    this.vx = (Math.random() - 0.5) * 0.6;
+    this.vy = (Math.random() - 0.5) * 0.6;
+    this.size = Math.random() * 2 + 0.5;
+    this.opacity = Math.random() * 0.4 + 0.1; // 更朦胧
+    // 颜色参考Spasmodic图：粉/青/紫
     this.color = [
-      'rgba(255,42,138, ' + (Math.random() * 0.6 + 0.2) + ')',
-      'rgba(0,224,255, ' + (Math.random() * 0.6 + 0.2) + ')',
-      'rgba(253,224,71, ' + (Math.random() * 0.6 + 0.2) + ')',
-      'rgba(143,70,232, ' + (Math.random() * 0.6 + 0.2) + ')'
-    ][Math.floor(Math.random() * 4)];
+      'rgba(255,51,136, ' + (Math.random() * 0.4 + 0.1) + ')',
+      'rgba(0,221,255, ' + (Math.random() * 0.4 + 0.1) + ')',
+      'rgba(153,85,221, ' + (Math.random() * 0.4 + 0.1) + ')'
+    ][Math.floor(Math.random() * 3)];
   }
   update() {
     this.x += this.vx;
@@ -464,12 +456,12 @@ class Particle {
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < 120) {
         const force = (120 - dist) / 120;
-        this.x += dx * force * 0.03;
-        this.y += dy * force * 0.03;
-        this.opacity = Math.min(1, this.opacity + 0.05);
+        this.x += dx * force * 0.02;
+        this.y += dy * force * 0.02;
+        this.opacity = Math.min(0.5, this.opacity + 0.05);
       } else {
         this.opacity -= 0.01;
-        if (this.opacity < 0.2) this.opacity = 0.2;
+        if (this.opacity < 0.1) this.opacity = 0.1;
       }
     }
   }
@@ -479,8 +471,8 @@ class Particle {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
-    // 发光效果
-    ctx.shadowBlur = 8;
+    // 发光更朦胧
+    ctx.shadowBlur = 10;
     ctx.shadowColor = this.color;
     ctx.fill();
     ctx.shadowBlur = 0;
