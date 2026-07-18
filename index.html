@@ -236,8 +236,10 @@ async function unlock() {
   const hash = Array.from(new Uint8Array(
     await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
   )).map(b => b.toString(16).padStart(2,"0")).join("");
-  // 对应密钥: zju2026
-  if (hash === "8c7b7f5c8b4b0e5c6d3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2") {
+  // 哈希分段校验，避免源码直接可搜
+  const h1 = "a853266afd09704859eabc86c9ca7c3a";
+  const h2 = "fc8f1408672359acb389f195424c22a2";
+  if (hash === h1 + h2) {
     document.getElementById("secret-section").classList.add("visible");
     document.getElementById("key-err").style.display = "none";
   } else {
