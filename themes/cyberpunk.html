@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galatea · 赛博</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --bg: #0a0a12;
+      --bg2: #12101e;
+      --cyan: #00f0ff;
+      --pink: #ff3cac;
+      --hotpink: #ff6bcb;
+      --purple: #784ba0;
+      --darkpink: #2a0a1e;
+      --grid: rgba(0, 240, 255, 0.04);
+      --text: #e0d8f0;
+      --text-dim: #7868a0;
+      --glow-cyan: 0 0 20px rgba(0,240,255,0.3);
+      --glow-pink: 0 0 20px rgba(255,60,172,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Noto Sans SC", -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== BG Layers ===== */
+    .bg-grid {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0; pointer-events: none;
+    }
+
+    .bg-glow {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+    .bg-glow::before {
+      content: ""; position: absolute;
+      width: 600px; height: 600px; border-radius: 50%;
+      top: -10%; left: -10%;
+      background: radial-gradient(circle, rgba(255,60,172,0.08) 0%, transparent 70%);
+    }
+    .bg-glow::after {
+      content: ""; position: absolute;
+      width: 500px; height: 500px; border-radius: 50%;
+      bottom: -10%; right: -5%;
+      background: radial-gradient(circle, rgba(0,240,255,0.06) 0%, transparent 70%);
+    }
+
+    .scanline {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,240,255,0.015) 2px,
+        rgba(0,240,255,0.015) 4px
+      );
+    }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 1; }
+
+    /* ===== Header ===== */
+    .header { text-align: center; margin-bottom: 48px; position: relative; }
+
+    .avatar-ring {
+      width: 90px; height: 90px; margin: 0 auto 20px; position: relative;
+    }
+    .avatar-ring .ring {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: linear-gradient(135deg, var(--cyan), var(--pink), var(--cyan)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .avatar-ring .inner {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: linear-gradient(135deg, var(--darkpink), #0a0a20);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; color: var(--hotpink); font-weight: 700;
+      font-family: "Share Tech Mono", monospace;
+      box-shadow: var(--glow-pink);
+    }
+
+    h1 {
+      font-size: 28px; font-weight: 700; letter-spacing: 8px;
+      background: linear-gradient(90deg, var(--cyan), var(--hotpink), var(--cyan));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    .subtitle {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 12px; color: var(--text-dim);
+      letter-spacing: 4px; margin-top: 6px;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 16px auto; max-width: 280px;
+    }
+    .divider-line { flex: 1; height: 1px; }
+    .divider-line:first-child { background: linear-gradient(90deg, transparent, var(--cyan)); }
+    .divider-line:last-child { background: linear-gradient(90deg, var(--pink), transparent); }
+    .divider-dot { width: 4px; height: 4px; background: var(--hotpink); border-radius: 50%; box-shadow: var(--glow-pink); }
+
+    .bio {
+      font-size: 14px; color: var(--text-dim);
+      margin-top: 12px; font-weight: 300;
+    }
+
+    /* ===== Sections ===== */
+    section { margin-bottom: 28px; }
+
+    .sec-title {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 11px; letter-spacing: 3px;
+      color: var(--cyan); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sec-title .line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(0,240,255,0.3), transparent);
+    }
+    .sec-title .tag {
+      display: inline-block; padding: 1px 8px;
+      background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.2);
+      font-size: 9px; letter-spacing: 1px;
+    }
+
+    .card {
+      background: rgba(18,16,30,0.8); border-radius: 4px; padding: 16px 20px;
+      border: 1px solid rgba(255,60,172,0.12); margin-bottom: 8px;
+      backdrop-filter: blur(4px);
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .card::before {
+      content: ""; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--cyan), var(--pink));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover { border-color: rgba(255,60,172,0.3); transform: translateX(4px); }
+    .card:hover::before { opacity: 1; }
+
+    .card .accent-block {
+      position: absolute; top: -20px; right: -20px;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,240,255,0.06), transparent);
+      pointer-events: none;
+    }
+
+    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .card p { font-size: 13px; color: var(--text-dim); font-weight: 300; }
+    .card .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .card .tag {
+      font-size: 11px; padding: 1px 8px; border-radius: 2px;
+      font-family: "Share Tech Mono", monospace;
+    }
+    .tag-cyan { background: rgba(0,240,255,0.1); color: var(--cyan); border: 1px solid rgba(0,240,255,0.2); }
+    .tag-pink { background: rgba(255,60,172,0.1); color: var(--hotpink); border: 1px solid rgba(255,60,172,0.2); }
+    .tag-purple { background: rgba(120,75,160,0.15); color: #b080e0; border: 1px solid rgba(120,75,160,0.2); }
+
+    /* ===== Color Block Section ===== */
+    .color-blocks {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 28px;
+    }
+    .color-block {
+      padding: 20px; border-radius: 4px; position: relative; overflow: hidden;
+      min-height: 90px; display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .color-block .label {
+      font-size: 11px; font-family: "Share Tech Mono", monospace;
+      letter-spacing: 1px; opacity: 0.7;
+    }
+    .color-block .value {
+      font-size: 20px; font-weight: 700;
+      font-family: "Share Tech Mono", monospace;
+      letter-spacing: 2px;
+    }
+    .cb-cyan {
+      background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(0,240,255,0.03));
+      border: 1px solid rgba(0,240,255,0.15);
+      color: var(--cyan);
+    }
+    .cb-pink {
+      background: linear-gradient(135deg, rgba(255,60,172,0.12), rgba(255,60,172,0.03));
+      border: 1px solid rgba(255,60,172,0.15);
+      color: var(--hotpink);
+    }
+    .cb-purple {
+      background: linear-gradient(135deg, rgba(120,75,160,0.15), rgba(120,75,160,0.03));
+      border: 1px solid rgba(120,75,160,0.15);
+      color: #b080e0;
+    }
+    .cb-border {
+      background: transparent;
+      border: 1px solid rgba(255,60,172,0.2);
+      color: var(--text-dim);
+    }
+
+    /* ===== Key Section ===== */
+    .key-area {
+      margin-top: 36px; padding: 24px;
+      border: 1px solid rgba(0,240,255,0.1);
+      background: rgba(0,240,255,0.02);
+      border-radius: 4px; text-align: center;
+    }
+    .key-area .lock-icon { font-size: 24px; margin-bottom: 8px; }
+    .key-area p { font-size: 13px; color: var(--text-dim); font-weight: 300; margin-bottom: 10px; }
+    .key-box { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+    .key-box input {
+      flex: 1; padding: 8px 14px;
+      background: rgba(0,0,0,0.4); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 4px; font-size: 14px; color: var(--cyan);
+      outline: none; font-family: "Share Tech Mono", monospace;
+    }
+    .key-box input:focus { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,60,172,0.2); }
+    .key-box button {
+      padding: 8px 20px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: #fff; border: none; border-radius: 4px; cursor: pointer;
+      font-size: 13px; font-family: "Share Tech Mono", monospace;
+      letter-spacing: 2px; transition: all 0.3s;
+    }
+    .key-box button:hover {
+      box-shadow: var(--glow-pink);
+      transform: translateY(-1px);
+    }
+    .key-err { color: var(--pink); font-size: 13px; display: none; margin-top: 6px; font-family: "Share Tech Mono", monospace; }
+    .key-ok { color: var(--cyan); font-size: 13px; display: none; margin-top: 6px; }
+
+    /* ===== Footer ===== */
+    .footer {
+      margin-top: 48px; padding-top: 20px; text-align: center;
+      border-top: 1px solid rgba(255,60,172,0.1);
+    }
+    .footer-links { display: flex; gap: 16px; justify-content: center; margin-bottom: 8px; }
+    .footer-links a {
+      color: var(--text-dim); text-decoration: none; font-size: 13px;
+      font-family: "Share Tech Mono", monospace; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--hotpink); }
+    .footer p { color: rgba(120,104,160,0.5); font-size: 11px; font-family: "Share Tech Mono", monospace; }
+
+    /* ===== Glitch Text ===== */
+    .glitch-text {
+      display: inline-block;
+      position: relative;
+    }
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+    }
+    .glitch-text:hover::before {
+      opacity: 0.7; color: var(--cyan);
+      transform: translate(-2px, 0);
+      clip-path: inset(20% 0 60% 0);
+      animation: glitch1 0.3s ease;
+    }
+    .glitch-text:hover::after {
+      opacity: 0.7; color: var(--pink);
+      transform: translate(2px, 0);
+      clip-path: inset(60% 0 10% 0);
+      animation: glitch2 0.3s ease;
+    }
+    @keyframes glitch1 { 0% { transform: translate(0); } 50% { transform: translate(-3px, 1px); } }
+    @keyframes glitch2 { 0% { transform: translate(0); } 50% { transform: translate(3px, -1px); } }
+
+    @media (max-width: 520px) {
+      .container { padding: 36px 16px; }
+      h1 { font-size: 22px; letter-spacing: 4px; }
+      .color-blocks { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="scanline"></div>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="avatar-ring">
+      <div class="ring"></div>
+      <div class="inner">G</div>
+    </div>
+    <h1 class="glitch-text" data-text="GALATEA">GALATEA</h1>
+    <p class="subtitle">// STUDENT · LITERATURE · TECH</p>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+    <p class="bio">好读书，不求甚解。录所得、所思，与技术探索。</p>
+  </div>
+
+  <!-- Color Blocks -->
+  <div class="color-blocks">
+    <div class="color-block cb-cyan">
+      <span class="label">文学</span>
+      <span class="value">唐诗</span>
+    </div>
+    <div class="color-block cb-pink">
+      <span class="label">技术</span>
+      <span class="value">自动化</span>
+    </div>
+    <div class="color-block cb-purple">
+      <span class="label">工具</span>
+      <span class="value">效率</span>
+    </div>
+    <div class="color-block cb-border">
+      <span class="label">STATUS</span>
+      <span class="value" style="font-size:14px;opacity:0.6">ONLINE</span>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <section>
+    <div class="sec-title">
+      <span class="tag">PROJECTS</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="card">
+      <div class="accent-block"></div>
+      <h3>📚 图书馆座位预约</h3>
+      <p>ZJU 紫金港 · 实时监控 · 钉钉通知 · AES 加密</p>
+      <div class="tags">
+        <span class="tag tag-cyan">Node.js</span>
+        <span class="tag tag-pink">API</span>
+        <span class="tag tag-purple">自动化</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="accent-block"></div>
+      <h3>✍️ 学在浙大签到</h3>
+      <p>雷达签到 · 三点定位 · 守护进程</p>
+      <div class="tags">
+        <span class="tag tag-cyan">Python</span>
+        <span class="tag tag-pink">SSO</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="accent-block"></div>
+      <h3>🌐 个人网站</h3>
+      <p>GitHub Pages · 暗色主题 · 持续更新</p>
+      <div class="tags">
+        <span class="tag tag-cyan">HTML/CSS</span>
+        <span class="tag tag-purple">静态站</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Area -->
+  <div class="key-area">
+    <div class="lock-icon">🔐</div>
+    <p>输入密钥解锁私藏区域</p>
+    <div class="key-box">
+      <input type="password" id="k" placeholder="ACCESS KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
+      <button onclick="unlock()">UNLOCK</button>
+    </div>
+    <p class="key-err" id="err">// ERROR: INVALID KEY</p>
+    <p class="key-ok" id="ok">// ACCESS GRANTED</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-links">
+      <a href="https://github.com/GalateaYe749" target="_blank">[GitHub]</a>
+      <a href="mailto:galatea@zju.edu.cn">[Email]</a>
+    </div>
+    <p>© 2026 GALATEA · BUILT WITH ❤</p>
+  </div>
+</div>
+
+<script>
+async function unlock() {
+  const input = document.getElementById("k").value;
+  const hash = Array.from(new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
+  )).map(b => b.toString(16).padStart(2,"0")).join("");
+  const h1 = "a853266afd09704859eabc86c9ca7c3a";
+  const h2 = "fc8f1408672359acb389f195424c22a2";
+  if (hash === h1 + h2) {
+    sessionStorage.setItem("auth", "1");
+    location.href = "../private/";
+  } else {
+    document.getElementById("err").style.display = "block";
+    setTimeout(() => document.getElementById("err").style.display = "none", 2000);
+  }
+}
+</script>
+</body>
+</html>
