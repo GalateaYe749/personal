@@ -5,390 +5,345 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Galatea · Neon</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700&family=Share+Tech+Mono&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --night: #0a0a14;
-      --night2: #111122;
-      --street: #181828;
-      --red: #ff0040;
-      --pink: #ff4080;
-      --hotpink: #ff60a0;
-      --cyan: #00e5ff;
-      --blue: #0088ff;
-      --yellow: #ffd000;
-      --orange: #ff8800;
-      --green: #00ff88;
-      --white: #f0eef8;
-      --dim: rgba(240,238,248,0.4);
+      --night: #07070f;
+      --pink: #ff1879;
+      --cyan: #00d4ff;
+      --yellow: #ffcc00;
+      --orange: #ff7700;
+      --green: #00ff95;
+      --white: #f0edf8;
+      --dim: rgba(240,237,248,0.35);
     }
 
     body {
-      font-family: "Noto Sans SC", -apple-system, sans-serif;
+      font-family: "Noto Sans SC", sans-serif;
       background: var(--night);
       color: var(--white);
       line-height: 1.7;
       min-height: 100vh;
     }
 
-    /* ===== City Night BG ===== */
-    .city {
+    /* ===== BG ===== */
+    .bg {
       position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
     }
-    /* 城市天际线剪影 */
-    .city .skyline {
-      position: absolute; bottom: 0; width: 100%; height: 120px;
-      display: flex; align-items: flex-end; gap: 2px;
+    .bg .haze1 {
+      position: absolute; top: -20%; left: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,24,121,0.05), transparent 70%);
     }
-    .city .skyline span {
-      flex: 1; background: rgba(255,255,255,0.02);
-      border-top: 1px solid rgba(255,255,255,0.02);
+    .bg .haze2 {
+      position: absolute; bottom: -10%; right: -10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,212,255,0.04), transparent 70%);
     }
-    .city .skyline span:nth-child(odd) { height: 70%; }
-    .city .skyline span:nth-child(even) { height: 100%; }
-    .city .skyline span:nth-child(3n) { height: 40%; }
-    .city .skyline span:nth-child(5n) { height: 85%; }
-
-    /* 地面光晕 */
-    .city .ground-glow {
-      position: absolute; bottom: 0; width: 100%; height: 60%;
-      background: linear-gradient(0deg,
-        rgba(255,0,64,0.03) 0%,
-        rgba(0,229,255,0.02) 30%,
-        rgba(255,208,0,0.015) 60%,
-        transparent 100%);
-    }
-
-    /* 彩色光晕 */
-    .city .glow-left {
-      position: absolute; top: 10%; left: -10%;
+    .bg .haze3 {
+      position: absolute; top: 50%; left: 40%;
       width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(255,0,64,0.06), transparent 70%);
-    }
-    .city .glow-right {
-      position: absolute; top: 40%; right: -10%;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(0,229,255,0.04), transparent 70%);
-    }
-    .city .glow-bottom {
-      position: absolute; bottom: 10%; left: 30%;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(255,208,0,0.03), transparent);
+      background: radial-gradient(circle, rgba(255,204,0,0.03), transparent);
     }
 
-    .container { max-width: 680px; margin: 0 auto; padding: 48px 24px; position: relative; z-index: 1; }
+    .container { max-width: 660px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
 
-    /* ===== 霓虹灯管标题 ===== */
-    .neon-sign {
-      text-align: center; margin-bottom: 36px;
-      background: rgba(0,0,0,0.3); padding: 24px;
-      border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.03);
+    /* ===== 霓虹灯牌 ===== */
+    .sign {
+      text-align: center;
+      padding: 36px 24px 28px;
+      margin-bottom: 32px;
+      border: 1.5px solid rgba(255,24,121,0.06);
+      background: rgba(255,24,121,0.015);
       position: relative;
     }
-    /* 霓虹边框 */
-    .neon-sign .border-neon {
-      position: absolute; inset: -2px; border-radius: 6px;
-      border: 2px solid var(--pink);
-      filter: blur(4px); opacity: 0.3;
-      animation: breathe 3s ease-in-out infinite;
+    /* 霓虹外边框 - 发光 */
+    .sign .frame-glow {
+      position: absolute; inset: -1px;
+      border: 1.5px solid var(--pink);
+      filter: blur(6px);
+      opacity: 0.15;
+      animation: flicker 4s ease-in-out infinite;
     }
-    @keyframes breathe {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 0.5; }
+    @keyframes flicker {
+      0%, 100% { opacity: 0.12; }
+      25% { opacity: 0.20; }
+      50% { opacity: 0.10; }
+      75% { opacity: 0.18; }
     }
 
-    .neon-sign .avatar {
-      width: 64px; height: 64px; margin: 0 auto 12px;
+    /* 头像 - 霓虹管光圈 */
+    .sign .avatar {
+      width: 60px; height: 60px; margin: 0 auto 14px;
       border-radius: 50%;
-      background: rgba(255,64,128,0.06);
       border: 2px solid var(--pink);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px; font-weight: 900; color: var(--pink);
+      font-size: 20px; font-weight: 500; color: transparent;
       font-family: "Share Tech Mono", monospace;
-      box-shadow: 0 0 20px rgba(255,64,128,0.2), inset 0 0 20px rgba(255,64,128,0.05);
+      -webkit-text-stroke: 1px var(--pink);
+      box-shadow: 0 0 18px rgba(255,24,121,0.15), inset 0 0 18px rgba(255,24,121,0.05);
     }
 
-    /* 霓虹灯管主标题 */
-    .neon-sign h1 {
-      font-size: 36px; font-weight: 900; letter-spacing: 12px;
-      color: var(--pink);
+    /* ★ 霓虹镂空文字 - 关键效果 */
+    .sign h1 {
+      font-size: 44px; font-weight: 700; letter-spacing: 14px;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--pink);
       text-shadow:
-        0 0 7px var(--pink),
-        0 0 10px var(--pink),
-        0 0 21px var(--pink),
-        0 0 42px rgba(255,64,128,0.3);
+        0 0 7px rgba(255,24,121,0.4),
+        0 0 14px rgba(255,24,121,0.2),
+        0 0 28px rgba(255,24,121,0.1);
       font-family: "Noto Sans SC", sans-serif;
-    }
-    .neon-sign .sub {
-      font-family: "Share Tech Mono", monospace;
-      font-size: 11px; letter-spacing: 6px; margin-top: 6px;
-      color: var(--cyan);
-      text-shadow: 0 0 7px rgba(0,229,255,0.4);
-    }
-    .neon-sign .bio {
-      font-size: 14px; color: var(--dim);
-      margin-top: 8px; font-weight: 300; letter-spacing: 2px;
+      line-height: 1.2;
     }
 
-    /* ===== 霓虹标签条 ===== */
-    .neon-tags {
+    .sign .sub {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 12px; letter-spacing: 6px; margin-top: 10px;
+      color: transparent;
+      -webkit-text-stroke: 0.8px var(--cyan);
+      text-shadow: 0 0 10px rgba(0,212,255,0.3);
+    }
+
+    .sign .desc {
+      font-size: 15px; color: var(--dim);
+      font-weight: 300; margin-top: 12px; letter-spacing: 1px;
+    }
+
+    /* ===== 霓虹标签行 ===== */
+    .tag-row {
       display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
       margin-bottom: 28px;
     }
-    .neon-tags .tag {
+    .tag-row a {
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; padding: 4px 14px; letter-spacing: 2px;
-      border-radius: 2px; text-decoration: none;
-      transition: all 0.2s;
+      font-size: 12px; padding: 5px 14px; letter-spacing: 1.5px;
+      text-decoration: none; transition: all 0.2s;
     }
-    .neon-tags .tag:hover { filter: brightness(1.4); }
-    .nt-red {
-      color: var(--red); border: 1px solid rgba(255,0,64,0.2);
-      text-shadow: 0 0 8px rgba(255,0,64,0.2);
+    .tag-row a:hover { filter: brightness(1.5); }
+
+    .tag-pink {
+      color: transparent;
+      -webkit-text-stroke: 0.8px var(--pink);
+      border: 1px solid rgba(255,24,121,0.08);
+      text-shadow: 0 0 6px rgba(255,24,121,0.15);
     }
-    .nt-cyan {
-      color: var(--cyan); border: 1px solid rgba(0,229,255,0.2);
-      text-shadow: 0 0 8px rgba(0,229,255,0.2);
+    .tag-cyan {
+      color: transparent;
+      -webkit-text-stroke: 0.8px var(--cyan);
+      border: 1px solid rgba(0,212,255,0.08);
+      text-shadow: 0 0 6px rgba(0,212,255,0.15);
     }
-    .nt-yellow {
-      color: var(--yellow); border: 1px solid rgba(255,208,0,0.2);
-      text-shadow: 0 0 8px rgba(255,208,0,0.2);
+    .tag-yellow {
+      color: transparent;
+      -webkit-text-stroke: 0.8px var(--yellow);
+      border: 1px solid rgba(255,204,0,0.08);
+      text-shadow: 0 0 6px rgba(255,204,0,0.15);
     }
-    .nt-green {
-      color: var(--green); border: 1px solid rgba(0,255,136,0.2);
-      text-shadow: 0 0 8px rgba(0,255,136,0.2);
+    .tag-green {
+      color: transparent;
+      -webkit-text-stroke: 0.8px var(--green);
+      border: 1px solid rgba(0,255,149,0.08);
+      text-shadow: 0 0 6px rgba(0,255,149,0.15);
     }
 
-    /* ===== 霓虹招牌卡片 ===== */
-    .signboard { margin-bottom: 28px; }
-
-    .signboard .board-title {
+    /* ===== 霓虹招牌网格 ===== */
+    .signs-title {
       font-family: "Share Tech Mono", monospace;
       font-size: 10px; letter-spacing: 4px;
-      color: var(--dim); margin-bottom: 8px;
+      color: var(--dim); margin-bottom: 10px;
     }
 
-    .board-grid {
+    .signs-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 28px;
     }
 
-    .board {
-      padding: 16px; border-radius: 3px;
-      position: relative; overflow: hidden;
-      text-decoration: none; color: inherit; display: block;
+    .sign-card {
+      padding: 18px 16px;
+      background: rgba(255,255,255,0.01);
+      text-decoration: none; color: inherit;
       transition: all 0.25s;
+      position: relative;
     }
-    .board:hover { transform: translateY(-2px); }
+    .sign-card:hover { transform: translateY(-2px); }
 
-    /* 每个招牌不同霓虹色 */
-    .board-1 {
-      background: rgba(255,0,64,0.03);
-      border: 1px solid rgba(255,0,64,0.1);
-      box-shadow: 0 0 15px rgba(255,0,64,0.02);
-    }
-    .board-1:hover { border-color: rgba(255,0,64,0.3); box-shadow: 0 0 25px rgba(255,0,64,0.05); }
-    .board-1 .icon { color: var(--red); text-shadow: 0 0 12px rgba(255,0,64,0.3); }
+    .sc-1 { border: 1px solid rgba(255,24,121,0.06); }
+    .sc-1:hover { border-color: rgba(255,24,121,0.15); }
+    .sc-1 .s-icon { color: transparent; -webkit-text-stroke: 1px var(--pink); text-shadow: 0 0 10px rgba(255,24,121,0.2); }
 
-    .board-2 {
-      background: rgba(0,229,255,0.03);
-      border: 1px solid rgba(0,229,255,0.1);
-      box-shadow: 0 0 15px rgba(0,229,255,0.02);
-    }
-    .board-2:hover { border-color: rgba(0,229,255,0.3); box-shadow: 0 0 25px rgba(0,229,255,0.05); }
-    .board-2 .icon { color: var(--cyan); text-shadow: 0 0 12px rgba(0,229,255,0.3); }
+    .sc-2 { border: 1px solid rgba(0,212,255,0.06); }
+    .sc-2:hover { border-color: rgba(0,212,255,0.15); }
+    .sc-2 .s-icon { color: transparent; -webkit-text-stroke: 1px var(--cyan); text-shadow: 0 0 10px rgba(0,212,255,0.2); }
 
-    .board-3 {
-      background: rgba(255,208,0,0.03);
-      border: 1px solid rgba(255,208,0,0.1);
-      box-shadow: 0 0 15px rgba(255,208,0,0.02);
-    }
-    .board-3:hover { border-color: rgba(255,208,0,0.3); box-shadow: 0 0 25px rgba(255,208,0,0.05); }
-    .board-3 .icon { color: var(--yellow); text-shadow: 0 0 12px rgba(255,208,0,0.3); }
+    .sc-3 { border: 1px solid rgba(255,204,0,0.06); }
+    .sc-3:hover { border-color: rgba(255,204,0,0.15); }
+    .sc-3 .s-icon { color: transparent; -webkit-text-stroke: 1px var(--yellow); text-shadow: 0 0 10px rgba(255,204,0,0.2); }
 
-    .board-4 {
-      background: rgba(0,255,136,0.03);
-      border: 1px solid rgba(0,255,136,0.1);
-      box-shadow: 0 0 15px rgba(0,255,136,0.02);
-    }
-    .board-4:hover { border-color: rgba(0,255,136,0.3); box-shadow: 0 0 25px rgba(0,255,136,0.05); }
-    .board-4 .icon { color: var(--green); text-shadow: 0 0 12px rgba(0,255,136,0.3); }
+    .sc-4 { border: 1px solid rgba(0,255,149,0.06); }
+    .sc-4:hover { border-color: rgba(0,255,149,0.15); }
+    .sc-4 .s-icon { color: transparent; -webkit-text-stroke: 1px var(--green); text-shadow: 0 0 10px rgba(0,255,149,0.2); }
 
-    .board .icon { font-size: 22px; margin-bottom: 4px; }
-    .board .name { font-size: 14px; font-weight: 700; }
-    .board .desc { font-size: 11px; color: var(--dim); font-weight: 300; margin-top: 2px; }
+    .sign-card .s-icon { font-size: 24px; margin-bottom: 4px; }
+    .sign-card .s-name { font-size: 16px; font-weight: 500; }
+    .sign-card .s-desc { font-size: 12px; color: var(--dim); margin-top: 1px; }
 
-    /* ===== 霓虹统计条 ===== */
-    .neon-stats {
+    /* ===== 统计条 ===== */
+    .stat-row {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
       margin-bottom: 28px;
     }
-    .neon-stats .stat {
-      text-align: center; padding: 10px 4px;
-      border: 1px solid rgba(255,255,255,0.03);
-      background: rgba(0,0,0,0.2);
+    .stat-row .st {
+      text-align: center; padding: 12px 4px;
+      border: 1px solid rgba(255,255,255,0.02);
+      background: rgba(0,0,0,0.15);
     }
-    .neon-stats .stat .num {
+    .stat-row .st .n {
       font-family: "Share Tech Mono", monospace;
-      font-size: 20px; font-weight: 700;
-      background: linear-gradient(135deg, var(--pink), var(--yellow));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 22px; font-weight: 500;
+      color: transparent;
+      -webkit-text-stroke: 0.8px var(--yellow);
+      text-shadow: 0 0 10px rgba(255,204,0,0.15);
     }
-    .neon-stats .stat .lbl {
+    .stat-row .st .l {
       font-size: 9px; color: var(--dim);
       font-family: "Share Tech Mono", monospace;
       letter-spacing: 2px; margin-top: 2px;
     }
 
-    /* ===== 霓虹密码门 ===== */
-    .neon-door {
-      margin-top: 8px;
-      border: 1px solid rgba(255,64,128,0.06);
-      background: rgba(255,64,128,0.02);
-      padding: 24px; text-align: center;
+    /* ===== 密码门 ===== */
+    .door {
+      border: 1px solid rgba(255,24,121,0.04);
+      background: rgba(255,24,121,0.01);
+      padding: 24px 20px; text-align: center;
       position: relative;
     }
-    .neon-door .glow-bar {
-      position: absolute; top: 0; left: 10%; width: 80%; height: 1px;
+    .door .bar {
+      position: absolute; top: 0; left: 15%; width: 70%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), transparent);
-      filter: blur(2px);
+      filter: blur(3px);
     }
-    .neon-door .hint {
+    .door .hint {
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; color: var(--dim);
-      margin-bottom: 10px;
+      font-size: 12px; color: var(--dim); margin-bottom: 12px;
     }
-    .neon-door .hint span { color: var(--pink); text-shadow: 0 0 8px rgba(255,64,128,0.3); }
-    .key-box { display: flex; gap: 6px; max-width: 340px; margin: 0 auto; }
+    .door .hint em { font-style: normal; color: transparent; -webkit-text-stroke: 0.7px var(--pink); text-shadow: 0 0 8px rgba(255,24,121,0.2); }
+    .key-box { display: flex; gap: 6px; max-width: 360px; margin: 0 auto; }
     .key-box input {
-      flex: 1; padding: 10px 14px;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,64,128,0.1);
-      color: var(--pink); font-size: 14px; outline: none;
+      flex: 1; padding: 12px 16px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,24,121,0.08);
+      color: var(--white); font-size: 15px; outline: none;
       font-family: "Share Tech Mono", monospace;
-      letter-spacing: 4px;
+      letter-spacing: 6px;
     }
-    .key-box input:focus { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,64,128,0.1); }
-    .key-box input::placeholder { color: rgba(255,64,128,0.15); }
+    .key-box input:focus { border-color: var(--pink); box-shadow: 0 0 14px rgba(255,24,121,0.06); }
+    .key-box input::placeholder { color: rgba(255,24,121,0.10); letter-spacing: 2px; }
     .key-box button {
-      padding: 10px 20px;
-      color: #fff; border: none; cursor: pointer;
+      padding: 12px 24px;
+      background: transparent; border: 1px solid rgba(255,24,121,0.12);
+      color: var(--white); cursor: pointer;
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; letter-spacing: 3px;
-      background: rgba(255,64,128,0.08);
-      border: 1px solid rgba(255,64,128,0.15);
+      font-size: 12px; letter-spacing: 3px;
       transition: all 0.2s;
     }
     .key-box button:hover {
-      background: rgba(255,64,128,0.15);
-      box-shadow: 0 0 16px rgba(255,64,128,0.08);
+      border-color: var(--pink);
+      box-shadow: 0 0 16px rgba(255,24,121,0.06);
     }
-    .key-err { font-family: "Share Tech Mono", monospace; font-size: 11px; color: var(--red); display: none; margin-top: 6px; }
+    .key-err { font-family: "Share Tech Mono", monospace; font-size: 11px; color: transparent; -webkit-text-stroke: 0.6px var(--pink); display: none; margin-top: 6px; }
 
     /* ===== Footer ===== */
     .foot {
-      margin-top: 32px; padding-top: 16px;
+      margin-top: 28px; padding-top: 14px;
       display: flex; justify-content: space-between; align-items: center;
-      border-top: 1px solid rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.01);
     }
     .foot a {
       color: var(--dim); text-decoration: none;
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; margin-right: 14px; transition: color 0.2s;
+      font-size: 12px; margin-right: 16px; transition: color 0.2s;
     }
-    .foot a:hover { color: var(--cyan); text-shadow: 0 0 8px rgba(0,229,255,0.3); }
-    .foot .copy {
+    .foot a:hover { color: var(--white); text-shadow: 0 0 10px rgba(0,212,255,0.2); }
+    .foot .cp {
       font-family: "Share Tech Mono", monospace;
-      font-size: 10px; color: rgba(240,238,248,0.1);
+      font-size: 10px; color: rgba(240,237,248,0.06);
     }
 
     @media (max-width: 520px) {
       .container { padding: 24px 14px; }
-      .neon-sign h1 { font-size: 26px; letter-spacing: 8px; }
-      .board-grid { grid-template-columns: 1fr; }
-      .neon-stats { grid-template-columns: 1fr 1fr; }
+      .sign h1 { font-size: 30px; letter-spacing: 8px; }
+      .signs-grid { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
-<div class="city">
-  <div class="glow-left"></div>
-  <div class="glow-right"></div>
-  <div class="glow-bottom"></div>
-  <div class="ground-glow"></div>
-  <div class="skyline">
-    <span></span><span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
+<div class="bg">
+  <div class="haze1"></div>
+  <div class="haze2"></div>
+  <div class="haze3"></div>
 </div>
 
 <div class="container">
 
   <!-- 霓虹灯牌 -->
-  <div class="neon-sign">
-    <div class="border-neon"></div>
+  <div class="sign">
+    <div class="frame-glow"></div>
     <div class="avatar">G</div>
     <h1>GALATEA</h1>
-    <p class="sub">✦ STUDENT · LITERATURE · TECH ✦</p>
-    <p class="bio">好读书，不求甚解。录所得、所思，与技术探索。</p>
+    <p class="sub">STUDENT · LITERATURE · TECH</p>
+    <p class="desc">好读书，不求甚解。录所得、所思，与技术探索。</p>
   </div>
 
-  <!-- 霓虹标签 -->
-  <div class="neon-tags">
-    <span class="tag nt-red">#唐诗</span>
-    <span class="tag nt-cyan">#古代文论</span>
-    <span class="tag nt-yellow">#自动化</span>
-    <span class="tag nt-green">#效率</span>
-    <span class="tag nt-red">#Node.js</span>
-    <span class="tag nt-cyan">#API</span>
+  <!-- 标签 -->
+  <div class="tag-row">
+    <a class="tag-pink" href="#">#唐诗</a>
+    <a class="tag-cyan" href="#">#古代文论</a>
+    <a class="tag-yellow" href="#">#自动化</a>
+    <a class="tag-green" href="#">#效率工具</a>
   </div>
 
-  <!-- 霓虹招牌卡片 -->
-  <div class="signboard">
-    <div class="board-title">// PROJECTS</div>
-    <div class="board-grid">
-      <a class="board board-1" href="#">
-        <div class="icon">📚</div>
-        <div class="name">座位预约</div>
-        <div class="desc">ZJU 紫金港 · AES 加密 · 钉钉通知</div>
-      </a>
-      <a class="board board-2" href="#">
-        <div class="icon">✍️</div>
-        <div class="name">自动签到</div>
-        <div class="desc">学在浙大 · 雷达定位 · 守护进程</div>
-      </a>
-      <a class="board board-3" href="#">
-        <div class="icon">🌐</div>
-        <div class="name">个人网站</div>
-        <div class="desc">GitHub Pages · 霓虹主题</div>
-      </a>
-      <a class="board board-4" href="#">
-        <div class="icon">📖</div>
-        <div class="name">私藏笔记</div>
-        <div class="desc">读书摘录 · 学习记录</div>
-      </a>
-    </div>
+  <!-- 霓虹招牌 -->
+  <div class="signs-title">// PROJECTS</div>
+  <div class="signs-grid">
+    <a class="sign-card sc-1" href="#">
+      <div class="s-icon">📚</div>
+      <div class="s-name">座位预约</div>
+      <div class="s-desc">ZJU图书馆 · AES加密 · 通知</div>
+    </a>
+    <a class="sign-card sc-2" href="#">
+      <div class="s-icon">✍️</div>
+      <div class="s-name">自动签到</div>
+      <div class="s-desc">学在浙大 · 雷达定位</div>
+    </a>
+    <a class="sign-card sc-3" href="#">
+      <div class="s-icon">🌐</div>
+      <div class="s-name">个人网站</div>
+      <div class="s-desc">GitHub Pages · 霓虹主题</div>
+    </a>
+    <a class="sign-card sc-4" href="#">
+      <div class="s-icon">📖</div>
+      <div class="s-name">私藏笔记</div>
+      <div class="s-desc">读书摘录 · 学习记录</div>
+    </a>
   </div>
 
-  <!-- 霓虹统计 -->
-  <div class="neon-stats">
-    <div class="stat"><div class="num">4</div><div class="lbl">PROJECTS</div></div>
-    <div class="stat"><div class="num">∞</div><div class="lbl">CURIOSITY</div></div>
-    <div class="stat"><div class="num">1</div><div class="lbl">SITE</div></div>
-    <div class="stat"><div class="num">✦</div><div class="lbl">ONLINE</div></div>
+  <!-- 统计 -->
+  <div class="stat-row">
+    <div class="st"><div class="n">4</div><div class="l">PROJECTS</div></div>
+    <div class="st"><div class="n">∞</div><div class="l">CURIOSITY</div></div>
+    <div class="st"><div class="n">1</div><div class="l">SITE</div></div>
+    <div class="st"><div class="n">✦</div><div class="l">ONLINE</div></div>
   </div>
 
-  <!-- 密码门 -->
-  <div class="neon-door">
-    <div class="glow-bar"></div>
-    <div class="hint">// <span>UNLOCK</span> 私藏区域</div>
+  <!-- 密码 -->
+  <div class="door">
+    <div class="bar"></div>
+    <div class="hint">// <em>UNLOCK</em> 私藏区域</div>
     <div class="key-box">
       <input type="password" id="k" placeholder="NEON KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
       <button onclick="unlock()">ENTER</button>
@@ -398,10 +353,10 @@
 
   <div class="foot">
     <div>
-      <a href="https://github.com/GalateaYe749" target="_blank">[GitHub]</a>
-      <a href="mailto:galatea@zju.edu.cn">[Email]</a>
+      <a href="https://github.com/GalateaYe749" target="_blank">GitHub</a>
+      <a href="mailto:galatea@zju.edu.cn">Email</a>
     </div>
-    <div class="copy">© 2026 GALATEA</div>
+    <div class="cp">© 2026</div>
   </div>
 </div>
 
