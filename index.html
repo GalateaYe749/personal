@@ -23,7 +23,6 @@
     }
     .container { max-width: 700px; margin: 0 auto; padding: 60px 24px; }
 
-    /* ========== Hero ========== */
     .hero {
       text-align: center;
       padding: 60px 0 40px;
@@ -53,9 +52,7 @@
       font-size: 15px; color: var(--ink-light);
       margin-top: 16px; line-height: 1.6;
     }
-    .bio span { color: var(--accent); }
 
-    /* ========== Sections ========== */
     section { margin: 48px 0; }
     .section-title {
       font-size: 14px; font-weight: 600; letter-spacing: 4px;
@@ -67,7 +64,6 @@
       background: linear-gradient(90deg, var(--border), transparent);
     }
 
-    /* ========== Cards ========== */
     .card {
       background: #fff; border-radius: 8px; padding: 20px 24px;
       border: 1px solid var(--border); margin-bottom: 12px;
@@ -79,14 +75,27 @@
       font-size: 14px; color: var(--ink-light);
     }
 
-    /* ========== Links ========== */
     .tag-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
     .tag {
       display: inline-block; padding: 3px 12px; border-radius: 12px;
       background: var(--accent-light); color: var(--ink);
       font-size: 13px; text-decoration: none;
     }
-    .tag:hover { background: var(--accent); color: #fff; }
+
+    .key-box {
+      display: flex; gap: 8px; max-width: 360px; margin: 12px 0;
+    }
+    .key-box input {
+      flex: 1; padding: 8px 14px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 14px; background: #fff; outline: none;
+    }
+    .key-box input:focus { border-color: var(--accent); }
+    .key-box button {
+      padding: 8px 20px; background: var(--accent); color: #fff;
+      border: none; border-radius: 6px; cursor: pointer; font-size: 14px;
+    }
+    .key-box button:hover { opacity: 0.9; }
+    .key-err { color: #c00; font-size: 13px; display: none; margin-top: 4px; }
 
     .social-links {
       display: flex; gap: 16px; flex-wrap: wrap;
@@ -102,26 +111,6 @@
       color: var(--accent); border-color: var(--accent);
     }
 
-    /* ========== Secret ========== */
-    #secret-section { display: none; }
-    #secret-section.visible { display: block; }
-    .key-box {
-      display: flex; gap: 8px; max-width: 360px;
-      margin: 12px 0;
-    }
-    .key-box input {
-      flex: 1; padding: 8px 14px; border: 1px solid var(--border);
-      border-radius: 6px; font-size: 14px; background: #fff; outline: none;
-    }
-    .key-box input:focus { border-color: var(--accent); }
-    .key-box button {
-      padding: 8px 20px; background: var(--accent); color: #fff;
-      border: none; border-radius: 6px; cursor: pointer; font-size: 14px;
-    }
-    .key-box button:hover { opacity: 0.9; }
-    .key-err { color: #c00; font-size: 13px; display: none; margin-top: 4px; }
-
-    /* ========== Footer ========== */
     footer {
       text-align: center; padding: 32px 0;
       color: var(--ink-light); font-size: 13px;
@@ -136,99 +125,43 @@
 <body>
 <div class="container">
 
-  <!-- Hero -->
   <div class="hero">
     <div class="avatar">G</div>
     <h1>Galatea</h1>
     <p class="subtitle">学生 · 文学 · 技术</p>
     <p class="bio">
       好读书，不求甚解。<br>
-      此站录读书所得、课业所思，<span>与技术探索</span>。
+      此站录读书所得、课业所思，与技术探索。
     </p>
   </div>
 
-  <!-- 学术 -->
   <section>
-    <div class="section-title">学术方向</div>
+    <div class="section-title">关于</div>
     <div class="card">
-      <h3>唐诗经典研读</h3>
-      <p>王维、李白、杜甫——唐代诗人的文本细读与赏析</p>
-    </div>
-    <div class="card">
-      <h3>古代文论与学术写作</h3>
-      <p>学术论文写作规范、古代文学研究方法论</p>
+      <p>这里是一个人的小站，存放一些文字与代码。</p>
     </div>
   </section>
 
-  <!-- 项目 -->
-  <section>
-    <div class="section-title">技术尝试</div>
-    <div class="card">
-      <h3>📚 图书馆座位预约系统</h3>
-      <p class="meta">ZJU 紫金港主馆 · 实时监控 + 自动预约 · 钉钉通知</p>
-    </div>
-    <div class="card">
-      <h3>✍️ 学在浙大自动签到</h3>
-      <p class="meta">雷达签到 · 三点定位 · 守护进程</p>
-    </div>
-    <div class="card">
-      <h3>🌐 个人网站</h3>
-      <p class="meta">GitHub Pages · 静态站 · 持续更新中</p>
-    </div>
-  </section>
-
-  <!-- 笔记 -->
-  <section>
-    <div class="section-title">笔记</div>
-    <div class="card">
-      <h3>📄 唐诗的特质 · 复习资料</h3>
-      <p class="meta">唐诗经典研读 第1讲 · 2026春</p>
-      <div class="tag-list" style="margin-top:8px">
-        <span class="tag">#唐诗</span>
-        <span class="tag">#王维</span>
-        <span class="tag">#盛唐</span>
-      </div>
-    </div>
-    <div class="card" style="opacity:0.5; cursor:default">
-      <h3>更多笔记整理中……</h3>
-    </div>
-  </section>
-
-  <!-- 密钥区域 -->
   <section>
     <div class="section-title">🔑 私藏</div>
     <p style="font-size:14px;color:var(--ink-light);margin-bottom:8px">
-      输入密钥解锁私人内容
+      输入密钥进入私人页面
     </p>
     <div class="key-box">
-      <input type="password" id="key-input" placeholder="密钥" autocomplete="off" />
-      <button onclick="unlock()">解锁</button>
+      <input type="password" id="key-input" placeholder="密钥" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
+      <button onclick="unlock()">进入</button>
     </div>
     <p class="key-err" id="key-err">密钥错误</p>
-
-    <div id="secret-section">
-      <div class="card">
-        <h3>📖 内部笔记</h3>
-        <p>这里放一些暂不公开的内容。</p>
-        <div class="tag-list" style="margin-top:8px">
-          <span class="tag">草稿</span>
-          <span class="tag">待完善</span>
-        </div>
-      </div>
-    </div>
   </section>
 
-  <!-- 链接 -->
   <div class="social-links">
     <a href="https://github.com/GalateaYe749" target="_blank">GitHub</a>
-    <a href="mailto:qianyiqing@zju.edu.cn">Email</a>
+    <a href="mailto:galatea@zju.edu.cn">Email</a>
   </div>
 
 </div>
 
-<footer>
-  © 2026 Galatea
-</footer>
+<footer>© 2026 Galatea</footer>
 
 <script>
 async function unlock() {
@@ -236,12 +169,11 @@ async function unlock() {
   const hash = Array.from(new Uint8Array(
     await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
   )).map(b => b.toString(16).padStart(2,"0")).join("");
-  // 哈希分段校验，避免源码直接可搜
   const h1 = "a853266afd09704859eabc86c9ca7c3a";
   const h2 = "fc8f1408672359acb389f195424c22a2";
   if (hash === h1 + h2) {
-    document.getElementById("secret-section").classList.add("visible");
-    document.getElementById("key-err").style.display = "none";
+    sessionStorage.setItem("auth", "1");
+    location.href = "private/";
   } else {
     document.getElementById("key-err").style.display = "block";
   }

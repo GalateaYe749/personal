@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>项目 · Galatea</title>
+  <style>
+    :root {
+      --ink: #2c2c2c;
+      --ink-light: #888;
+      --paper: #1a1a2e;
+      --card: #16213e;
+      --accent: #e2b96f;
+      --border: #2a2a4a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
+      background: var(--paper);
+      color: #e8e4dc;
+      line-height: 1.8;
+    }
+    .container { max-width: 700px; margin: 0 auto; padding: 60px 24px; }
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 32px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-bar .title { font-size: 18px; letter-spacing: 4px; color: var(--accent); }
+    .top-bar a {
+      color: var(--ink-light); text-decoration: none; font-size: 13px;
+      padding: 4px 12px; border: 1px solid var(--border); border-radius: 4px;
+    }
+    .top-bar a:hover { color: var(--accent); border-color: var(--accent); }
+    .project {
+      background: var(--card); border-radius: 8px; padding: 20px 24px;
+      border: 1px solid var(--border); margin-bottom: 12px;
+    }
+    .project h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .project p { font-size: 14px; color: var(--ink-light); }
+    .empty { color: var(--ink-light); font-size: 14px; text-align: center; padding: 40px 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="top-bar">
+    <span class="title">🛠 项目</span>
+    <a href="./">← 返回私藏</a>
+  </div>
+
+  <div class="empty">以后放项目内容</div>
+</div>
+
+<script>
+if (!sessionStorage.getItem("auth")) { location.href = "../"; }
+</script>
+</body>
+</html>
