@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>钱奕青 · 个人主页</title>
+  <style>
+    :root {
+      --ink: #2c2c2c;
+      --ink-light: #888;
+      --paper: #faf8f5;
+      --accent: #b8860b;
+      --accent-light: #f0e6d0;
+      --border: #e8e3dc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+    .container { max-width: 700px; margin: 0 auto; padding: 60px 24px; }
+
+    /* ========== Hero ========== */
+    .hero {
+      text-align: center;
+      padding: 60px 0 40px;
+      position: relative;
+    }
+    .hero::after {
+      content: "";
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, #b8860b, #d4a843);
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; color: #fff; letter-spacing: 2px;
+      box-shadow: 0 4px 20px rgba(184,134,11,0.2);
+    }
+    h1 { font-size: 28px; font-weight: 600; letter-spacing: 6px; }
+    .subtitle {
+      color: var(--ink-light); font-size: 14px;
+      margin-top: 6px; letter-spacing: 3px;
+    }
+    .bio {
+      font-size: 15px; color: var(--ink-light);
+      margin-top: 16px; line-height: 1.6;
+    }
+    .bio span { color: var(--accent); }
+
+    /* ========== Sections ========== */
+    section { margin: 48px 0; }
+    .section-title {
+      font-size: 14px; font-weight: 600; letter-spacing: 4px;
+      color: var(--accent); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title::after {
+      content: ""; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* ========== Cards ========== */
+    .card {
+      background: #fff; border-radius: 8px; padding: 20px 24px;
+      border: 1px solid var(--border); margin-bottom: 12px;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .card p, .card .meta {
+      font-size: 14px; color: var(--ink-light);
+    }
+
+    /* ========== Links ========== */
+    .tag-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .tag {
+      display: inline-block; padding: 3px 12px; border-radius: 12px;
+      background: var(--accent-light); color: var(--ink);
+      font-size: 13px; text-decoration: none;
+    }
+    .tag:hover { background: var(--accent); color: #fff; }
+
+    .social-links {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      justify-content: center; margin-top: 20px;
+    }
+    .social-links a {
+      color: var(--ink-light); text-decoration: none;
+      font-size: 14px; padding: 6px 14px;
+      border: 1px solid var(--border); border-radius: 20px;
+      transition: all 0.2s;
+    }
+    .social-links a:hover {
+      color: var(--accent); border-color: var(--accent);
+    }
+
+    /* ========== Secret ========== */
+    #secret-section { display: none; }
+    #secret-section.visible { display: block; }
+    .key-box {
+      display: flex; gap: 8px; max-width: 360px;
+      margin: 12px 0;
+    }
+    .key-box input {
+      flex: 1; padding: 8px 14px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 14px; background: #fff; outline: none;
+    }
+    .key-box input:focus { border-color: var(--accent); }
+    .key-box button {
+      padding: 8px 20px; background: var(--accent); color: #fff;
+      border: none; border-radius: 6px; cursor: pointer; font-size: 14px;
+    }
+    .key-box button:hover { opacity: 0.9; }
+    .key-err { color: #c00; font-size: 13px; display: none; margin-top: 4px; }
+
+    /* ========== Footer ========== */
+    footer {
+      text-align: center; padding: 32px 0;
+      color: var(--ink-light); font-size: 13px;
+    }
+
+    @media (max-width: 520px) {
+      .container { padding: 32px 16px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="avatar">奕</div>
+    <h1>钱奕青</h1>
+    <p class="subtitle">浙江大学 · 蓝田学园</p>
+    <p class="bio">
+      研读古代文学，好唐诗。<br>
+      此站录读书所得、课业所思，<span>与技术探索</span>。
+    </p>
+  </div>
+
+  <!-- 学术 -->
+  <section>
+    <div class="section-title">学术方向</div>
+    <div class="card">
+      <h3>唐诗经典研读</h3>
+      <p>王维、李白、杜甫——唐代诗人的文本细读与赏析</p>
+    </div>
+    <div class="card">
+      <h3>古代文论与学术写作</h3>
+      <p>学术论文写作规范、古代文学研究方法论</p>
+    </div>
+  </section>
+
+  <!-- 项目 -->
+  <section>
+    <div class="section-title">技术尝试</div>
+    <div class="card">
+      <h3>📚 图书馆座位预约系统</h3>
+      <p class="meta">ZJU 紫金港主馆 · 实时监控 + 自动预约 · 钉钉通知</p>
+    </div>
+    <div class="card">
+      <h3>✍️ 学在浙大自动签到</h3>
+      <p class="meta">雷达签到 · 三点定位 · 守护进程</p>
+    </div>
+    <div class="card">
+      <h3>🌐 个人网站</h3>
+      <p class="meta">GitHub Pages · 静态站 · 持续更新中</p>
+    </div>
+  </section>
+
+  <!-- 笔记 -->
+  <section>
+    <div class="section-title">笔记</div>
+    <div class="card">
+      <h3>📄 唐诗的特质 · 复习资料</h3>
+      <p class="meta">唐诗经典研读 第1讲 · 2026春</p>
+      <div class="tag-list" style="margin-top:8px">
+        <span class="tag">#唐诗</span>
+        <span class="tag">#王维</span>
+        <span class="tag">#盛唐</span>
+      </div>
+    </div>
+    <div class="card" style="opacity:0.5; cursor:default">
+      <h3>更多笔记整理中……</h3>
+    </div>
+  </section>
+
+  <!-- 密钥区域 -->
+  <section>
+    <div class="section-title">🔑 私藏</div>
+    <p style="font-size:14px;color:var(--ink-light);margin-bottom:8px">
+      输入密钥解锁私人内容
+    </p>
+    <div class="key-box">
+      <input type="password" id="key-input" placeholder="密钥" autocomplete="off" />
+      <button onclick="unlock()">解锁</button>
+    </div>
+    <p class="key-err" id="key-err">密钥错误</p>
+
+    <div id="secret-section">
+      <div class="card">
+        <h3>📖 内部笔记</h3>
+        <p>这里放一些暂不公开的内容。</p>
+        <div class="tag-list" style="margin-top:8px">
+          <span class="tag">草稿</span>
+          <span class="tag">待完善</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 链接 -->
+  <div class="social-links">
+    <a href="https://github.com/GalateaYe749" target="_blank">GitHub</a>
+    <a href="mailto:qianyiqing@zju.edu.cn">Email</a>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 钱奕青 · 浙之滨
+</footer>
+
+<script>
+async function unlock() {
+  const input = document.getElementById("key-input").value;
+  const hash = Array.from(new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
+  )).map(b => b.toString(16).padStart(2,"0")).join("");
+  // 对应密钥: zju2026
+  if (hash === "8c7b7f5c8b4b0e5c6d3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2") {
+    document.getElementById("secret-section").classList.add("visible");
+    document.getElementById("key-err").style.display = "none";
+  } else {
+    document.getElementById("key-err").style.display = "block";
+  }
+}
+</script>
+</body>
+</html>
