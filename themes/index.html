@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方案 · Galatea</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      background: #f5f2ed;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+    h1 { text-align: center; font-size: 24px; letter-spacing: 6px; margin-bottom: 8px; }
+    .desc { text-align: center; color: #888; font-size: 14px; margin-bottom: 40px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    .card {
+      background: #fff; border-radius: 12px; overflow: hidden;
+      border: 1px solid #e8e3dc; text-decoration: none; color: inherit;
+      transition: all 0.2s; display: flex;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+    .card .preview {
+      width: 200px; min-height: 160px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+    }
+    .card .info { padding: 20px 24px; flex: 1; }
+    .card .info h2 { font-size: 18px; margin-bottom: 4px; }
+    .card .info .tag {
+      display: inline-block; font-size: 12px; padding: 2px 10px;
+      border-radius: 10px; margin-bottom: 8px;
+    }
+    .card .info p { font-size: 14px; color: #666; }
+    .badge {
+      display: inline-block; font-size: 12px; padding: 2px 10px;
+      border-radius: 10px; margin-top: 8px;
+    }
+    @media (max-width: 600px) {
+      .card { flex-direction: column; }
+      .card .preview { width: 100%; min-height: 100px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>主页风格方案</h1>
+  <p class="desc">选一个你喜欢的，我把它设成首页</p>
+
+  <div class="grid">
+
+    <!-- 方案A: 水墨国风 -->
+    <a class="card" href="ink.html" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#f5f0e8,#e8ddd0);color:#5a4a3a;font-size:36px">
+        墨
+      </div>
+      <div class="info">
+        <span class="tag" style="background:#d4c5a9;color:#3a3020">方案A</span>
+        <h2>墨韵 · 水墨国风</h2>
+        <p>浅米底色 + 墨色笔触，留白充裕。毛笔书法感标题，淡雅古韵。</p>
+        <span class="badge" style="background:#e8e3dc;color:#555">文气 · 安静</span>
+      </div>
+    </a>
+
+    <!-- 方案B: 暗色星系 -->
+    <a class="card" href="dark.html" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#e2b96f;font-size:36px">
+        ✦
+      </div>
+      <div class="info">
+        <span class="tag" style="background:#e2b96f;color:#1a1a2e">方案B</span>
+        <h2>星夜 · 深色典雅</h2>
+        <p>深蓝底色 + 金色点缀，与私藏区风格统一。沉稳、专注。</p>
+        <span class="badge" style="background:#e8e3dc;color:#555">沉稳 · 统一</span>
+      </div>
+    </a>
+
+    <!-- 方案C: 暖木 -->
+    <a class="card" href="warm.html" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#faf0e6,#f5e6d0);color:#b87c4a;font-size:36px">
+        ○
+      </div>
+      <div class="info">
+        <span class="tag" style="background:#d4a373;color:#fff">方案C</span>
+        <h2>暖阳 · 木色温润</h2>
+        <p>暖杏色 + 圆润卡片，柔和亲切。适合阅读感强的个人站。</p>
+        <span class="badge" style="background:#e8e3dc;color:#555">温暖 · 亲和</span>
+      </div>
+    </a>
+
+    <!-- 方案D: 极简 -->
+    <a class="card" href="minimal.html" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#fafafa,#f0f0f0);color:#333;font-size:36px">
+        —
+      </div>
+      <div class="info">
+        <span class="tag" style="background:#999;color:#fff">方案D</span>
+        <h2>素白 · 极简主义</h2>
+        <p>大量留白，黑白灰为主，纯排版驱动。干净、现代。</p>
+        <span class="badge" style="background:#e8e3dc;color:#555">干净 · 现代</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+</body>
+</html>

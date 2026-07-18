@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方案C · 暖阳 · Galatea</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+      background: #faf0e6;
+      color: #3a3028;
+      line-height: 1.8;
+    }
+    .wrapper { max-width: 660px; margin: 0 auto; padding: 60px 24px 40px; }
+
+    .header { text-align: center; margin-bottom: 40px; }
+    .avatar {
+      width: 80px; height: 80px; margin: 0 auto 14px;
+      background: linear-gradient(135deg, #d4a373, #e8c4a0);
+      border-radius: 20px; display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 28px; box-shadow: 0 4px 16px rgba(212,163,115,0.25);
+    }
+    h1 { font-size: 28px; font-weight: 600; letter-spacing: 6px; color: #3a3028; }
+    .divider { width: 36px; height: 3px; background: #d4a373; border-radius: 2px; margin: 12px auto; }
+    .sub { font-size: 14px; color: #a09080; letter-spacing: 3px; }
+
+    .bio { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px;
+      border: 1px solid #f0e4d8; box-shadow: 0 2px 12px rgba(212,163,115,0.06); }
+    .bio p { font-size: 14px; color: #5a4a3a; }
+
+    section { margin-bottom: 28px; }
+    .sec-title { font-size: 13px; letter-spacing: 4px; color: #b09070; margin-bottom: 10px; }
+    .card {
+      background: #fff; border-radius: 10px; padding: 16px 20px;
+      border: 1px solid #f0e4d8; margin-bottom: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02); transition: all 0.2s;
+    }
+    .card:hover { box-shadow: 0 3px 12px rgba(212,163,115,0.1); }
+    .card h3 { font-size: 15px; font-weight: 500; color: #3a3028; }
+    .card p { font-size: 13px; color: #a09080; }
+
+    .key-area { background: #fff; border-radius: 12px; padding: 20px 24px; margin-top: 32px;
+      border: 1px solid #f0e4d8; text-align: center; }
+    .key-box { display: flex; gap: 8px; max-width: 300px; margin: 8px auto 0; }
+    .key-box input {
+      flex: 1; padding: 8px 14px; border: 1px solid #e0d0c0;
+      border-radius: 8px; font-size: 14px; background: #faf5f0; outline: none;
+      font-family: inherit; color: #3a3028;
+    }
+    .key-box input:focus { border-color: #d4a373; }
+    .key-box button {
+      padding: 8px 20px; background: #d4a373; color: #fff;
+      border: none; border-radius: 8px; cursor: pointer; font-size: 13px;
+      font-family: inherit; font-weight: 500;
+    }
+    .key-box button:hover { background: #c49060; }
+    .key-err { color: #c06050; font-size: 13px; display: none; margin-top: 4px; }
+
+    .footer { text-align: center; margin-top: 40px; color: #c0b0a0; font-size: 13px; }
+
+    @media (max-width: 520px) {
+      .wrapper { padding: 32px 16px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="avatar">G</div>
+    <h1>Galatea</h1>
+    <div class="divider"></div>
+    <p class="sub">学生 · 文学 · 技术</p>
+  </div>
+
+  <div class="bio"><p>好读书，不求甚解。录读书所得、课业所思，与技术探索。</p></div>
+
+  <section>
+    <div class="sec-title">方向</div>
+    <div class="card"><h3>文学 · 古代文论</h3><p>唐诗 · 文本细读</p></div>
+    <div class="card"><h3>技术 · 自动化</h3><p>前端 · 小工具</p></div>
+  </section>
+
+  <section>
+    <div class="sec-title">项目</div>
+    <div class="card"><h3>图书馆座位预约系统</h3><p>ZJU 紫金港主馆 · 实时监控 · 自动通知</p></div>
+    <div class="card"><h3>学在浙大自动签到</h3><p>雷达签到 · 三点定位 · 守护进程</p></div>
+    <div class="card"><h3>个人网站</h3><p>GitHub Pages · 持续更新中</p></div>
+  </section>
+
+  <div class="key-area">
+    <p style="font-size:14px;color:#a09080">🔑 私藏</p>
+    <div class="key-box">
+      <input type="password" id="k" placeholder="输入密钥" />
+      <button onclick="go()">进入</button>
+    </div>
+    <p class="key-err" id="err">密钥错误</p>
+  </div>
+
+  <div class="footer"><p>© 2026 Galatea</p></div>
+</div>
+<script>
+async function go() {
+  const input = document.getElementById("k").value;
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input)))).map(b=>b.toString(16).padStart(2,"0")).join("");
+  const h1="a853266afd09704859eabc86c9ca7c3a",h2="fc8f1408672359acb389f195424c22a2";
+  if(h===h1+h2){sessionStorage.setItem("auth","1");location.href="../private/"}else{document.getElementById("err").style.display="block"}
+}
+</script>
+</body>
+</html>

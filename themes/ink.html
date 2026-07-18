@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方案A · 墨韵 · Galatea</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Noto Serif SC", "Source Han Serif SC", "STSong", "KaiTi", serif;
+      background: #f5f0e8;
+      color: #3a302a;
+      line-height: 2;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(180,160,140,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(180,160,140,0.05) 0%, transparent 50%);
+    }
+    .wrapper { max-width: 640px; margin: 0 auto; padding: 80px 24px 40px; }
+
+    .header { text-align: center; margin-bottom: 56px; position: relative; }
+    .seal {
+      width: 64px; height: 64px; margin: 0 auto 20px;
+      border: 2px solid #8a4a2a; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: #8a4a2a; font-size: 22px; letter-spacing: 2px;
+      transform: rotate(-2deg); opacity: 0.85;
+    }
+    h1 { font-size: 32px; font-weight: 400; letter-spacing: 12px; color: #2a2018; }
+    .divider { width: 48px; height: 1px; background: #c4b5a0; margin: 16px auto; }
+    .sub { font-size: 14px; color: #8a7a6a; letter-spacing: 6px; }
+
+    .bio { text-align: center; font-size: 15px; color: #5a4a3a; margin-bottom: 48px; }
+    .bio p { margin-bottom: 4px; }
+
+    section { margin-bottom: 36px; }
+    .sec-title {
+      font-size: 13px; letter-spacing: 6px; color: #8a7a6a;
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid #e0d5c8;
+    }
+    .item { padding: 12px 0; border-bottom: 1px dashed #e8ddd0; }
+    .item:last-child { border: none; }
+    .item h3 { font-size: 15px; font-weight: 400; }
+    .item p { font-size: 13px; color: #8a7a6a; }
+
+    .key-area { margin-top: 40px; text-align: center; }
+    .key-area p { font-size: 13px; color: #8a7a6a; margin-bottom: 8px; }
+    .key-box { display: flex; gap: 8px; max-width: 300px; margin: 0 auto; }
+    .key-box input {
+      flex: 1; padding: 8px 12px; border: 1px solid #d4c5b0;
+      border-radius: 2px; font-size: 14px; background: #faf5ee; outline: none;
+      font-family: inherit;
+    }
+    .key-box input:focus { border-color: #8a4a2a; }
+    .key-box button {
+      padding: 8px 16px; background: #8a4a2a; color: #f5f0e8;
+      border: none; border-radius: 2px; cursor: pointer; font-size: 13px;
+      letter-spacing: 2px; font-family: inherit;
+    }
+    .key-box button:hover { background: #6a3a1a; }
+    .key-err { color: #a04030; font-size: 13px; display: none; margin-top: 4px; }
+
+    .footer { text-align: center; margin-top: 56px; padding-top: 24px; border-top: 1px solid #e0d5c8; }
+    .footer a { color: #8a7a6a; font-size: 13px; text-decoration: none; margin: 0 8px; }
+    .footer a:hover { color: #3a302a; }
+    .footer p { font-size: 12px; color: #a09080; margin-top: 8px; }
+
+    @media (max-width: 520px) {
+      .wrapper { padding: 40px 16px; }
+      h1 { font-size: 24px; letter-spacing: 8px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="seal">G</div>
+    <h1>Galatea</h1>
+    <div class="divider"></div>
+    <p class="sub">好读书 · 不求甚解</p>
+  </div>
+
+  <div class="bio">
+    <p>这里录一些读书所得、课业所思，与技术探索。</p>
+  </div>
+
+  <section>
+    <div class="sec-title">方 向</div>
+    <div class="item"><h3>文学</h3><p>古代文论 · 唐诗 · 文本细读</p></div>
+    <div class="item"><h3>技术</h3><p>前端 · 自动化 · 小工具</p></div>
+  </section>
+
+  <section>
+    <div class="sec-title">项 目</div>
+    <div class="item"><h3>图书馆座位预约</h3><p>ZJU 主馆 · 实时监控 · 自动通知</p></div>
+    <div class="item"><h3>自动签到</h3><p>学在浙大 · 雷达签到 · 守护进程</p></div>
+    <div class="item"><h3>个人网站</h3><p>GitHub Pages · 持续更新</p></div>
+  </section>
+
+  <div class="key-area">
+    <p>🔑 私藏</p>
+    <div class="key-box">
+      <input type="password" id="k" placeholder="密钥" />
+      <button onclick="go()">进入</button>
+    </div>
+    <p class="key-err" id="err">密钥错误</p>
+  </div>
+
+  <div class="footer">
+    <p>© 2026 Galatea</p>
+  </div>
+</div>
+<script>
+async function go() {
+  const input = document.getElementById("k").value;
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input)))).map(b=>b.toString(16).padStart(2,"0")).join("");
+  const h1="a853266afd09704859eabc86c9ca7c3a",h2="fc8f1408672359acb389f195424c22a2";
+  if(h===h1+h2){sessionStorage.setItem("auth","1");location.href="../private/"}else{document.getElementById("err").style.display="block"}
+}
+</script>
+</body>
+</html>

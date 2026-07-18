@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方案D · 素白 · Galatea</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Inter", -apple-system, "Helvetica Neue", sans-serif;
+      background: #fafafa;
+      color: #222;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+    }
+    .wrapper { max-width: 600px; margin: 0 auto; padding: 100px 24px 60px; }
+
+    .header { margin-bottom: 56px; }
+    .avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #222; color: #fafafa;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 500; margin-bottom: 20px;
+    }
+    h1 { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: #999; font-weight: 300; }
+
+    .bio { font-size: 14px; color: #555; margin-bottom: 40px; max-width: 460px; }
+
+    section { margin-bottom: 32px; }
+    .sec-title {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      color: #bbb; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .item {
+      padding: 12px 0; border-bottom: 1px solid #eee;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .item:last-child { border: none; }
+    .item .name { font-size: 14px; font-weight: 400; }
+    .item .desc { font-size: 13px; color: #999; }
+
+    .key-area { margin-top: 48px; padding-top: 24px; border-top: 1px solid #eee; }
+    .key-area p { font-size: 13px; color: #999; margin-bottom: 8px; }
+    .key-box { display: flex; gap: 8px; max-width: 280px; }
+    .key-box input {
+      flex: 1; padding: 8px 12px; border: 1px solid #ddd;
+      border-radius: 4px; font-size: 14px; background: #fff; outline: none;
+      font-family: inherit;
+    }
+    .key-box input:focus { border-color: #222; }
+    .key-box button {
+      padding: 8px 16px; background: #222; color: #fafafa;
+      border: none; border-radius: 4px; cursor: pointer; font-size: 13px;
+      font-family: inherit; font-weight: 400;
+    }
+    .key-box button:hover { background: #444; }
+    .key-err { color: #d05040; font-size: 13px; display: none; margin-top: 4px; }
+
+    .footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #eee; }
+    .footer p { color: #bbb; font-size: 12px; }
+
+    @media (max-width: 520px) {
+      .wrapper { padding: 60px 20px 40px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="avatar">G</div>
+    <h1>Galatea</h1>
+    <p class="sub">学生 · 文学 · 技术</p>
+  </div>
+
+  <div class="bio"><p>好读书，不求甚解。录读书所得、课业所思，与技术探索。</p></div>
+
+  <section>
+    <div class="sec-title">Directions</div>
+    <div class="item"><span class="name">文学 · 古代文论</span><span class="desc">唐诗 · 文本细读</span></div>
+    <div class="item"><span class="name">技术 · 自动化</span><span class="desc">前端 · 小工具</span></div>
+  </section>
+
+  <section>
+    <div class="sec-title">Projects</div>
+    <div class="item"><span class="name">图书馆座位预约</span><span class="desc">ZJU 主馆 · 监控 · 通知</span></div>
+    <div class="item"><span class="name">学在浙大自动签到</span><span class="desc">雷达签到 · 守护进程</span></div>
+    <div class="item"><span class="name">个人网站</span><span class="desc">GitHub Pages</span></div>
+  </section>
+
+  <div class="key-area">
+    <p>🔑 私藏</p>
+    <div class="key-box">
+      <input type="password" id="k" placeholder="密钥" />
+      <button onclick="go()">进入</button>
+    </div>
+    <p class="key-err" id="err">密钥错误</p>
+  </div>
+
+  <div class="footer"><p>© 2026 Galatea</p></div>
+</div>
+<script>
+async function go() {
+  const input = document.getElementById("k").value;
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input)))).map(b=>b.toString(16).padStart(2,"0")).join("");
+  const h1="a853266afd09704859eabc86c9ca7c3a",h2="fc8f1408672359acb389f195424c22a2";
+  if(h===h1+h2){sessionStorage.setItem("auth","1");location.href="../private/"}else{document.getElementById("err").style.display="block"}
+}
+</script>
+</body>
+</html>
