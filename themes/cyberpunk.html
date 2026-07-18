@@ -3,383 +3,327 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galatea · 绯色</title>
+  <title>Galatea</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Share+Tech+Mono&display=swap');
-
-    :root {
-      --bg: #0a0808;
-      --bg2: #120e0e;
-      --crimson: #dc143c;
-      --warm-pink: #ff8a8a;
-      --pale-pink: #ffbfbf;
-      --rose: #ff6080;
-      --gold: #d4a050;
-      --grid: rgba(220, 20, 60, 0.04);
-      --text: #e8d8d0;
-      --text-dim: #887078;
-      --glow-warm: 0 0 24px rgba(255,138,138,0.25);
-      --glow-crimson: 0 0 20px rgba(220,20,60,0.3);
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;700;900&family=Share+Tech+Mono&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --bg: #080406;
+      --card: #0f080a;
+      --crimson: #cc1133;
+      --warm: #ff8890;
+      --pale: #ffd0d0;
+      --gold: #d4a050;
+      --rose: #ff4060;
+    }
+
     body {
-      font-family: "Noto Sans SC", -apple-system, sans-serif;
+      font-family: "Noto Sans SC", sans-serif;
       background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
+      color: #e8d8d0;
+      line-height: 1.6;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* ===== BG ===== */
-    .bg-mist {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
-      background:
-        radial-gradient(ellipse 120% 60% at 30% 0%, rgba(220,20,60,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 80% 50% at 70% 100%, rgba(255,138,138,0.04) 0%, transparent 50%),
-        radial-gradient(circle 30% 30% at 20% 50%, rgba(212,160,80,0.02) 0%, transparent 50%);
+    /* ===== BG 背景层 ===== */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
     }
-
-    .bg-grid {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    /* 大斜切撕裂 */
+    .bg-layer .slash1 {
+      position: absolute; top: 0; right: -10%; width: 50%; height: 100%;
+      background: linear-gradient(180deg, rgba(204,17,51,0.08), transparent 60%);
+      transform: skewX(-12deg);
+    }
+    .bg-layer .slash2 {
+      position: absolute; bottom: 0; left: -10%; width: 40%; height: 60%;
+      background: linear-gradient(0deg, rgba(255,136,144,0.05), transparent);
+      transform: skewX(18deg);
+    }
+    /* 底部光晕 */
+    .bg-layer .glow {
+      position: absolute; bottom: -20%; left: 50%; translate: -50% 0;
+      width: 80%; height: 50%;
+      background: radial-gradient(ellipse, rgba(204,17,51,0.08), transparent 70%);
+    }
+    /* 网格（只中间可见） */
+    .bg-layer .grid {
+      position: absolute; inset: 0;
       background-image:
-        linear-gradient(var(--grid) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-      background-size: 40px 40px;
-      z-index: 0; pointer-events: none;
-      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent 80%);
-      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent 80%);
+        linear-gradient(rgba(204,17,51,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(204,17,51,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 70%);
     }
 
-    /* ===== Spasmodic-inspired slash decoration ===== */
-    .slash-deco {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
-      overflow: hidden;
-    }
-    .slash-deco::before {
-      content: "";
-      position: absolute; top: -20%; right: -10%;
-      width: 300px; height: 200%;
-      background: linear-gradient(180deg, transparent, rgba(220,20,60,0.06), transparent);
-      transform: rotate(25deg);
-    }
-    .slash-deco::after {
-      content: "";
-      position: absolute; bottom: -10%; left: -5%;
-      width: 200px; height: 150%;
-      background: linear-gradient(0deg, transparent, rgba(255,138,138,0.04), transparent);
-      transform: rotate(-15deg);
-    }
+    .container { max-width: 640px; margin: 0 auto; padding: 48px 24px; position: relative; z-index: 1; }
 
-    .container { max-width: 720px; margin: 0 auto; padding: 56px 24px; position: relative; z-index: 1; }
+    /* ===== HERO ===== */
+    .hero { margin-bottom: 36px; position: relative; }
 
-    /* ===== Header ===== */
-    .header { text-align: center; margin-bottom: 44px; position: relative; }
-
-    .avatar-wrap {
-      width: 88px; height: 88px; margin: 0 auto 18px; position: relative;
+    .hero .name-block {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 4px;
     }
-    .avatar-wrap .glow-ring {
-      position: absolute; inset: -4px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--crimson), var(--warm-pink), var(--gold));
-      opacity: 0.4;
-      filter: blur(6px);
-      animation: pulse-glow 3s ease-in-out infinite;
+    .hero .name-block .initial {
+      font-size: 52px; font-weight: 900;
+      background: linear-gradient(180deg, var(--pale), var(--rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      letter-spacing: -2px;
     }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.05); }
+    .hero .name-block .rest {
+      font-size: 24px; font-weight: 300; letter-spacing: 14px;
+      color: var(--pale);
+      opacity: 0.6;
     }
-    .avatar-wrap .inner {
-      width: 100%; height: 100%; border-radius: 50%;
-      background: linear-gradient(135deg, #1a0808, #0a0606);
-      border: 2px solid rgba(255,138,138,0.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px; font-weight: 700; color: var(--pale-pink);
+    .hero .tagline {
       font-family: "Share Tech Mono", monospace;
-      position: relative; z-index: 1;
-      text-shadow: 0 0 16px rgba(255,138,138,0.4);
+      font-size: 11px; color: rgba(255,136,144,0.4);
+      letter-spacing: 6px; margin-top: 2px;
+    }
+    .hero .desc {
+      font-size: 14px; color: rgba(255,208,208,0.5);
+      font-weight: 300; margin-top: 12px;
+      max-width: 70%;
     }
 
-    h1 {
-      font-size: 30px; font-weight: 700; letter-spacing: 10px;
-      color: var(--pale-pink);
-      text-shadow: 0 0 30px rgba(255,191,191,0.15);
-      position: relative;
-      display: inline-block;
+    /* ===== 撕裂色块条 ===== */
+    .tear-strip {
+      display: flex; gap: 4px; margin: 20px 0 28px; height: 6px;
     }
-    h1::after {
-      content: "";
-      position: absolute; bottom: -2px; left: 10%; width: 80%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    .tear-strip span {
+      height: 100%; border-radius: 2px;
     }
+    .tear-strip .t1 { flex: 3; background: var(--crimson); }
+    .tear-strip .t2 { flex: 5; background: linear-gradient(90deg, var(--crimson), var(--gold)); }
+    .tear-strip .t3 { flex: 2; background: var(--gold); opacity: 0.6; }
+    .tear-strip .t4 { flex: 4; background: linear-gradient(90deg, var(--gold), transparent); opacity: 0.3; }
 
-    .subtitle {
+    /* ===== Tags ===== */
+    .tag-strip {
+      display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 28px;
+    }
+    .tag-strip a {
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; color: var(--text-dim);
-      letter-spacing: 6px; margin-top: 8px;
+      font-size: 10px; padding: 4px 10px; letter-spacing: 1px;
+      text-decoration: none; transition: all 0.2s;
     }
-
-    .divider-line {
-      width: 40px; height: 2px;
-      background: linear-gradient(90deg, var(--crimson), var(--gold));
-      margin: 12px auto;
-      border-radius: 1px;
+    .tag-strip a.solid {
+      background: var(--crimson); color: #fff;
     }
-
-    .bio {
-      font-size: 14px; color: var(--text-dim);
-      font-weight: 300; letter-spacing: 2px;
+    .tag-strip a.border {
+      border: 1px solid rgba(204,17,51,0.2); color: rgba(255,136,144,0.5);
     }
+    .tag-strip a:hover { filter: brightness(1.3); }
 
-    /* ===== Color Blocks: Spasmodic-inspired ===== */
-    .hero-blocks {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-      margin-bottom: 28px; height: 80px;
+    /* ===== 项目卡片 - 横向 ===== */
+    .project-strip {
+      display: flex; flex-direction: column; gap: 2px; margin-bottom: 28px;
     }
-    .hero-blocks .block {
-      border-radius: 2px;
-      position: relative; overflow: hidden;
+    .project-strip .row {
+      display: flex; gap: 2px;
     }
-    .hb-1 { background: linear-gradient(135deg, #1a0808, rgba(220,20,60,0.08)); border: 1px solid rgba(220,20,60,0.12); }
-    .hb-2 { background: linear-gradient(135deg, rgba(220,20,60,0.12), rgba(255,138,138,0.06)); border: 1px solid rgba(255,138,138,0.12); }
-    .hb-3 { background: linear-gradient(135deg, rgba(255,138,138,0.06), rgba(212,160,80,0.08)); border: 1px solid rgba(212,160,80,0.10); }
-    .hb-4 { background: linear-gradient(135deg, rgba(212,160,80,0.06), #1a0808); border: 1px solid rgba(220,20,60,0.06); }
+    .project-strip .row .item {
+      flex: 1; padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid rgba(204,17,51,0.04);
+      text-decoration: none; color: inherit;
+      transition: all 0.25s; position: relative; overflow: hidden;
+    }
+    .project-strip .row .item:hover {
+      background: #14080a;
+      border-color: rgba(255,136,144,0.12);
+    }
+    .project-strip .row .item:hover .icon { opacity: 1; }
+    .project-strip .row .item .icon { font-size: 18px; margin-bottom: 4px; opacity: 0.5; transition: opacity 0.2s; }
+    .project-strip .row .item .label { font-size: 13px; font-weight: 600; }
+    .project-strip .row .item .sub { font-size: 11px; color: rgba(255,208,208,0.35); font-weight: 300; }
 
-    /* ===== Info Cards ===== */
-    section { margin-bottom: 24px; }
-
-    .sec-title {
+    /* ===== Stats Bar ===== */
+    .stats-bar {
+      display: flex; gap: 2px; margin-bottom: 28px;
+    }
+    .stats-bar .s {
+      flex: 1; text-align: center; padding: 12px 4px;
+      background: var(--card);
+      border: 1px solid rgba(204,17,51,0.04);
+    }
+    .stats-bar .s .num {
       font-family: "Share Tech Mono", monospace;
-      font-size: 10px; letter-spacing: 4px;
-      color: var(--rose); margin-bottom: 10px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .sec-title .hr { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,96,128,0.3), transparent); }
-
-    .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-    .tag-item {
-      font-family: "Share Tech Mono", monospace;
-      font-size: 10px; padding: 3px 10px; letter-spacing: 1px;
-    }
-    .tag-item.def {
-      background: rgba(220,20,60,0.08); color: var(--warm-pink);
-      border: 1px solid rgba(220,20,60,0.15);
-    }
-    .tag-item.gold {
-      background: rgba(212,160,80,0.08); color: var(--gold);
-      border: 1px solid rgba(212,160,80,0.12);
-    }
-    .tag-item.outline {
-      border: 1px solid rgba(255,138,138,0.12);
-      color: var(--text-dim);
-    }
-
-    .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-    .card {
-      background: rgba(12,8,8,0.7); border-radius: 2px; padding: 16px;
-      border: 1px solid rgba(220,20,60,0.08);
-      position: relative; overflow: hidden;
-      transition: all 0.35s;
-      backdrop-filter: blur(2px);
-    }
-    .card::before {
-      content: "";
-      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,138,138,0.04), transparent);
-      transition: left 0.6s;
-    }
-    .card:hover { border-color: rgba(255,138,138,0.2); }
-    .card:hover::before { left: 100%; }
-
-    .card .accent {
-      position: absolute; top: 0; right: 0;
-      width: 40px; height: 40px;
-      background: radial-gradient(circle at top right, rgba(220,20,60,0.06), transparent);
-      pointer-events: none;
-    }
-    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .card p { font-size: 12px; color: var(--text-dim); font-weight: 300; }
-
-    /* ===== Stats Row ===== */
-    .stats {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
-      margin-bottom: 24px;
-    }
-    .stat-item {
-      text-align: center; padding: 12px 8px;
-      border: 1px solid rgba(220,20,60,0.06);
-      background: rgba(12,8,8,0.4);
-    }
-    .stat-item .num {
-      font-family: "Share Tech Mono", monospace;
-      font-size: 20px; font-weight: 700;
-      background: linear-gradient(180deg, var(--pale-pink), var(--rose));
+      font-size: 22px; font-weight: 700;
+      background: linear-gradient(180deg, var(--pale), var(--rose));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .stat-item .lbl {
-      font-size: 10px; color: var(--text-dim);
+    .stats-bar .s .lbl {
+      font-size: 9px; color: rgba(255,136,144,0.3);
       font-family: "Share Tech Mono", monospace;
       letter-spacing: 2px; margin-top: 2px;
     }
 
-    /* ===== Key Area ===== */
-    .key-area {
-      margin-top: 32px;
-      border: 1px solid rgba(220,20,60,0.1);
-      background: rgba(220,20,60,0.02);
-      padding: 24px; text-align: center; position: relative; overflow: hidden;
+    /* ===== Key Area - 更视觉化的密码入口 ===== */
+    .key-block {
+      margin-top: 8px;
+      border: 1px solid rgba(204,17,51,0.08);
+      background: rgba(204,17,51,0.02);
+      padding: 24px;
+      position: relative;
     }
-    .key-area::before {
-      content: "";
-      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--rose), var(--gold), transparent);
+    .key-block .top-line {
+      position: absolute; top: 0; left: 10%; width: 80%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--crimson), var(--gold), transparent);
     }
-    .key-area p { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; }
-    .key-box { display: flex; gap: 8px; max-width: 320px; margin: 0 auto; }
+    .key-block .hint {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 11px; color: rgba(255,136,144,0.3);
+      letter-spacing: 3px; margin-bottom: 10px;
+    }
+    .key-block .hint span { color: var(--rose); }
+    .key-box { display: flex; gap: 6px; max-width: 340px; }
     .key-box input {
-      flex: 1; padding: 8px 14px;
-      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,138,138,0.15);
-      color: var(--pale-pink); font-size: 14px; outline: none;
+      flex: 1; padding: 10px 14px;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(204,17,51,0.12);
+      color: var(--pale); font-size: 14px; outline: none;
       font-family: "Share Tech Mono", monospace;
     }
-    .key-box input:focus { border-color: var(--rose); box-shadow: 0 0 16px rgba(255,96,128,0.15); }
+    .key-box input:focus { border-color: var(--rose); }
     .key-box button {
-      padding: 8px 20px;
+      padding: 10px 22px;
       background: linear-gradient(135deg, var(--crimson), var(--rose));
       color: #fff; border: none; cursor: pointer;
       font-family: "Share Tech Mono", monospace;
-      font-size: 12px; letter-spacing: 2px;
+      font-size: 11px; letter-spacing: 3px;
       transition: all 0.3s;
     }
-    .key-box button:hover { box-shadow: var(--glow-crimson); transform: translateY(-1px); }
-    .key-err { color: var(--rose); font-size: 12px; display: none; margin-top: 6px; font-family: "Share Tech Mono", monospace; }
+    .key-box button:hover { filter: brightness(1.2); }
+    .key-err { font-family: "Share Tech Mono", monospace; font-size: 11px; color: var(--rose); display: none; margin-top: 6px; }
 
     /* ===== Footer ===== */
-    .footer {
-      margin-top: 40px; padding-top: 16px; text-align: center;
-      border-top: 1px solid rgba(220,20,60,0.06);
+    .foot {
+      margin-top: 36px; padding-top: 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(204,17,51,0.04);
     }
-    .footer a {
-      color: var(--text-dim); text-decoration: none;
-      font-size: 12px; font-family: "Share Tech Mono", monospace;
-      margin: 0 10px; transition: color 0.2s;
+    .foot .links a {
+      color: rgba(255,136,144,0.25); text-decoration: none;
+      font-family: "Share Tech Mono", monospace;
+      font-size: 11px; margin-right: 14px; transition: color 0.2s;
     }
-    .footer a:hover { color: var(--warm-pink); }
-    .footer p { color: rgba(136,112,120,0.4); font-size: 11px; font-family: "Share Tech Mono", monospace; margin-top: 6px; }
+    .foot .links a:hover { color: var(--rose); }
+    .foot .copy {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 10px; color: rgba(255,136,144,0.15);
+    }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 560px) {
-      .container { padding: 32px 16px; }
-      h1 { font-size: 22px; letter-spacing: 6px; }
-      .hero-blocks { height: 50px; }
-      .project-grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: 1fr 1fr; }
+    /* ===== 响应式 ===== */
+    @media (max-width: 520px) {
+      .container { padding: 32px 14px; }
+      .hero .name-block .initial { font-size: 38px; }
+      .hero .name-block .rest { font-size: 18px; letter-spacing: 8px; }
+      .hero .desc { max-width: 100%; }
+      .project-strip .row { flex-direction: column; }
+      .stats-bar { flex-wrap: wrap; }
+      .stats-bar .s { min-width: 80px; }
     }
   </style>
 </head>
 <body>
-<div class="bg-mist"></div>
-<div class="bg-grid"></div>
-<div class="slash-deco"></div>
+
+<div class="bg-layer">
+  <div class="slash1"></div>
+  <div class="slash2"></div>
+  <div class="glow"></div>
+  <div class="grid"></div>
+</div>
 
 <div class="container">
-  <!-- Header -->
-  <div class="header">
-    <div class="avatar-wrap">
-      <div class="glow-ring"></div>
-      <div class="inner">G</div>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="name-block">
+      <span class="initial">G</span>
+      <span class="rest">ALATEA</span>
     </div>
-    <h1>GALATEA</h1>
-    <p class="subtitle">// STUDENT · LITERATURE · TECH</p>
-    <div class="divider-line"></div>
-    <p class="bio">好读书，不求甚解。录所得、所思，与技术探索。</p>
+    <div class="tagline">// STUDENT · LITERATURE · TECH</div>
+    <div class="desc">好读书，不求甚解。录所得、所思，与技术探索。</div>
   </div>
 
-  <!-- Hero Color Blocks -->
-  <div class="hero-blocks">
-    <div class="block hb-1"></div>
-    <div class="block hb-2"></div>
-    <div class="block hb-3"></div>
-    <div class="block hb-4"></div>
+  <!-- Tear Strip -->
+  <div class="tear-strip">
+    <span class="t1"></span>
+    <span class="t2"></span>
+    <span class="t3"></span>
+    <span class="t4"></span>
   </div>
 
   <!-- Tags -->
-  <div class="tag-row">
-    <span class="tag-item def"># 唐诗</span>
-    <span class="tag-item def"># 古代文论</span>
-    <span class="tag-item gold"># 自动化</span>
-    <span class="tag-item outline"># 效率工具</span>
+  <div class="tag-strip">
+    <a class="solid" href="#">唐诗</a>
+    <a class="border" href="#">古代文论</a>
+    <a class="border" href="#">自动化</a>
+    <a class="border" href="#">Node.js</a>
+    <a class="border" href="#">API</a>
   </div>
 
   <!-- Projects -->
-  <section>
-    <div class="sec-title">
-      <span>PROJECTS</span>
-      <span class="hr"></span>
+  <div class="project-strip">
+    <div class="row">
+      <a class="item" href="#">
+        <div class="icon">📚</div>
+        <div class="label">座位预约</div>
+        <div class="sub">ZJU图书馆 · AES加密</div>
+      </a>
+      <a class="item" href="#">
+        <div class="icon">✍️</div>
+        <div class="label">自动签到</div>
+        <div class="sub">学在浙大 · 雷达定位</div>
+      </a>
     </div>
-    <div class="project-grid">
-      <div class="card">
-        <div class="accent"></div>
-        <h3>📚 座位预约</h3>
-        <p>ZJU图书馆 · AES加密 · 钉钉通知</p>
-      </div>
-      <div class="card">
-        <div class="accent"></div>
-        <h3>✍️ 自动签到</h3>
-        <p>学在浙大 · 雷达定位 · 守护进程</p>
-      </div>
-      <div class="card">
-        <div class="accent"></div>
-        <h3>🌐 个人站</h3>
-        <p>GitHub Pages · 持续更新</p>
-      </div>
-      <div class="card">
-        <div class="accent"></div>
-        <h3>🔐 私藏笔记</h3>
-        <p>读书摘录 · 学习记录</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat-item">
-      <div class="num">04</div>
-      <div class="lbl">PROJECTS</div>
-    </div>
-    <div class="stat-item">
-      <div class="num">∞</div>
-      <div class="lbl">CURIOSITY</div>
-    </div>
-    <div class="stat-item">
-      <div class="num">01</div>
-      <div class="lbl">SITE</div>
+    <div class="row">
+      <a class="item" href="#">
+        <div class="icon">🌐</div>
+        <div class="label">个人站</div>
+        <div class="sub">GitHub Pages</div>
+      </a>
+      <a class="item" href="#">
+        <div class="icon">📖</div>
+        <div class="label">笔记</div>
+        <div class="sub">读书摘录 · 复习资料</div>
+      </a>
     </div>
   </div>
 
-  <!-- Key Area -->
-  <div class="key-area">
-    <p>🔐 私藏区域</p>
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="s"><div class="num">4</div><div class="lbl">项目</div></div>
+    <div class="s"><div class="num">∞</div><div class="lbl">探索</div></div>
+    <div class="s"><div class="num">1</div><div class="lbl">网站</div></div>
+    <div class="s"><div class="num">?</div><div class="lbl">待续</div></div>
+  </div>
+
+  <!-- Key -->
+  <div class="key-block">
+    <div class="top-line"></div>
+    <div class="hint">// <span>UNLOCK</span> 私藏区域</div>
     <div class="key-box">
-      <input type="password" id="k" placeholder="ACCESS KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
-      <button onclick="unlock()">UNLOCK</button>
+      <input type="password" id="k" placeholder="KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
+      <button onclick="unlock()">→</button>
     </div>
-    <p class="key-err" id="err">// KEY ERROR</p>
+    <p class="key-err" id="err">// ACCESS DENIED</p>
   </div>
 
   <!-- Footer -->
-  <div class="footer">
-    <a href="https://github.com/GalateaYe749" target="_blank">[GitHub]</a>
-    <a href="mailto:galatea@zju.edu.cn">[Email]</a>
-    <p>© 2026 GALATEA</p>
+  <div class="foot">
+    <div class="links">
+      <a href="https://github.com/GalateaYe749">GitHub</a>
+      <a href="mailto:galatea@zju.edu.cn">Email</a>
+    </div>
+    <div class="copy">© 2026</div>
   </div>
 </div>
 
@@ -389,15 +333,9 @@ async function unlock() {
   const hash = Array.from(new Uint8Array(
     await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
   )).map(b => b.toString(16).padStart(2,"0")).join("");
-  const h1 = "a853266afd09704859eabc86c9ca7c3a";
-  const h2 = "fc8f1408672359acb389f195424c22a2";
-  if (hash === h1 + h2) {
-    sessionStorage.setItem("auth", "1");
-    location.href = "../private/";
-  } else {
-    document.getElementById("err").style.display = "block";
-    setTimeout(() => document.getElementById("err").style.display = "none", 2000);
-  }
+  const h1="a853266afd09704859eabc86c9ca7c3a",h2="fc8f1408672359acb389f195424c22a2";
+  if (hash === h1+h2) { sessionStorage.setItem("auth","1"); location.href="../private/"; }
+  else { document.getElementById("err").style.display="block"; setTimeout(()=>document.getElementById("err").style.display="none",2000); }
 }
 </script>
 </body>
