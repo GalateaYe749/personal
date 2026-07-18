@@ -3,327 +3,405 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galatea</title>
+  <title>Galatea · Neon</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;700;900&family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Share+Tech+Mono&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #080406;
-      --card: #0f080a;
-      --crimson: #cc1133;
-      --warm: #ff8890;
-      --pale: #ffd0d0;
-      --gold: #d4a050;
-      --rose: #ff4060;
+      --night: #0a0a14;
+      --night2: #111122;
+      --street: #181828;
+      --red: #ff0040;
+      --pink: #ff4080;
+      --hotpink: #ff60a0;
+      --cyan: #00e5ff;
+      --blue: #0088ff;
+      --yellow: #ffd000;
+      --orange: #ff8800;
+      --green: #00ff88;
+      --white: #f0eef8;
+      --dim: rgba(240,238,248,0.4);
     }
 
     body {
-      font-family: "Noto Sans SC", sans-serif;
-      background: var(--bg);
-      color: #e8d8d0;
-      line-height: 1.6;
+      font-family: "Noto Sans SC", -apple-system, sans-serif;
+      background: var(--night);
+      color: var(--white);
+      line-height: 1.7;
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    /* ===== BG 背景层 ===== */
-    .bg-layer {
+    /* ===== City Night BG ===== */
+    .city {
       position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
     }
-    /* 大斜切撕裂 */
-    .bg-layer .slash1 {
-      position: absolute; top: 0; right: -10%; width: 50%; height: 100%;
-      background: linear-gradient(180deg, rgba(204,17,51,0.08), transparent 60%);
-      transform: skewX(-12deg);
+    /* 城市天际线剪影 */
+    .city .skyline {
+      position: absolute; bottom: 0; width: 100%; height: 120px;
+      display: flex; align-items: flex-end; gap: 2px;
     }
-    .bg-layer .slash2 {
-      position: absolute; bottom: 0; left: -10%; width: 40%; height: 60%;
-      background: linear-gradient(0deg, rgba(255,136,144,0.05), transparent);
-      transform: skewX(18deg);
+    .city .skyline span {
+      flex: 1; background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.02);
     }
-    /* 底部光晕 */
-    .bg-layer .glow {
-      position: absolute; bottom: -20%; left: 50%; translate: -50% 0;
-      width: 80%; height: 50%;
-      background: radial-gradient(ellipse, rgba(204,17,51,0.08), transparent 70%);
-    }
-    /* 网格（只中间可见） */
-    .bg-layer .grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(204,17,51,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(204,17,51,0.03) 1px, transparent 1px);
-      background-size: 30px 30px;
-      mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 70%);
+    .city .skyline span:nth-child(odd) { height: 70%; }
+    .city .skyline span:nth-child(even) { height: 100%; }
+    .city .skyline span:nth-child(3n) { height: 40%; }
+    .city .skyline span:nth-child(5n) { height: 85%; }
+
+    /* 地面光晕 */
+    .city .ground-glow {
+      position: absolute; bottom: 0; width: 100%; height: 60%;
+      background: linear-gradient(0deg,
+        rgba(255,0,64,0.03) 0%,
+        rgba(0,229,255,0.02) 30%,
+        rgba(255,208,0,0.015) 60%,
+        transparent 100%);
     }
 
-    .container { max-width: 640px; margin: 0 auto; padding: 48px 24px; position: relative; z-index: 1; }
-
-    /* ===== HERO ===== */
-    .hero { margin-bottom: 36px; position: relative; }
-
-    .hero .name-block {
-      display: flex; align-items: baseline; gap: 12px;
-      margin-bottom: 4px;
+    /* 彩色光晕 */
+    .city .glow-left {
+      position: absolute; top: 10%; left: -10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255,0,64,0.06), transparent 70%);
     }
-    .hero .name-block .initial {
-      font-size: 52px; font-weight: 900;
-      background: linear-gradient(180deg, var(--pale), var(--rose));
+    .city .glow-right {
+      position: absolute; top: 40%; right: -10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0,229,255,0.04), transparent 70%);
+    }
+    .city .glow-bottom {
+      position: absolute; bottom: 10%; left: 30%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,208,0,0.03), transparent);
+    }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 48px 24px; position: relative; z-index: 1; }
+
+    /* ===== 霓虹灯管标题 ===== */
+    .neon-sign {
+      text-align: center; margin-bottom: 36px;
+      background: rgba(0,0,0,0.3); padding: 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.03);
+      position: relative;
+    }
+    /* 霓虹边框 */
+    .neon-sign .border-neon {
+      position: absolute; inset: -2px; border-radius: 6px;
+      border: 2px solid var(--pink);
+      filter: blur(4px); opacity: 0.3;
+      animation: breathe 3s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.5; }
+    }
+
+    .neon-sign .avatar {
+      width: 64px; height: 64px; margin: 0 auto 12px;
+      border-radius: 50%;
+      background: rgba(255,64,128,0.06);
+      border: 2px solid var(--pink);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 900; color: var(--pink);
+      font-family: "Share Tech Mono", monospace;
+      box-shadow: 0 0 20px rgba(255,64,128,0.2), inset 0 0 20px rgba(255,64,128,0.05);
+    }
+
+    /* 霓虹灯管主标题 */
+    .neon-sign h1 {
+      font-size: 36px; font-weight: 900; letter-spacing: 12px;
+      color: var(--pink);
+      text-shadow:
+        0 0 7px var(--pink),
+        0 0 10px var(--pink),
+        0 0 21px var(--pink),
+        0 0 42px rgba(255,64,128,0.3);
+      font-family: "Noto Sans SC", sans-serif;
+    }
+    .neon-sign .sub {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 11px; letter-spacing: 6px; margin-top: 6px;
+      color: var(--cyan);
+      text-shadow: 0 0 7px rgba(0,229,255,0.4);
+    }
+    .neon-sign .bio {
+      font-size: 14px; color: var(--dim);
+      margin-top: 8px; font-weight: 300; letter-spacing: 2px;
+    }
+
+    /* ===== 霓虹标签条 ===== */
+    .neon-tags {
+      display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+      margin-bottom: 28px;
+    }
+    .neon-tags .tag {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 11px; padding: 4px 14px; letter-spacing: 2px;
+      border-radius: 2px; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .neon-tags .tag:hover { filter: brightness(1.4); }
+    .nt-red {
+      color: var(--red); border: 1px solid rgba(255,0,64,0.2);
+      text-shadow: 0 0 8px rgba(255,0,64,0.2);
+    }
+    .nt-cyan {
+      color: var(--cyan); border: 1px solid rgba(0,229,255,0.2);
+      text-shadow: 0 0 8px rgba(0,229,255,0.2);
+    }
+    .nt-yellow {
+      color: var(--yellow); border: 1px solid rgba(255,208,0,0.2);
+      text-shadow: 0 0 8px rgba(255,208,0,0.2);
+    }
+    .nt-green {
+      color: var(--green); border: 1px solid rgba(0,255,136,0.2);
+      text-shadow: 0 0 8px rgba(0,255,136,0.2);
+    }
+
+    /* ===== 霓虹招牌卡片 ===== */
+    .signboard { margin-bottom: 28px; }
+
+    .signboard .board-title {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 10px; letter-spacing: 4px;
+      color: var(--dim); margin-bottom: 8px;
+    }
+
+    .board-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+
+    .board {
+      padding: 16px; border-radius: 3px;
+      position: relative; overflow: hidden;
+      text-decoration: none; color: inherit; display: block;
+      transition: all 0.25s;
+    }
+    .board:hover { transform: translateY(-2px); }
+
+    /* 每个招牌不同霓虹色 */
+    .board-1 {
+      background: rgba(255,0,64,0.03);
+      border: 1px solid rgba(255,0,64,0.1);
+      box-shadow: 0 0 15px rgba(255,0,64,0.02);
+    }
+    .board-1:hover { border-color: rgba(255,0,64,0.3); box-shadow: 0 0 25px rgba(255,0,64,0.05); }
+    .board-1 .icon { color: var(--red); text-shadow: 0 0 12px rgba(255,0,64,0.3); }
+
+    .board-2 {
+      background: rgba(0,229,255,0.03);
+      border: 1px solid rgba(0,229,255,0.1);
+      box-shadow: 0 0 15px rgba(0,229,255,0.02);
+    }
+    .board-2:hover { border-color: rgba(0,229,255,0.3); box-shadow: 0 0 25px rgba(0,229,255,0.05); }
+    .board-2 .icon { color: var(--cyan); text-shadow: 0 0 12px rgba(0,229,255,0.3); }
+
+    .board-3 {
+      background: rgba(255,208,0,0.03);
+      border: 1px solid rgba(255,208,0,0.1);
+      box-shadow: 0 0 15px rgba(255,208,0,0.02);
+    }
+    .board-3:hover { border-color: rgba(255,208,0,0.3); box-shadow: 0 0 25px rgba(255,208,0,0.05); }
+    .board-3 .icon { color: var(--yellow); text-shadow: 0 0 12px rgba(255,208,0,0.3); }
+
+    .board-4 {
+      background: rgba(0,255,136,0.03);
+      border: 1px solid rgba(0,255,136,0.1);
+      box-shadow: 0 0 15px rgba(0,255,136,0.02);
+    }
+    .board-4:hover { border-color: rgba(0,255,136,0.3); box-shadow: 0 0 25px rgba(0,255,136,0.05); }
+    .board-4 .icon { color: var(--green); text-shadow: 0 0 12px rgba(0,255,136,0.3); }
+
+    .board .icon { font-size: 22px; margin-bottom: 4px; }
+    .board .name { font-size: 14px; font-weight: 700; }
+    .board .desc { font-size: 11px; color: var(--dim); font-weight: 300; margin-top: 2px; }
+
+    /* ===== 霓虹统计条 ===== */
+    .neon-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+      margin-bottom: 28px;
+    }
+    .neon-stats .stat {
+      text-align: center; padding: 10px 4px;
+      border: 1px solid rgba(255,255,255,0.03);
+      background: rgba(0,0,0,0.2);
+    }
+    .neon-stats .stat .num {
+      font-family: "Share Tech Mono", monospace;
+      font-size: 20px; font-weight: 700;
+      background: linear-gradient(135deg, var(--pink), var(--yellow));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      line-height: 1;
-      letter-spacing: -2px;
     }
-    .hero .name-block .rest {
-      font-size: 24px; font-weight: 300; letter-spacing: 14px;
-      color: var(--pale);
-      opacity: 0.6;
-    }
-    .hero .tagline {
-      font-family: "Share Tech Mono", monospace;
-      font-size: 11px; color: rgba(255,136,144,0.4);
-      letter-spacing: 6px; margin-top: 2px;
-    }
-    .hero .desc {
-      font-size: 14px; color: rgba(255,208,208,0.5);
-      font-weight: 300; margin-top: 12px;
-      max-width: 70%;
-    }
-
-    /* ===== 撕裂色块条 ===== */
-    .tear-strip {
-      display: flex; gap: 4px; margin: 20px 0 28px; height: 6px;
-    }
-    .tear-strip span {
-      height: 100%; border-radius: 2px;
-    }
-    .tear-strip .t1 { flex: 3; background: var(--crimson); }
-    .tear-strip .t2 { flex: 5; background: linear-gradient(90deg, var(--crimson), var(--gold)); }
-    .tear-strip .t3 { flex: 2; background: var(--gold); opacity: 0.6; }
-    .tear-strip .t4 { flex: 4; background: linear-gradient(90deg, var(--gold), transparent); opacity: 0.3; }
-
-    /* ===== Tags ===== */
-    .tag-strip {
-      display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 28px;
-    }
-    .tag-strip a {
-      font-family: "Share Tech Mono", monospace;
-      font-size: 10px; padding: 4px 10px; letter-spacing: 1px;
-      text-decoration: none; transition: all 0.2s;
-    }
-    .tag-strip a.solid {
-      background: var(--crimson); color: #fff;
-    }
-    .tag-strip a.border {
-      border: 1px solid rgba(204,17,51,0.2); color: rgba(255,136,144,0.5);
-    }
-    .tag-strip a:hover { filter: brightness(1.3); }
-
-    /* ===== 项目卡片 - 横向 ===== */
-    .project-strip {
-      display: flex; flex-direction: column; gap: 2px; margin-bottom: 28px;
-    }
-    .project-strip .row {
-      display: flex; gap: 2px;
-    }
-    .project-strip .row .item {
-      flex: 1; padding: 14px 16px;
-      background: var(--card);
-      border: 1px solid rgba(204,17,51,0.04);
-      text-decoration: none; color: inherit;
-      transition: all 0.25s; position: relative; overflow: hidden;
-    }
-    .project-strip .row .item:hover {
-      background: #14080a;
-      border-color: rgba(255,136,144,0.12);
-    }
-    .project-strip .row .item:hover .icon { opacity: 1; }
-    .project-strip .row .item .icon { font-size: 18px; margin-bottom: 4px; opacity: 0.5; transition: opacity 0.2s; }
-    .project-strip .row .item .label { font-size: 13px; font-weight: 600; }
-    .project-strip .row .item .sub { font-size: 11px; color: rgba(255,208,208,0.35); font-weight: 300; }
-
-    /* ===== Stats Bar ===== */
-    .stats-bar {
-      display: flex; gap: 2px; margin-bottom: 28px;
-    }
-    .stats-bar .s {
-      flex: 1; text-align: center; padding: 12px 4px;
-      background: var(--card);
-      border: 1px solid rgba(204,17,51,0.04);
-    }
-    .stats-bar .s .num {
-      font-family: "Share Tech Mono", monospace;
-      font-size: 22px; font-weight: 700;
-      background: linear-gradient(180deg, var(--pale), var(--rose));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .stats-bar .s .lbl {
-      font-size: 9px; color: rgba(255,136,144,0.3);
+    .neon-stats .stat .lbl {
+      font-size: 9px; color: var(--dim);
       font-family: "Share Tech Mono", monospace;
       letter-spacing: 2px; margin-top: 2px;
     }
 
-    /* ===== Key Area - 更视觉化的密码入口 ===== */
-    .key-block {
+    /* ===== 霓虹密码门 ===== */
+    .neon-door {
       margin-top: 8px;
-      border: 1px solid rgba(204,17,51,0.08);
-      background: rgba(204,17,51,0.02);
-      padding: 24px;
+      border: 1px solid rgba(255,64,128,0.06);
+      background: rgba(255,64,128,0.02);
+      padding: 24px; text-align: center;
       position: relative;
     }
-    .key-block .top-line {
+    .neon-door .glow-bar {
       position: absolute; top: 0; left: 10%; width: 80%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--crimson), var(--gold), transparent);
+      background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), transparent);
+      filter: blur(2px);
     }
-    .key-block .hint {
+    .neon-door .hint {
       font-family: "Share Tech Mono", monospace;
-      font-size: 11px; color: rgba(255,136,144,0.3);
-      letter-spacing: 3px; margin-bottom: 10px;
+      font-size: 11px; color: var(--dim);
+      margin-bottom: 10px;
     }
-    .key-block .hint span { color: var(--rose); }
-    .key-box { display: flex; gap: 6px; max-width: 340px; }
+    .neon-door .hint span { color: var(--pink); text-shadow: 0 0 8px rgba(255,64,128,0.3); }
+    .key-box { display: flex; gap: 6px; max-width: 340px; margin: 0 auto; }
     .key-box input {
       flex: 1; padding: 10px 14px;
-      background: rgba(0,0,0,0.3); border: 1px solid rgba(204,17,51,0.12);
-      color: var(--pale); font-size: 14px; outline: none;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,64,128,0.1);
+      color: var(--pink); font-size: 14px; outline: none;
       font-family: "Share Tech Mono", monospace;
+      letter-spacing: 4px;
     }
-    .key-box input:focus { border-color: var(--rose); }
+    .key-box input:focus { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,64,128,0.1); }
+    .key-box input::placeholder { color: rgba(255,64,128,0.15); }
     .key-box button {
-      padding: 10px 22px;
-      background: linear-gradient(135deg, var(--crimson), var(--rose));
+      padding: 10px 20px;
       color: #fff; border: none; cursor: pointer;
       font-family: "Share Tech Mono", monospace;
       font-size: 11px; letter-spacing: 3px;
-      transition: all 0.3s;
+      background: rgba(255,64,128,0.08);
+      border: 1px solid rgba(255,64,128,0.15);
+      transition: all 0.2s;
     }
-    .key-box button:hover { filter: brightness(1.2); }
-    .key-err { font-family: "Share Tech Mono", monospace; font-size: 11px; color: var(--rose); display: none; margin-top: 6px; }
+    .key-box button:hover {
+      background: rgba(255,64,128,0.15);
+      box-shadow: 0 0 16px rgba(255,64,128,0.08);
+    }
+    .key-err { font-family: "Share Tech Mono", monospace; font-size: 11px; color: var(--red); display: none; margin-top: 6px; }
 
     /* ===== Footer ===== */
     .foot {
-      margin-top: 36px; padding-top: 16px;
+      margin-top: 32px; padding-top: 16px;
       display: flex; justify-content: space-between; align-items: center;
-      border-top: 1px solid rgba(204,17,51,0.04);
+      border-top: 1px solid rgba(255,255,255,0.02);
     }
-    .foot .links a {
-      color: rgba(255,136,144,0.25); text-decoration: none;
+    .foot a {
+      color: var(--dim); text-decoration: none;
       font-family: "Share Tech Mono", monospace;
       font-size: 11px; margin-right: 14px; transition: color 0.2s;
     }
-    .foot .links a:hover { color: var(--rose); }
+    .foot a:hover { color: var(--cyan); text-shadow: 0 0 8px rgba(0,229,255,0.3); }
     .foot .copy {
       font-family: "Share Tech Mono", monospace;
-      font-size: 10px; color: rgba(255,136,144,0.15);
+      font-size: 10px; color: rgba(240,238,248,0.1);
     }
 
-    /* ===== 响应式 ===== */
     @media (max-width: 520px) {
-      .container { padding: 32px 14px; }
-      .hero .name-block .initial { font-size: 38px; }
-      .hero .name-block .rest { font-size: 18px; letter-spacing: 8px; }
-      .hero .desc { max-width: 100%; }
-      .project-strip .row { flex-direction: column; }
-      .stats-bar { flex-wrap: wrap; }
-      .stats-bar .s { min-width: 80px; }
+      .container { padding: 24px 14px; }
+      .neon-sign h1 { font-size: 26px; letter-spacing: 8px; }
+      .board-grid { grid-template-columns: 1fr; }
+      .neon-stats { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
-<div class="bg-layer">
-  <div class="slash1"></div>
-  <div class="slash2"></div>
-  <div class="glow"></div>
-  <div class="grid"></div>
+<div class="city">
+  <div class="glow-left"></div>
+  <div class="glow-right"></div>
+  <div class="glow-bottom"></div>
+  <div class="ground-glow"></div>
+  <div class="skyline">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
 </div>
 
 <div class="container">
-  <!-- Hero -->
-  <div class="hero">
-    <div class="name-block">
-      <span class="initial">G</span>
-      <span class="rest">ALATEA</span>
-    </div>
-    <div class="tagline">// STUDENT · LITERATURE · TECH</div>
-    <div class="desc">好读书，不求甚解。录所得、所思，与技术探索。</div>
+
+  <!-- 霓虹灯牌 -->
+  <div class="neon-sign">
+    <div class="border-neon"></div>
+    <div class="avatar">G</div>
+    <h1>GALATEA</h1>
+    <p class="sub">✦ STUDENT · LITERATURE · TECH ✦</p>
+    <p class="bio">好读书，不求甚解。录所得、所思，与技术探索。</p>
   </div>
 
-  <!-- Tear Strip -->
-  <div class="tear-strip">
-    <span class="t1"></span>
-    <span class="t2"></span>
-    <span class="t3"></span>
-    <span class="t4"></span>
+  <!-- 霓虹标签 -->
+  <div class="neon-tags">
+    <span class="tag nt-red">#唐诗</span>
+    <span class="tag nt-cyan">#古代文论</span>
+    <span class="tag nt-yellow">#自动化</span>
+    <span class="tag nt-green">#效率</span>
+    <span class="tag nt-red">#Node.js</span>
+    <span class="tag nt-cyan">#API</span>
   </div>
 
-  <!-- Tags -->
-  <div class="tag-strip">
-    <a class="solid" href="#">唐诗</a>
-    <a class="border" href="#">古代文论</a>
-    <a class="border" href="#">自动化</a>
-    <a class="border" href="#">Node.js</a>
-    <a class="border" href="#">API</a>
-  </div>
-
-  <!-- Projects -->
-  <div class="project-strip">
-    <div class="row">
-      <a class="item" href="#">
+  <!-- 霓虹招牌卡片 -->
+  <div class="signboard">
+    <div class="board-title">// PROJECTS</div>
+    <div class="board-grid">
+      <a class="board board-1" href="#">
         <div class="icon">📚</div>
-        <div class="label">座位预约</div>
-        <div class="sub">ZJU图书馆 · AES加密</div>
+        <div class="name">座位预约</div>
+        <div class="desc">ZJU 紫金港 · AES 加密 · 钉钉通知</div>
       </a>
-      <a class="item" href="#">
+      <a class="board board-2" href="#">
         <div class="icon">✍️</div>
-        <div class="label">自动签到</div>
-        <div class="sub">学在浙大 · 雷达定位</div>
+        <div class="name">自动签到</div>
+        <div class="desc">学在浙大 · 雷达定位 · 守护进程</div>
       </a>
-    </div>
-    <div class="row">
-      <a class="item" href="#">
+      <a class="board board-3" href="#">
         <div class="icon">🌐</div>
-        <div class="label">个人站</div>
-        <div class="sub">GitHub Pages</div>
+        <div class="name">个人网站</div>
+        <div class="desc">GitHub Pages · 霓虹主题</div>
       </a>
-      <a class="item" href="#">
+      <a class="board board-4" href="#">
         <div class="icon">📖</div>
-        <div class="label">笔记</div>
-        <div class="sub">读书摘录 · 复习资料</div>
+        <div class="name">私藏笔记</div>
+        <div class="desc">读书摘录 · 学习记录</div>
       </a>
     </div>
   </div>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="s"><div class="num">4</div><div class="lbl">项目</div></div>
-    <div class="s"><div class="num">∞</div><div class="lbl">探索</div></div>
-    <div class="s"><div class="num">1</div><div class="lbl">网站</div></div>
-    <div class="s"><div class="num">?</div><div class="lbl">待续</div></div>
+  <!-- 霓虹统计 -->
+  <div class="neon-stats">
+    <div class="stat"><div class="num">4</div><div class="lbl">PROJECTS</div></div>
+    <div class="stat"><div class="num">∞</div><div class="lbl">CURIOSITY</div></div>
+    <div class="stat"><div class="num">1</div><div class="lbl">SITE</div></div>
+    <div class="stat"><div class="num">✦</div><div class="lbl">ONLINE</div></div>
   </div>
 
-  <!-- Key -->
-  <div class="key-block">
-    <div class="top-line"></div>
+  <!-- 密码门 -->
+  <div class="neon-door">
+    <div class="glow-bar"></div>
     <div class="hint">// <span>UNLOCK</span> 私藏区域</div>
     <div class="key-box">
-      <input type="password" id="k" placeholder="KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
-      <button onclick="unlock()">→</button>
+      <input type="password" id="k" placeholder="NEON KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
+      <button onclick="unlock()">ENTER</button>
     </div>
-    <p class="key-err" id="err">// ACCESS DENIED</p>
+    <p class="key-err" id="err">// INVALID KEY</p>
   </div>
 
-  <!-- Footer -->
   <div class="foot">
-    <div class="links">
-      <a href="https://github.com/GalateaYe749">GitHub</a>
-      <a href="mailto:galatea@zju.edu.cn">Email</a>
+    <div>
+      <a href="https://github.com/GalateaYe749" target="_blank">[GitHub]</a>
+      <a href="mailto:galatea@zju.edu.cn">[Email]</a>
     </div>
-    <div class="copy">© 2026</div>
+    <div class="copy">© 2026 GALATEA</div>
   </div>
 </div>
 
@@ -333,7 +411,7 @@ async function unlock() {
   const hash = Array.from(new Uint8Array(
     await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
   )).map(b => b.toString(16).padStart(2,"0")).join("");
-  const h1="a853266afd09704859eabc86c9ca7c3a",h2="fc8f1408672359acb389f195424c22a2";
+  const h1="a853266afd09704859eabc86c9ca7c3a", h2="fc8f1408672359acb389f195424c22a2";
   if (hash === h1+h2) { sessionStorage.setItem("auth","1"); location.href="../private/"; }
   else { document.getElementById("err").style.display="block"; setTimeout(()=>document.getElementById("err").style.display="none",2000); }
 }
