@@ -502,6 +502,50 @@
     #page-1.animate-in .hero .galatea {
       animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards, glitch 4s ease-in-out 1s infinite;
     }
+
+    /* ===== 第二页目录 ===== */
+    .dir-section { margin-bottom: 20px; }
+    .dir-cat {
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.015);
+      border: 1px solid rgba(255,51,136,0.06);
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+    .dir-cat-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+    .dir-icon { margin-right: 6px; }
+    .dir-items { display: flex; flex-direction: column; gap: 4px; }
+    .dir-item {
+      display: block;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--dim-cyan);
+      text-decoration: none;
+      border-radius: 3px;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+    .dir-item:hover {
+      background: rgba(0,221,255,0.05);
+      color: var(--cyan);
+      padding-left: 16px;
+    }
+    .dir-item.dim { color: rgba(240,240,255,0.15); font-style: italic; }
+    .dir-item.dim:hover { color: rgba(240,240,255,0.3); background: none; padding-left: 12px; }
+
+    /* ===== 翻页提示箭头 ===== */
+    .scroll-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 100;
       color: var(--dim-cyan);
       font-size: 10px;
@@ -563,46 +607,55 @@
 <div class="page" id="page-2">
   <div class="container">
 
-  <!-- 内容分类 -->
-  <div class="sec-title mono">CONTENTS</div>
-  <div class="card-grid">
-    <a class="card" href="#">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="name">📚 学习日志</div>
-      <div class="desc">电气工程 · 自动化 · 课程笔记</div>
-    </a>
-    <a class="card" href="#">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="name">🔬 技术笔记</div>
-      <div class="desc">代码项目 · API · 科研探索</div>
-    </a>
-    <a class="card" href="#">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="name">📖 读书摘录</div>
-      <div class="desc">文学阅读 · 摘记与思考</div>
-    </a>
-    <a class="card" href="#">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="name">🎵 创作</div>
-      <div class="desc">文学写作 · 音乐作品</div>
-    </a>
-    <a class="card" href="#">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="name">💭 随想</div>
-      <div class="desc">情感生活 · 随笔漫谈</div>
-    </a>
+  <!-- 内容目录 -->
+  <div class="sec-title mono">DIRECTORY</div>
+
+  <div class="dir-section">
+    <div class="dir-cat">
+      <div class="dir-cat-title"><span class="dir-icon">📚</span> 学习日志</div>
+      <div class="dir-items">
+        <a class="dir-item" href="#">电气工程基础 · 课程笔记</a>
+        <a class="dir-item" href="#">自动控制原理 · 要点整理</a>
+        <a class="dir-item dim" href="#">+ 添加新内容</a>
+      </div>
+    </div>
+    <div class="dir-cat">
+      <div class="dir-cat-title"><span class="dir-icon">🔬</span> 技术笔记</div>
+      <div class="dir-items">
+        <a class="dir-item" href="#">图书馆预约 API 逆向记录</a>
+        <a class="dir-item" href="#">自动签到系统搭建</a>
+        <a class="dir-item dim" href="#">+ 添加新内容</a>
+      </div>
+    </div>
+    <div class="dir-cat">
+      <div class="dir-cat-title"><span class="dir-icon">📖</span> 读书摘录</div>
+      <div class="dir-items">
+        <a class="dir-item" href="#">唐诗经典研读 · 笔记</a>
+        <a class="dir-item dim" href="#">+ 添加新内容</a>
+      </div>
+    </div>
+    <div class="dir-cat">
+      <div class="dir-cat-title"><span class="dir-icon">🎵</span> 创作</div>
+      <div class="dir-items">
+        <a class="dir-item dim" href="#">等待填充……</a>
+      </div>
+    </div>
+    <div class="dir-cat">
+      <div class="dir-cat-title"><span class="dir-icon">💭</span> 随想</div>
+      <div class="dir-items">
+        <a class="dir-item dim" href="#">等待填充……</a>
+      </div>
+    </div>
   </div>
 
-  <!-- 统计 -->
-  <div class="stats">
-    <div class="s"><div class="num mono">📚</div><div class="lbl mono">学习</div></div>
-    <div class="s"><div class="num mono">🔬</div><div class="lbl mono">技术</div></div>
-    <div class="s"><div class="num mono">📖</div><div class="lbl mono">读书</div></div>
-    <div class="s"><div class="num mono">🎵</div><div class="lbl mono">创作</div></div>
   </div>
+</div>
+
+<div class="page" id="page-3">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;">
 
   <!-- 密码门 -->
-  <div class="door">
+  <div class="door" style="width:100%;max-width:460px;">
     <div class="glow-bar"></div>
     <div class="hint mono">// <span>UNLOCK</span> 私藏区域</div>
     <div class="key-box">
@@ -612,7 +665,7 @@
     <p class="key-err mono" id="err">// INVALID KEY</p>
   </div>
 
-  <div class="foot">
+  <div class="foot" style="margin-top:60px;width:100%;max-width:460px;">
     <div>
       <a href="https://github.com/GalateaYe749" target="_blank" class="mono">[GitHub]</a>
       <a href="mailto:yegalatea@gmail.com" class="mono">[Email]</a>
