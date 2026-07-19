@@ -19,14 +19,30 @@
       --dim-purple: #ffbe6e;
     }
 
+    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       background: var(--bg);
       color: var(--white);
       line-height: 1.7;
-      min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .scroll-wrap {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+    .page {
+      height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 24px;
+      overflow-y: auto;
     }
 
     .mono {
@@ -104,7 +120,7 @@
       -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
     }
 
-    .container { max-width: 720px; margin: 0 auto; padding: 32px 20px; position: relative; z-index: 10; /* 内容在最上层 */ }
+    .container { max-width: 720px; margin: 0 auto; padding: 16px 20px; position: relative; z-index: 10; width: 100%; }
 
     /* ===== 主标题 ===== */
     .hero {
@@ -287,12 +303,32 @@
     }
 
     @media (max-width: 520px) {
-      body { padding: 16px; }
-      .container { padding: 24px 12px; }
+      .page { padding: 16px; }
+      .container { padding: 16px 12px; }
       .hero .galatea { font-size: 32px; letter-spacing: 8px; }
       .card-grid { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
       .corner, .cyber-border { display: none; }
+    }
+
+    /* 翻页提示箭头 */
+    .scroll-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      color: var(--dim-cyan);
+      font-size: 10px;
+      letter-spacing: 4px;
+      animation: hintBounce 2s ease-in-out infinite;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .scroll-hint.hidden { opacity: 0; transition: opacity 0.6s; pointer-events: none; }
+    @keyframes hintBounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
     }
   </style>
 </head>
@@ -309,7 +345,10 @@
 <div class="bg"></div>
 <div class="bg-grid"></div>
 
-<div class="container"> <!-- z-index=10，强制在最上层 -->
+<div class="scroll-wrap">
+
+<div class="page" id="page-1">
+  <div class="container">
 
   <!-- 主标题 -->
   <div class="hero">
@@ -328,6 +367,12 @@
     <span class="tag tag-pink mono">#Node.js</span>
     <span class="tag tag-cyan mono">#API</span>
   </div>
+
+  </div>
+</div>
+
+<div class="page" id="page-2">
+  <div class="container">
 
   <!-- 项目卡片 -->
   <div class="sec-title mono">PROJECTS</div>
@@ -380,9 +425,27 @@
     </div>
     <div class="cp mono">© 2026 GALATEA</div>
   </div>
+
+  </div>
 </div>
 
+</div>
+
+<!-- 翻页提示 -->
+<div class="scroll-hint mono" id="scrollHint">▼ SCROLL ▼</div>
+
 <script>
+// ===== 翻页提示隐藏 =====
+const scrollWrap = document.querySelector('.scroll-wrap');
+const hint = document.getElementById('scrollHint');
+scrollWrap.addEventListener('scroll', () => {
+  if (scrollWrap.scrollTop > 40) {
+    hint.classList.add('hidden');
+  } else {
+    hint.classList.remove('hidden');
+  }
+});
+
 // ===== 鼠标跟随星尘粒子 =====
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
@@ -465,17 +528,7 @@ window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
-
-// 密码解锁
-async function unlock() {
-  const input = document.getElementById("k").value;
-  const hash = Array.from(new Uint8Array(
-    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
-  )).map(b => b.toString(16).padStart(2,"0")).join("");
-  const h1="a853266afd09704859eabc86c9ca7c3a", h2="fc8f1408672359acb389f195424c22a2";
-  if (hash === h1 + h2) { sessionStorage.setItem("auth","1"); location.href="../private/"; }
-  else { document.getElementById("err").style.display="block"; setTimeout(()=>document.getElementById("err").style.display="none",2000); }
-}
 </script>
+
 </body>
 </html>
