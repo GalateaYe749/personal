@@ -608,41 +608,31 @@
 
     /* ===== 霓虹灯牌标题（镂空大字） ===== */
     .neon-sign-title {
-      font-size: 24px;
+      font-size: 30px;
       font-weight: 900;
-      letter-spacing: 6px;
-      margin-bottom: 12px;
+      letter-spacing: 8px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       color: transparent;
-      line-height: 1.2;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1.5px currentColor;
+      line-height: 1.1;
+      text-shadow: none;
     }
-    .ns-pink .neon-sign-title {
-      -webkit-text-stroke: 1.5px var(--pink);
-      text-shadow: 0 0 18px rgba(255,51,136,0.6), 0 0 6px rgba(255,51,136,0.3);
-    }
-    .ns-cyan .neon-sign-title {
-      -webkit-text-stroke: 1.5px var(--cyan);
-      text-shadow: 0 0 18px rgba(0,221,255,0.6), 0 0 6px rgba(0,221,255,0.3);
-    }
-    .ns-purple .neon-sign-title {
-      -webkit-text-stroke: 1.5px #d4bbff;
-      text-shadow: 0 0 18px rgba(153,85,221,0.6), 0 0 6px rgba(153,85,221,0.3);
-    }
-    .ns-lpink .neon-sign-title {
-      -webkit-text-stroke: 1.5px var(--light-pink);
-      text-shadow: 0 0 18px rgba(255,153,204,0.6), 0 0 6px rgba(255,153,204,0.3);
-    }
-    .ns-gold .neon-sign-title {
-      -webkit-text-stroke: 1.5px #ffbe6e;
-      text-shadow: 0 0 18px rgba(255,190,110,0.6), 0 0 6px rgba(255,190,110,0.3);
-    }
-    .ns-pink .neon-sign-title .ns-emoji { color: var(--pink); -webkit-text-stroke: 0; }
-    .ns-cyan .neon-sign-title .ns-emoji { color: var(--cyan); -webkit-text-stroke: 0; }
-    .ns-purple .neon-sign-title .ns-emoji { color: #d4bbff; -webkit-text-stroke: 0; }
-    .ns-lpink .neon-sign-title .ns-emoji { color: var(--light-pink); -webkit-text-stroke: 0; }
-    .ns-gold .neon-sign-title .ns-emoji { color: #ffbe6e; -webkit-text-stroke: 0; }
+    .ns-pink .neon-sign-title { color: transparent; -webkit-text-stroke: 1.5px var(--pink); }
+    .ns-cyan .neon-sign-title { color: transparent; -webkit-text-stroke: 1.5px var(--cyan); }
+    .ns-purple .neon-sign-title { color: transparent; -webkit-text-stroke: 1.5px #d4bbff; }
+    .ns-lpink .neon-sign-title { color: transparent; -webkit-text-stroke: 1.5px var(--light-pink); }
+    .ns-gold .neon-sign-title { color: transparent; -webkit-text-stroke: 1.5px #ffbe6e; }
+
+    /* 边框光晕加强 */
+    .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)); }
+    .neon-border-cyan::before { filter: drop-shadow(0 0 8px rgba(0,221,255,0.4)) drop-shadow(0 0 3px rgba(0,221,255,0.2)); }
+    .neon-border-purple::before { filter: drop-shadow(0 0 8px rgba(153,85,221,0.4)) drop-shadow(0 0 3px rgba(153,85,221,0.2)); }
+    .neon-border-lpink::before { filter: drop-shadow(0 0 8px rgba(255,153,204,0.4)) drop-shadow(0 0 3px rgba(255,153,204,0.2)); }
+    .neon-border-gold::before { filter: drop-shadow(0 0 8px rgba(255,190,110,0.4)) drop-shadow(0 0 3px rgba(255,190,110,0.2)); }
 
     /* 列表项微霓虹 */
     .neon-sign-items {
@@ -790,7 +780,7 @@
   <div class="neon-signs">
 
     <div class="neon-sign ns-pink neon-border-pink">
-      <div class="neon-sign-title"><span class="ns-emoji">📚</span> 学习日志</div>
+      <div class="neon-sign-title">学习日志</div>
       <div class="neon-sign-items">
         <a href="#">电气工程基础 · 课程笔记</a>
         <a href="#">自动控制原理 · 要点整理</a>
@@ -799,7 +789,7 @@
     </div>
 
     <div class="neon-sign ns-cyan neon-border-cyan">
-      <div class="neon-sign-title"><span class="ns-emoji">🔬</span> 技术笔记</div>
+      <div class="neon-sign-title">技术笔记</div>
       <div class="neon-sign-items">
         <a href="#">图书馆预约 API 逆向记录</a>
         <a href="#">自动签到系统搭建</a>
@@ -808,7 +798,7 @@
     </div>
 
     <div class="neon-sign ns-purple neon-border-purple">
-      <div class="neon-sign-title"><span class="ns-emoji">📖</span> 读书摘录</div>
+      <div class="neon-sign-title">读书摘录</div>
       <div class="neon-sign-items">
         <a href="#">唐诗经典研读 · 笔记</a>
         <a class="dim" href="#">+ 添加新内容</a>
@@ -816,14 +806,14 @@
     </div>
 
     <div class="neon-sign ns-lpink neon-border-lpink">
-      <div class="neon-sign-title"><span class="ns-emoji">🎵</span> 创作</div>
+      <div class="neon-sign-title">创作</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
     </div>
 
     <div class="neon-sign ns-gold neon-border-gold">
-      <div class="neon-sign-title"><span class="ns-emoji">💭</span> 随想</div>
+      <div class="neon-sign-title">随想</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
