@@ -521,14 +521,20 @@
     }
 
     /* ===== 第二页霓虹灯牌目录 ===== */
-    #page-2 .container { max-width: 820px; }
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 0;
+    }
+    #page-2 .container { max-width: 820px; width: 100%; }
 
     .neon-signs {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      padding: 10px 0;
-      margin-bottom: 20px;
+      gap: 26px;
+      padding: 20px 0;
     }
 
     .neon-sign {
