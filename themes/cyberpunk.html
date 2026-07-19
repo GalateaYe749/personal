@@ -754,25 +754,17 @@ window.addEventListener('resize', () => {
 });
 
 // ===== 密码门解锁（服务端验证） =====
-async function unlock() {
+// ===== 密码门解锁 =====
+const SERVER = 'http://120.55.242.84';
+
+if (new URLSearchParams(location.search).get('err')) {
+  const err = document.getElementById('err');
+  if (err) { err.style.display = 'block'; setTimeout(() => err.style.display = 'none', 3000); }
+}
+
+function unlock() {
   const input = document.getElementById('k').value;
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: input })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      location.href = 'private/' + data.zone + '/';
-    } else {
-      document.getElementById('err').style.display = 'block';
-      setTimeout(() => document.getElementById('err').style.display = 'none', 2000);
-    }
-  } catch (e) {
-    document.getElementById('err').style.display = 'block';
-    setTimeout(() => document.getElementById('err').style.display = 'none', 2000);
-  }
+  location.href = SERVER + '/login?key=' + encodeURIComponent(input);
 }
 </script>
 
