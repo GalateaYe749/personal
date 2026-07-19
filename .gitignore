@@ -1,2 +1,5 @@
 node_modules/
 server/
+private/index.html
+private/notes.html
+private/projects.html
