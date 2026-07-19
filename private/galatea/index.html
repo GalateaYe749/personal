@@ -51,9 +51,11 @@
     </p>
     <a href="/" class="back" id="backLink">← BACK</a>
   <script>
-    // 回到上一页（如果是从 GitHub Pages 来的，回 GitHub Pages）
-    var ref = document.referrer;
-    if (ref) document.getElementById('backLink').href = ref;
+    // 根据来源设置返回链接
+    var p = new URLSearchParams(location.search);
+    if (p.get('from') === 'gh') {
+      document.getElementById('backLink').href = 'https://galateaye749.github.io/personal/';
+    }
   </script>
   </div>
 </body>

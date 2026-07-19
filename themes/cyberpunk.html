@@ -764,7 +764,8 @@ if (new URLSearchParams(location.search).get('err')) {
 
 function unlock() {
   const input = document.getElementById('k').value;
-  location.href = SERVER + '/login?key=' + encodeURIComponent(input);
+  const from = location.hostname === 'galateaye749.github.io' ? 'gh' : '';
+  location.href = SERVER + '/login?key=' + encodeURIComponent(input) + '&from=' + from;
 }
 </script>
 
