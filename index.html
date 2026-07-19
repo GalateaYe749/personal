@@ -5,179 +5,684 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Galatea · 个人主页</title>
   <style>
-    :root {
-      --ink: #2c2c2c;
-      --ink-light: #888;
-      --paper: #faf8f5;
-      --accent: #b8860b;
-      --accent-light: #f0e6d0;
-      --border: #e8e3dc;
-    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
-      background: var(--paper);
-      color: var(--ink);
-      line-height: 1.8;
-      min-height: 100vh;
-    }
-    .container { max-width: 700px; margin: 0 auto; padding: 60px 24px; }
 
+    :root {
+      --bg: #0d0716;
+      --pink: #ff3388;
+      --cyan: #00ddff;
+      --purple: #9955dd;
+      --light-pink: #ff99cc;
+      --white: #f0f0ff;
+      --dim-pink: rgba(255,51,136,0.4);
+      --dim-cyan: rgba(0,221,255,0.4);
+      --dim-purple: #ffbe6e;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      line-height: 1.7;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .scroll-wrap {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+    .page {
+      height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .mono {
+      font-family: "Consolas", "Monaco", monospace;
+    }
+
+    /* ===== 赛博霓虹边框（完全空心不挡内容） ===== */
+    .cyber-border {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      border: 4px solid transparent;
+      border-radius: 8px;
+      background: 
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--pink)) border-box;
+      /* 强制中间100%透明，只留边框 */
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      animation: borderGlow 5s ease-in-out infinite;
+      opacity: 0.7;
+    }
+    @keyframes borderGlow {
+      0%,100% { filter: drop-shadow(0 0 6px rgba(255,51,136,0.1)); }
+      50% { filter: drop-shadow(0 0 12px rgba(0,221,255,0.1)); }
+    }
+    /* 边角装饰（z-index降到0，在内容下方） */
+    .corner {
+      position: fixed; width: 36px; height: 36px; z-index: 0; pointer-events: none;
+      border: 2px solid var(--pink);
+      opacity: 0.5;
+    }
+    .corner-tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+    .corner-tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+    .corner-bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+    .corner-br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+    .corner .dot {
+      position: absolute; width: 4px; height: 4px; background: var(--cyan); border-radius: 50%;
+      opacity: 0.8;
+      animation: dotBlink 2s ease-in-out infinite;
+    }
+    @keyframes dotBlink {
+      0%,100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    .corner-tl .dot { bottom: 4px; right: 4px; animation-delay: 0s; }
+    .corner-tr .dot { bottom: 4px; left: 4px; animation-delay: 0.5s; }
+    .corner-bl .dot { top: 4px; right: 4px; animation-delay: 1s; }
+    .corner-br .dot { top: 4px; left: 4px; animation-delay: 1.5s; }
+
+    /* ===== 星尘粒子画布 ===== */
+    #particle-canvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+
+    /* ===== Spasmodic背景 ===== */
+    .bg {
+      position: fixed; inset: 0; z-index: -2;
+      background:
+        linear-gradient(135deg, rgba(13,7,22,0.65), rgba(13,7,22,0.7)),
+        url('./assets/bg-cyberpunk.jpg') center/cover no-repeat;
+      filter: blur(2.5px) brightness(0.85);
+    }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,51,136,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,221,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
+    }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 16px 20px; position: relative; z-index: 10; width: 100%; }
+
+    /* ===== 第一页放大 + 动画 + 呼吸灯 ===== */
+    #page-1 .container { max-width: 860px; }
+    #page-1 .hero { margin-bottom: 20px; }
+    #page-1 .hero .title-wrap {
+      padding: 40px 28px 30px;
+      transform: rotate(-0.8deg);
+    }
+    #page-1 .hero .galatea {
+      font-size: 68px;
+      letter-spacing: 24px;
+    }
+    #page-1 .hero .sub {
+      font-size: 15px;
+      letter-spacing: 10px;
+      margin-top: 12px;
+    }
+    #page-1 .hero .desc {
+      font-size: 17px;
+      margin-top: 14px;
+    }
+    #page-1 .tags {
+      gap: 12px;
+      margin: 28px 0;
+    }
+    #page-1 .tags .tag {
+      font-size: 14px;
+      padding: 8px 26px;
+      letter-spacing: 4px;
+    }
+
+    /* ===== 第一页呼吸灯边框（空心立体） ===== */
+    #page-1 .container {
+      position: relative;
+      border: none;
+      background: none;
+    }
+    /* 实际渐变边框（mask-composite 只留边框区域） */
+    #page-1 .container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      border: 3px solid transparent;
+      background:
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--light-pink), var(--pink)) border-box;
+      background-size: 300% 300%;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      z-index: -2;
+      pointer-events: none;
+      animation: borderBreathe 5s ease-in-out infinite;
+    }
+    /* 外发光层 — 立体感 */
+    #page-1 .container::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--pink), var(--cyan), var(--purple));
+      background-size: 300% 300%;
+      z-index: -3;
+      filter: blur(14px);
+      opacity: 0;
+      animation: outerGlow 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    /* 内层高光线 — 立体纵深感 */
+    .page-1-inner-edge {
+      position: absolute;
+      inset: 2px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background:
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        linear-gradient(225deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02), transparent) border-box;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      animation: innerEdge 5s ease-in-out infinite;
+    }
+    @keyframes borderBreathe {
+      0%, 100% { background-position: 0% 50%; filter: drop-shadow(0 0 3px rgba(255,51,136,0.15)); }
+      25% { filter: drop-shadow(0 0 6px rgba(0,221,255,0.2)) drop-shadow(0 0 14px rgba(255,51,136,0.12)); }
+      50% { background-position: 100% 50%; filter: drop-shadow(0 0 8px rgba(0,221,255,0.3)) drop-shadow(0 0 20px rgba(255,51,136,0.15)) drop-shadow(0 0 32px rgba(153,85,221,0.1)); }
+      75% { filter: drop-shadow(0 0 6px rgba(0,221,255,0.2)) drop-shadow(0 0 14px rgba(255,51,136,0.12)); }
+    }
+    @keyframes outerGlow {
+      0%, 100% { opacity: 0; }
+      25% { opacity: 0.2; }
+      50% { opacity: 0.35; background-position: 100% 50%; }
+      75% { opacity: 0.2; }
+    }
+    @keyframes innerEdge {
+      0%, 100% { opacity: 0; }
+      25% { opacity: 0.15; }
+      50% { opacity: 0.3; }
+      75% { opacity: 0.15; }
+    }
+
+    /* 入场动画：淡入 + 上浮（通过 .animate-in 控制，每次进入都重播） */
+    #page-1 .container > * {
+      opacity: 0;
+      transform: translateY(36px);
+    }
+    #page-1.animate-in .container > * {
+      animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #page-1.animate-in .hero  { animation-delay: 0.15s; }
+    #page-1.animate-in .tags  { animation-delay: 0.55s; }
+    #page-1.animate-in .tags .tag {
+      opacity: 0;
+      transform: translateY(20px) skewX(-4deg);
+      animation: tagPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #page-1.animate-in .tags .tag:nth-child(1) { animation-delay: 0.70s; }
+    #page-1.animate-in .tags .tag:nth-child(2) { animation-delay: 0.80s; }
+    #page-1.animate-in .tags .tag:nth-child(3) { animation-delay: 0.90s; }
+    #page-1.animate-in .tags .tag:nth-child(4) { animation-delay: 1.00s; }
+    #page-1.animate-in .tags .tag:nth-child(5) { animation-delay: 1.10s; }
+
+    @keyframes fadeFlyIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes tagPopIn {
+      to { opacity: 1; transform: translateY(0) skewX(-4deg); }
+    }
+
+    /* ===== 主标题 ===== */
     .hero {
-      text-align: center;
-      padding: 60px 0 40px;
+      margin-bottom: 32px;
       position: relative;
     }
-    .hero::after {
-      content: "";
-      position: absolute; bottom: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 60px; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    .hero .title-wrap {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255,51,136,0.05), rgba(153,85,221,0.05));
+      border: 2px solid rgba(255,51,136,0.1);
+      padding: 32px 20px 24px;
+      border-radius: 8px;
+      backdrop-filter: blur(6px);
+      transform: rotate(-1deg);
+      box-shadow: 0 0 30px rgba(255,51,136,0.04), 0 0 50px rgba(0,221,255,0.03);
     }
-    .avatar {
-      width: 88px; height: 88px; border-radius: 50%;
-      background: linear-gradient(135deg, #b8860b, #d4a843);
-      margin: 0 auto 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px; color: #fff; letter-spacing: 2px;
-      box-shadow: 0 4px 20px rgba(184,134,11,0.2);
+    .hero .galatea {
+      font-size: 52px; font-weight: 900; letter-spacing: 18px;
+      color: transparent;
+      background: linear-gradient(135deg, var(--pink), var(--light-pink), var(--cyan), var(--purple));
+      background-clip: text; -webkit-background-clip: text;
+      text-shadow: 0 0 25px rgba(255,51,136,0.15), 0 0 40px rgba(0,221,255,0.08);
+      text-align: center;
+      transform: skewX(2deg);
+      line-height: 1;
     }
-    h1 { font-size: 28px; font-weight: 600; letter-spacing: 6px; }
-    .subtitle {
-      color: var(--ink-light); font-size: 14px;
-      margin-top: 6px; letter-spacing: 3px;
+    .hero .sub {
+      font-size: 12px; letter-spacing: 8px; color: var(--light-pink);
+      text-align: center; margin-top: 10px;
+      transform: skewX(2deg);
+      text-shadow: 0 0 12px rgba(255,153,204,0.3);
     }
-    .bio {
-      font-size: 15px; color: var(--ink-light);
-      margin-top: 16px; line-height: 1.6;
-    }
-
-    section { margin: 48px 0; }
-    .section-title {
-      font-size: 14px; font-weight: 600; letter-spacing: 4px;
-      color: var(--accent); margin-bottom: 16px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .section-title::after {
-      content: ""; flex: 1; height: 1px;
-      background: linear-gradient(90deg, var(--border), transparent);
+    .hero .desc {
+      text-align: center; font-size: 15px; color: var(--dim-purple);
+      margin-top: 10px; transform: skewX(2deg);
     }
 
-    .card {
-      background: #fff; border-radius: 8px; padding: 20px 24px;
-      border: 1px solid var(--border); margin-bottom: 12px;
-      transition: box-shadow 0.2s;
+    /* ===== 标签条 ===== */
+    .tags {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+      margin: 24px 0; transform: rotate(-1deg);
     }
-    .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
-    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .card p, .card .meta {
-      font-size: 14px; color: var(--ink-light);
-    }
-
-    .tag-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-    .tag {
-      display: inline-block; padding: 3px 12px; border-radius: 12px;
-      background: var(--accent-light); color: var(--ink);
-      font-size: 13px; text-decoration: none;
-    }
-
-    .key-box {
-      display: flex; gap: 8px; max-width: 360px; margin: 12px 0;
-    }
-    .key-box input {
-      flex: 1; padding: 8px 14px; border: 1px solid var(--border);
-      border-radius: 6px; font-size: 14px; background: #fff; outline: none;
-    }
-    .key-box input:focus { border-color: var(--accent); }
-    .key-box button {
-      padding: 8px 20px; background: var(--accent); color: #fff;
-      border: none; border-radius: 6px; cursor: pointer; font-size: 14px;
-    }
-    .key-box button:hover { opacity: 0.9; }
-    .key-err { color: #c00; font-size: 13px; display: none; margin-top: 4px; }
-
-    .social-links {
-      display: flex; gap: 16px; flex-wrap: wrap;
-      justify-content: center; margin-top: 20px;
-    }
-    .social-links a {
-      color: var(--ink-light); text-decoration: none;
-      font-size: 14px; padding: 6px 14px;
-      border: 1px solid var(--border); border-radius: 20px;
+    .tags .tag {
+      padding: 6px 20px;
+      border-radius: 4px;
+      font-size: 12px; letter-spacing: 3px;
+      transform: skewX(-4deg);
       transition: all 0.2s;
     }
-    .social-links a:hover {
-      color: var(--accent); border-color: var(--accent);
+    .tags .tag:hover { filter: brightness(1.4); }
+    .tag-pink { background: rgba(255,51,136,0.12); border: 1px solid rgba(255,51,136,0.25); color: var(--light-pink); }
+    .tag-cyan { background: rgba(0,221,255,0.12); border: 1px solid rgba(0,221,255,0.25); color: var(--cyan); }
+    .tag-purple { background: rgba(153,85,221,0.12); border: 1px solid rgba(153,85,221,0.25); color: #d4bbff; }
+
+    /* ===== 项目卡片 ===== */
+    .sec-title {
+      font-size: 11px; letter-spacing: 8px;
+      color: var(--dim-cyan); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .sec-title::after {
+      content: ""; flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(255,51,136,0.3), transparent);
     }
 
-    footer {
-      text-align: center; padding: 32px 0;
-      color: var(--ink-light); font-size: 13px;
+    .card-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px;
+    }
+    .card {
+      padding: 18px;
+      background: rgba(255,255,255,0.015);
+      border: 2px solid rgba(255,51,136,0.08);
+      border-radius: 6px;
+      text-decoration: none; color: inherit;
+      position: relative;
+      transition: all 0.3s;
+      backdrop-filter: blur(6px);
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: rgba(0,221,255,0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 0 25px rgba(0,221,255,0.08);
+    }
+    .card:nth-child(odd) { transform: rotate(-1deg); }
+    .card:nth-child(even) { transform: rotate(1deg); }
+    .card:hover:nth-child(odd), .card:hover:nth-child(even) { transform: rotate(0deg) translateY(-4px); }
+
+    .card .name { font-size: 16px; font-weight: 600; color: var(--white); }
+    .card .desc { font-size: 12px; color: var(--cyan); margin-top: 3px; }
+    .card .dots {
+      position: absolute; top: 10px; right: 10px;
+      display: flex; gap: 4px;
+    }
+    .card .dots span {
+      width: 4px; height: 4px; border-radius: 50%;
+    }
+    .card .dots span:nth-child(1) { background: var(--pink); }
+    .card .dots span:nth-child(2) { background: var(--purple); }
+    .card .dots span:nth-child(3) { background: var(--cyan); }
+
+    /* ===== 统计条 ===== */
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+      margin-bottom: 28px;
+      transform: rotate(-1deg);
+    }
+    .stats .s {
+      padding: 16px 8px; text-align: center;
+      border: 1px solid rgba(153,85,221,0.08);
+      background: rgba(153,85,221,0.03);
+      backdrop-filter: blur(4px);
+      border-radius: 2px;
+    }
+    .stats .s .num {
+      font-size: 24px; font-weight: 700;
+      background: linear-gradient(135deg, var(--light-pink), var(--pink));
+      background-clip: text; -webkit-background-clip: text; color: transparent;
+      text-shadow: 0 0 12px rgba(255,153,204,0.08);
+    }
+    .stats .s .lbl {
+      font-size: 10px; color: var(--dim-purple);
+      letter-spacing: 2px; margin-top: 3px;
+    }
+
+    /* ===== 密码门 ===== */
+    .door {
+      margin-top: 20px;
+      border: 2px solid rgba(0,221,255,0.08);
+      background: rgba(0,221,255,0.03);
+      padding: 28px 24px; text-align: center;
+      position: relative;
+      transform: rotate(-0.5deg);
+      backdrop-filter: blur(6px);
+      border-radius: 6px;
+    }
+    .door .glow-bar {
+      position: absolute; top: 0; left: 15%; width: 70%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), transparent);
+      filter: blur(3px);
+    }
+    .door .hint {
+      font-size: 12px; color: var(--dim-cyan); margin-bottom: 14px;
+    }
+    .door .hint span { color: var(--pink); text-shadow: 0 0 8px rgba(255,51,136,0.2); }
+    .key-box { display: flex; gap: 8px; max-width: 400px; margin: 0 auto; }
+    .key-box input {
+      flex: 1; padding: 12px 16px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,51,136,0.1);
+      color: var(--cyan); font-size: 16px; outline: none;
+      letter-spacing: 6px;
+      border-radius: 2px;
+    }
+    .key-box input:focus { border-color: var(--cyan); box-shadow: 0 0 16px rgba(0,221,255,0.12); }
+    .key-box button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: #fff; border: none; cursor: pointer;
+      font-size: 12px; letter-spacing: 4px;
+      transition: all 0.2s;
+      border-radius: 2px;
+    }
+    .key-box button:hover { filter: brightness(1.3); box-shadow: 0 0 18px rgba(255,51,136,0.12); }
+    .key-err { font-size: 11px; color: var(--pink); display: none; margin-top: 8px; }
+
+    /* ===== Footer ===== */
+    .foot {
+      margin-top: 32px; padding-top: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.02);
+    }
+    .foot a {
+      color: var(--dim-purple); text-decoration: none;
+      font-size: 12px; margin-right: 18px; transition: color 0.2s;
+    }
+    .foot a:hover { color: var(--cyan); }
+    .foot .cp {
+      font-size: 10px; color: rgba(240,240,255,0.08);
     }
 
     @media (max-width: 520px) {
-      .container { padding: 32px 16px; }
-      h1 { font-size: 22px; }
+      .page { padding: 16px; }
+      .container { padding: 16px 12px; }
+      #page-1 .hero .galatea { font-size: 34px; letter-spacing: 10px; }
+      #page-1 .hero .sub { font-size: 12px; letter-spacing: 6px; }
+      #page-1 .hero .desc { font-size: 14px; }
+      #page-1 .tags .tag { font-size: 11px; padding: 6px 16px; letter-spacing: 2px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .corner, .cyber-border { display: none; }
+    }
+
+    /* 翻页提示箭头 */
+    .scroll-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      color: var(--dim-cyan);
+      font-size: 10px;
+      letter-spacing: 4px;
+      animation: hintBounce 2s ease-in-out infinite;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .scroll-hint.hidden { opacity: 0; transition: opacity 0.6s; pointer-events: none; }
+    @keyframes hintBounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
     }
   </style>
 </head>
 <body>
-<div class="container">
 
+<!-- 赛博边框（z-index=0，在内容下方，中间完全透明） -->
+<div class="cyber-border"></div>
+<div class="corner corner-tl"><div class="dot"></div></div>
+<div class="corner corner-tr"><div class="dot"></div></div>
+<div class="corner corner-bl"><div class="dot"></div></div>
+<div class="corner corner-br"><div class="dot"></div></div>
+
+<canvas id="particle-canvas"></canvas>
+<div class="bg"></div>
+<div class="bg-grid"></div>
+
+<div class="scroll-wrap">
+
+<div class="page animate-in" id="page-1">
+  <div class="page-1-inner-edge"></div>
+  <div class="container">
+
+  <!-- 主标题 -->
   <div class="hero">
-    <div class="avatar">G</div>
-    <h1>Galatea</h1>
-    <p class="subtitle">学生 · 文学 · 技术</p>
-    <p class="bio">
-      好读书，不求甚解。<br>
-      此站录读书所得、课业所思，与技术探索。
-    </p>
+    <div class="title-wrap">
+      <h1 class="galatea">GALATEA</h1>
+      <p class="sub mono">✦ STUDENT · LITERATURE · TECH ✦</p>
+      <p class="desc">好读书，不求甚解。录所得、所思，与技术探索。</p>
+    </div>
   </div>
 
-  <section>
-    <div class="section-title">关于</div>
-    <div class="card">
-      <p>这里是一个人的小站，存放一些文字与代码。</p>
-    </div>
-  </section>
+  <!-- 标签 -->
+  <div class="tags">
+    <span class="tag tag-pink mono">#唐诗</span>
+    <span class="tag tag-cyan mono">#古代文论</span>
+    <span class="tag tag-purple mono">#自动化</span>
+    <span class="tag tag-pink mono">#Node.js</span>
+    <span class="tag tag-cyan mono">#API</span>
+  </div>
 
-  <section>
-    <div class="section-title">🔑 私藏</div>
-    <p style="font-size:14px;color:var(--ink-light);margin-bottom:8px">
-      输入密钥进入私人页面
-    </p>
+  </div>
+</div>
+
+<div class="page" id="page-2">
+  <div class="container">
+
+  <!-- 项目卡片 -->
+  <div class="sec-title mono">PROJECTS</div>
+  <div class="card-grid">
+    <a class="card" href="#">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="name">座位预约</div>
+      <div class="desc">ZJU紫金港 · AES加密 · 钉钉通知</div>
+    </a>
+    <a class="card" href="#">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="name">自动签到</div>
+      <div class="desc">学在浙大 · 雷达定位 · 守护进程</div>
+    </a>
+    <a class="card" href="#">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="name">个人网站</div>
+      <div class="desc">GitHub Pages · 霓虹主题</div>
+    </a>
+    <a class="card" href="#">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="name">私藏笔记</div>
+      <div class="desc">读书摘录 · 学习记录</div>
+    </a>
+  </div>
+
+  <!-- 统计 -->
+  <div class="stats">
+    <div class="s"><div class="num mono">4</div><div class="lbl mono">PROJECTS</div></div>
+    <div class="s"><div class="num mono">∞</div><div class="lbl mono">CURIOSITY</div></div>
+    <div class="s"><div class="num mono">1</div><div class="lbl mono">SITE</div></div>
+    <div class="s"><div class="num mono">✦</div><div class="lbl mono">ONLINE</div></div>
+  </div>
+
+  <!-- 密码门 -->
+  <div class="door">
+    <div class="glow-bar"></div>
+    <div class="hint mono">// <span>UNLOCK</span> 私藏区域</div>
     <div class="key-box">
-      <input type="password" id="key-input" placeholder="密钥" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
-      <button onclick="unlock()">进入</button>
+      <input type="password" id="k" placeholder="NEON KEY" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()" />
+      <button onclick="unlock()">ENTER</button>
     </div>
-    <p class="key-err" id="key-err">密钥错误</p>
-  </section>
-
-  <div class="social-links">
-    <a href="https://github.com/GalateaYe749" target="_blank">GitHub</a>
-    <a href="mailto:galatea@zju.edu.cn">Email</a>
+    <p class="key-err mono" id="err">// INVALID KEY</p>
   </div>
+
+  <div class="foot">
+    <div>
+      <a href="https://github.com/GalateaYe749" target="_blank" class="mono">[GitHub]</a>
+      <a href="mailto:galatea@zju.edu.cn" class="mono">[Email]</a>
+    </div>
+    <div class="cp mono">© 2026 GALATEA</div>
+  </div>
+
+  </div>
+</div>
 
 </div>
 
-<footer>© 2026 Galatea</footer>
+<!-- 翻页提示 -->
+<div class="scroll-hint mono" id="scrollHint">▼ SCROLL ▼</div>
 
 <script>
-async function unlock() {
-  const input = document.getElementById("key-input").value;
-  const hash = Array.from(new Uint8Array(
-    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
-  )).map(b => b.toString(16).padStart(2,"0")).join("");
-  const h1 = "a853266afd09704859eabc86c9ca7c3a";
-  const h2 = "fc8f1408672359acb389f195424c22a2";
-  if (hash === h1 + h2) {
-    sessionStorage.setItem("auth", "1");
-    location.href = "private/";
+// ===== 翻页提示隐藏 =====
+const scrollWrap = document.querySelector('.scroll-wrap');
+const hint = document.getElementById('scrollHint');
+scrollWrap.addEventListener('scroll', () => {
+  if (scrollWrap.scrollTop > 40) {
+    hint.classList.add('hidden');
   } else {
-    document.getElementById("key-err").style.display = "block";
+    hint.classList.remove('hidden');
+  }
+});
+
+// ===== 每次翻到第一页都重播放入动画 =====
+const page1 = document.getElementById('page-1');
+const page1Observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // 先移除类强制重置
+      page1.classList.remove('animate-in');
+      // 强制 reflow 让浏览器重置动画状态
+      void page1.offsetWidth;
+      // 再加上类触发动画
+      page1.classList.add('animate-in');
+    }
+  });
+}, { threshold: 0.3 });
+page1Observer.observe(page1);
+
+// ===== 鼠标跟随星尘粒子 =====
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const particles = [];
+const particleCount = 280;
+let mouse = { x: null, y: null };
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.7;
+    this.vy = (Math.random() - 0.5) * 0.7;
+    this.size = Math.random() * 2.2 + 0.6;
+    this.opacity = Math.random() * 0.5 + 0.2;
+    this.color = [
+      'rgba(255,51,136, ' + (Math.random() * 0.5 + 0.2) + ')',
+      'rgba(0,221,255, ' + (Math.random() * 0.5 + 0.2) + ')',
+      'rgba(153,85,221, ' + (Math.random() * 0.5 + 0.2) + ')'
+    ][Math.floor(Math.random() * 3)];
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+    if (mouse.x != null && mouse.y != null) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 130) {
+        const force = (130 - dist) / 130;
+        this.x += dx * force * 0.025;
+        this.y += dy * force * 0.025;
+        this.opacity = Math.min(0.7, this.opacity + 0.06);
+      } else {
+        this.opacity -= 0.01;
+        if (this.opacity < 0.2) this.opacity = 0.2;
+      }
+    }
+  }
+  draw() {
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = this.color;
+    ctx.fill();
+    ctx.shadowBlur = 0;
   }
 }
+
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle());
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 </script>
+
 </body>
 </html>
