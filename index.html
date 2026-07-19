@@ -617,11 +617,11 @@
       gap: 8px;
       line-height: 1.1;
     }
-    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 8px rgba(255,51,136,0.4), 0 0 20px rgba(255,51,136,0.15); }
-    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 8px rgba(0,221,255,0.4), 0 0 20px rgba(0,221,255,0.15); }
-    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 8px rgba(153,85,221,0.4), 0 0 20px rgba(153,85,221,0.15); }
-    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 8px rgba(255,153,204,0.4), 0 0 20px rgba(255,153,204,0.15); }
-    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 8px rgba(255,190,110,0.4), 0 0 20px rgba(255,190,110,0.15); }
+    .ns-pink .neon-sign-title { color: var(--pink); filter: url(#outer-pink); }
+    .ns-cyan .neon-sign-title { color: var(--cyan); filter: url(#outer-cyan); }
+    .ns-purple .neon-sign-title { color: #d4bbff; filter: url(#outer-purple); }
+    .ns-lpink .neon-sign-title { color: var(--light-pink); filter: url(#outer-lpink); }
+    .ns-gold .neon-sign-title { color: #ffbe6e; filter: url(#outer-gold); }
 
     /* 边框光晕加强 */
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)); }
@@ -723,6 +723,42 @@
       50% { transform: translateX(-50%) translateY(6px); }
     }
   </style>
+
+<!-- SVG 字体外轮廓滤镜：先膨胀合并笔画，再侵蚀只留外轮廓 -->
+<svg style="position:absolute;width:0;height:0;" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="outer-pink" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="fat"/>
+      <feMorphology operator="erode" radius="3" in="fat" result="merged"/>
+      <feMorphology operator="dilate" radius="1.5" in="merged" result="edge"/>
+      <feComposite operator="out" in="edge" in2="merged"/>
+    </filter>
+    <filter id="outer-cyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology operator="dilate" radius="3.5" in="SourceAlpha" result="fat"/>
+      <feMorphology operator="erode" radius="2.5" in="fat" result="merged"/>
+      <feMorphology operator="dilate" radius="1.5" in="merged" result="edge"/>
+      <feComposite operator="out" in="edge" in2="merged"/>
+    </filter>
+    <filter id="outer-purple" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology operator="dilate" radius="3.5" in="SourceAlpha" result="fat"/>
+      <feMorphology operator="erode" radius="2.5" in="fat" result="merged"/>
+      <feMorphology operator="dilate" radius="1.5" in="merged" result="edge"/>
+      <feComposite operator="out" in="edge" in2="merged"/>
+    </filter>
+    <filter id="outer-lpink" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="fat"/>
+      <feMorphology operator="erode" radius="2" in="fat" result="merged"/>
+      <feMorphology operator="dilate" radius="1.5" in="merged" result="edge"/>
+      <feComposite operator="out" in="edge" in2="merged"/>
+    </filter>
+    <filter id="outer-gold" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="fat"/>
+      <feMorphology operator="erode" radius="2" in="fat" result="merged"/>
+      <feMorphology operator="dilate" radius="1.5" in="merged" result="edge"/>
+      <feComposite operator="out" in="edge" in2="merged"/>
+    </filter>
+  </defs>
+</svg>
 </head>
 <body>
 
