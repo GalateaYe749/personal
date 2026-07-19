@@ -93,7 +93,7 @@
         linear-gradient(#fff 0 0);
       mask-composite: exclude;
       animation: borderGlow 5s ease-in-out infinite;
-      opacity: 0.7;
+      opacity: 0.5;
     }
     @keyframes borderGlow {
       0%,100% { filter: drop-shadow(0 0 6px rgba(255,51,136,0.1)); }
@@ -624,39 +624,20 @@
     }
 
     @keyframes neonFlicker1 {
-      0%, 100% { opacity: 1; }
-      4% { opacity: 0.5; }
-      8% { opacity: 1; }
-      14% { opacity: 0.3; }
-      18% { opacity: 0.9; }
-      22% { opacity: 0.4; }
-      28% { opacity: 1; }
-      35% { opacity: 0.55; }
-      42% { opacity: 1; }
-      50% { opacity: 0.35; }
-      56% { opacity: 0.85; }
-      62% { opacity: 0.45; }
-      70% { opacity: 1; }
-      78% { opacity: 0.5; }
-      85% { opacity: 1; }
-      92% { opacity: 0.4; }
+      0%, 70% { opacity: 1; }
+      72% { opacity: 0.4; }
+      74% { opacity: 1; }
+      76% { opacity: 0.5; }
+      79% { opacity: 1; }
+      92% { opacity: 1; }
+      94% { opacity: 0.3; }
+      96% { opacity: 0.9; }
+      98% { opacity: 0.5; }
     }
 
-    @keyframes neonFlicker2 {
-      0%, 100% { opacity: 0.7; }
-      6% { opacity: 0.25; }
-      12% { opacity: 0.65; }
-      18% { opacity: 0.2; }
-      25% { opacity: 0.6; }
-      32% { opacity: 0.3; }
-      40% { opacity: 0.7; }
-      48% { opacity: 0.2; }
-      55% { opacity: 0.5; }
-      63% { opacity: 0.3; }
-      72% { opacity: 0.7; }
-      80% { opacity: 0.15; }
-      88% { opacity: 0.6; }
-      95% { opacity: 0.3; }
+    @keyframes neonBreath {
+      0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 6px currentColor); }
+      50% { opacity: 0.9; filter: drop-shadow(0 0 18px currentColor) drop-shadow(0 0 6px currentColor); }
     }
 
     .neon-sign::before {
@@ -683,8 +664,8 @@
       border-radius: 8px;
       border: 2px solid currentColor;
       pointer-events: none;
-      opacity: 0.7;
-      animation: neonFlicker2 8s infinite;
+      opacity: 0.5;
+      animation: neonBreath 4s ease-in-out infinite;
       filter: drop-shadow(0 0 8px currentColor);
     }
     .neon-border-pink::before {
@@ -829,16 +810,16 @@
 
     /* 霓虹呼吸 + 微闪 */
     @keyframes neonPulsePink {
-      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(255,51,136,0.3)); }
+      0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(255,51,136,0.3)); }
       45% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,51,136,0.5)); }
       48% { opacity: 0.6; }
       50% { opacity: 1; }
-      52% { opacity: 0.7; }
+      52% { opacity: 0.5; }
       55% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,51,136,0.5)); }
       70% { opacity: 0.9; }
     }
     @keyframes neonPulseCyan {
-      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(0,221,255,0.3)); }
+      0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(0,221,255,0.3)); }
       40% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
       43% { opacity: 0.5; }
       45% { opacity: 1; }
@@ -849,19 +830,19 @@
     @keyframes neonPulsePurple {
       0%, 100% { opacity: 0.65; filter: drop-shadow(0 0 4px rgba(153,85,221,0.3)); }
       50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(153,85,221,0.5)); }
-      53% { opacity: 0.7; }
+      53% { opacity: 0.5; }
       55% { opacity: 1; filter: drop-shadow(0 0 10px rgba(153,85,221,0.5)); }
       60% { opacity: 0.9; }
     }
     @keyframes neonPulseLpink {
-      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(255,153,204,0.3)); }
+      0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(255,153,204,0.3)); }
       30% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255,153,204,0.5)); }
       33% { opacity: 0.5; }
       35% { opacity: 1; }
       50% { opacity: 0.85; }
     }
     @keyframes neonPulseGold {
-      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(255,190,110,0.3)); }
+      0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(255,190,110,0.3)); }
       35% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255,190,110,0.5)); }
       55% { opacity: 0.85; }
     }
