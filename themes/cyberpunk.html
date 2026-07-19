@@ -576,16 +576,18 @@
     .ns-gold.neon-sign::after { background: radial-gradient(ellipse, rgba(255,190,110,0.2), transparent 70%); }
 
     @keyframes textFlicker {
-      0%, 48%, 52%, 96%, 100% { opacity: 1; text-shadow: inherit; }
-      50% { opacity: 0.2; text-shadow: 0 0 6px currentColor; }
-      98% { opacity: 0.3; text-shadow: 0 0 8px currentColor; }
+      0%, 80% { opacity: 1; text-shadow: inherit; }
+      83% { opacity: 0.3; text-shadow: 0 0 6px currentColor; }
+      85% { opacity: 0.9; text-shadow: 0 0 4px currentColor; }
+      88% { opacity: 0.4; text-shadow: 0 0 8px currentColor; }
+      91% { opacity: 1; text-shadow: inherit; }
     }
 
     .neon-sign-title.flicker {
-      animation: textFlicker 3s ease-in-out infinite;
+      animation: textFlicker 8s ease-in-out infinite;
     }
     .neon-sign-title.flicker-delay {
-      animation: textFlicker 3.5s ease-in-out 0.7s infinite;
+      animation: textFlicker 9s ease-in-out 3s infinite;
     }
 
     @keyframes neonFlicker1 {
