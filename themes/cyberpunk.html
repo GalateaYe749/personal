@@ -14,9 +14,10 @@
       --purple: #9955dd;
       --light-pink: #ff99cc;
       --white: #f0f0ff;
-      --dim-pink: rgba(255,51,136,0.4);
+      --dim-pink: rgba(0,221,255,0.65);
       --dim-cyan: rgba(0,221,255,0.4);
       --dim-purple: #ffbe6e;
+      --neon-cyan: #00e5ff;
     }
 
     body {
@@ -157,12 +158,12 @@
     .tags .tag:hover { filter: brightness(1.4); }
     .tag-pink { background: rgba(255,51,136,0.12); border: 1px solid rgba(255,51,136,0.25); color: var(--light-pink); }
     .tag-cyan { background: rgba(0,221,255,0.12); border: 1px solid rgba(0,221,255,0.25); color: var(--cyan); }
-    .tag-purple { background: rgba(153,85,221,0.12); border: 1px solid rgba(153,85,221,0.25); color: #d4bbff; }
+    .tag-purple { background: rgba(0,221,255,0.12); border: 1px solid rgba(0,221,255,0.25); color: var(--neon-cyan); }
 
     /* ===== 项目卡片 ===== */
     .sec-title {
       font-size: 11px; letter-spacing: 8px;
-      color: var(--dim-cyan); margin-bottom: 12px;
+      color: var(--neon-cyan); margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px;
     }
     .sec-title::after {
