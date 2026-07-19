@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Galatea · Neon City</title>
   <style>
+    /* 引入华文彩云字体 */
+    @font-face {
+      font-family: 'STCaiyun';
+      src: url('./assets/STCAIYUN.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
@@ -630,23 +638,21 @@
       line-height: 1.1;
     }
     .neon-sign-title {
-      font-size: 34px;
-      font-weight: 800;
-      letter-spacing: 14px;
+      font-family: 'STCaiyun'; /* 华文彩云字体，天生镂空 */
+      font-size: 38px;
+      font-weight: normal;
+      letter-spacing: 16px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
       line-height: 1.1;
-      color: var(--bg); /* 内部填充和背景同色 */
-      -webkit-text-stroke: 1.8px currentColor; /* 彩色描边 */
-      paint-order: stroke; /* 先画描边，再画填充，避免描边侵入内部 */
     }
-    .ns-pink .neon-sign-title { -webkit-text-stroke-color: var(--pink); }
-    .ns-cyan .neon-sign-title { -webkit-text-stroke-color: var(--cyan); }
-    .ns-purple .neon-sign-title { -webkit-text-stroke-color: #d4bbff; }
-    .ns-lpink .neon-sign-title { -webkit-text-stroke-color: var(--light-pink); }
-    .ns-gold .neon-sign-title { -webkit-text-stroke-color: #ffbe6e; }
+    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 4px rgba(255,51,136,0.5); }
+    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 4px rgba(0,221,255,0.5); }
+    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 4px rgba(153,85,221,0.5); }
+    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 4px rgba(255,153,204,0.5); }
+    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 4px rgba(255,190,110,0.5); }
 
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)) !important; }
     .neon-border-cyan::before { filter: drop-shadow(0 0 8px rgba(0,221,255,0.4)) drop-shadow(0 0 3px rgba(0,221,255,0.2)) !important; }
