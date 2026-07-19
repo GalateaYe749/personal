@@ -753,14 +753,23 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// ===== 密码门解锁 =====
-function unlock() {
+// ===== 密码门解锁（服务端验证） =====
+async function unlock() {
   const input = document.getElementById('k').value;
-  if (input === 'GalateaYe') {
-    location.href = 'private/galatea/';
-  } else if (input === 'EasonQian') {
-    location.href = 'private/eason/';
-  } else {
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: input })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      location.href = 'private/' + data.zone + '/';
+    } else {
+      document.getElementById('err').style.display = 'block';
+      setTimeout(() => document.getElementById('err').style.display = 'none', 2000);
+    }
+  } catch (e) {
     document.getElementById('err').style.display = 'block';
     setTimeout(() => document.getElementById('err').style.display = 'none', 2000);
   }
