@@ -682,6 +682,22 @@ window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
+
+// ===== 密码门解锁 =====
+async function unlock() {
+  const input = document.getElementById('k').value;
+  const hash = Array.from(new Uint8Array(
+    await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+  )).map(b => b.toString(16).padStart(2,'0')).join('');
+  const h1 = 'a853266afd09704859eabc86c9ca7c3a';
+  const h2 = 'fc8f1408672359acb389f195424c22a2';
+  if (hash === h1 + h2) {
+    sessionStorage.setItem('auth', '1');
+    location.href = 'private/';
+  } else {
+    document.getElementById('err').style.display = 'block';
+  }
+}
 </script>
 
 </body>
