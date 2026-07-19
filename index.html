@@ -562,6 +562,30 @@
     }
     #page-2 .container { max-width: 820px; width: 100%; }
 
+    /* 第二页灯牌入场动画 */
+    @keyframes signSlideInLeft {
+      0% { opacity: 0; transform: translateX(-80px) scale(0.9); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes signSlideInRight {
+      0% { opacity: 0; transform: translateX(80px) scale(0.9); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes signSlideInUp {
+      0% { opacity: 0; transform: translateY(60px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    #page-2.animate-in .neon-sign {
+      animation-fill-mode: forwards;
+      opacity: 0;
+    }
+    #page-2.animate-in .neon-sign:nth-child(1) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
+    #page-2.animate-in .neon-sign:nth-child(2) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.25s forwards; }
+    #page-2.animate-in .neon-sign:nth-child(3) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s forwards; }
+    #page-2.animate-in .neon-sign:nth-child(4) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
+    #page-2.animate-in .neon-sign:nth-child(5) { animation: signSlideInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.7s forwards; }
+
     .neon-signs {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1256,7 +1280,7 @@ function unlock() {
 
 <script>
 // 翻页过渡动画
-const observer = new IntersectionObserver((entries) => {
+const fadeObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.remove('hidden');
@@ -1267,8 +1291,21 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.2 });
 
 document.querySelectorAll('.page').forEach(page => {
-  observer.observe(page);
+  fadeObserver.observe(page);
 });
+
+// 第二页灯牌入场动画
+const page2 = document.getElementById('page-2');
+const signObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      page2.classList.remove('animate-in');
+      void page2.offsetWidth;
+      page2.classList.add('animate-in');
+    }
+  });
+}, { threshold: 0.3 });
+signObserver.observe(page2);
 </script>
 
 </body>
