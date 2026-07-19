@@ -978,8 +978,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const particles = [];
-const particleCount = 160;
-const mouse = { x: -999, y: -999, radius: 150 };
+const particleCount = 250;
+const mouse = { x: -999, y: -999, radius: 180 };
 let time = 0;
 
 // 粒子颜色池
@@ -993,7 +993,7 @@ for (let i = 0; i < 6; i++) {
     y: Math.random() * canvas.height,
     radius: 180 + Math.random() * 280,
     color: ['rgba(255,51,136,', 'rgba(0,221,255,', 'rgba(153,85,221,', 'rgba(255,153,204,'][i % 4],
-    opacity: 0.08 + Math.random() * 0.06,
+    opacity: 0.15 + Math.random() * 0.15,
     speedX: (Math.random() - 0.5) * 0.15,
     speedY: (Math.random() - 0.5) * 0.15,
     phase: Math.random() * Math.PI * 2
@@ -1007,10 +1007,10 @@ class Particle {
   reset() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 2.5 + 0.3;
+    this.size = Math.random() * 3 + 0.5;
     this.baseSize = this.size;
-    this.speedX = (Math.random() - 0.5) * 0.4;
-    this.speedY = (Math.random() - 0.5) * 0.4;
+    this.speedX = (Math.random() - 0.5) * 0.6;
+    this.speedY = (Math.random() - 0.5) * 0.6;
     this.color = palette[Math.floor(Math.random() * palette.length)];
     this.phase = Math.random() * Math.PI * 2;
     this.twinkleSpeed = 0.02 + Math.random() * 0.04;
@@ -1040,7 +1040,7 @@ class Particle {
   draw() {
     ctx.globalAlpha = this.currentOpacity;
     ctx.fillStyle = this.color;
-    ctx.shadowBlur = this.size * 4;
+    ctx.shadowBlur = this.size * 8;
     ctx.shadowColor = this.color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -1053,7 +1053,7 @@ class Particle {
 // 流星
 let shootingStars = [];
 function spawnShootingStar() {
-  if (Math.random() < 0.03 && shootingStars.length < 2) {
+  if (Math.random() < 0.05 && shootingStars.length < 3) {
     shootingStars.push({
       x: Math.random() * canvas.width,
       y: -20,
@@ -1096,8 +1096,8 @@ function animate() {
       const dx = particles[a].x - particles[b].x;
       const dy = particles[a].y - particles[b].y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 100) {
-        const alpha = (1 - dist / 100) * 0.12;
+      if (dist < 120) {
+        const alpha = (1 - dist / 120) * 0.2;
         ctx.beginPath();
         ctx.strokeStyle = `rgba(200,200,255,${alpha})`;
         ctx.lineWidth = 0.4;
