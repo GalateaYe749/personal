@@ -228,24 +228,26 @@
       75% { opacity: 0.15; }
     }
 
-    /* 入场动画：淡入 + 上浮 */
+    /* 入场动画：淡入 + 上浮（通过 .animate-in 控制，每次进入都重播） */
     #page-1 .container > * {
       opacity: 0;
       transform: translateY(36px);
+    }
+    #page-1.animate-in .container > * {
       animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    #page-1 .hero  { animation-delay: 0.15s; }
-    #page-1 .tags  { animation-delay: 0.55s; }
-    #page-1 .tags .tag {
+    #page-1.animate-in .hero  { animation-delay: 0.15s; }
+    #page-1.animate-in .tags  { animation-delay: 0.55s; }
+    #page-1.animate-in .tags .tag {
       opacity: 0;
       transform: translateY(20px) skewX(-4deg);
       animation: tagPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    #page-1 .tags .tag:nth-child(1) { animation-delay: 0.70s; }
-    #page-1 .tags .tag:nth-child(2) { animation-delay: 0.80s; }
-    #page-1 .tags .tag:nth-child(3) { animation-delay: 0.90s; }
-    #page-1 .tags .tag:nth-child(4) { animation-delay: 1.00s; }
-    #page-1 .tags .tag:nth-child(5) { animation-delay: 1.10s; }
+    #page-1.animate-in .tags .tag:nth-child(1) { animation-delay: 0.70s; }
+    #page-1.animate-in .tags .tag:nth-child(2) { animation-delay: 0.80s; }
+    #page-1.animate-in .tags .tag:nth-child(3) { animation-delay: 0.90s; }
+    #page-1.animate-in .tags .tag:nth-child(4) { animation-delay: 1.00s; }
+    #page-1.animate-in .tags .tag:nth-child(5) { animation-delay: 1.10s; }
 
     @keyframes fadeFlyIn {
       to { opacity: 1; transform: translateY(0); }
@@ -482,7 +484,7 @@
 
 <div class="scroll-wrap">
 
-<div class="page" id="page-1">
+<div class="page animate-in" id="page-1">
   <div class="page-1-inner-edge"></div>
   <div class="container">
 
@@ -581,6 +583,22 @@ scrollWrap.addEventListener('scroll', () => {
     hint.classList.remove('hidden');
   }
 });
+
+// ===== 每次翻到第一页都重播放入动画 =====
+const page1 = document.getElementById('page-1');
+const page1Observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // 先移除类强制重置
+      page1.classList.remove('animate-in');
+      // 强制 reflow 让浏览器重置动画状态
+      void page1.offsetWidth;
+      // 再加上类触发动画
+      page1.classList.add('animate-in');
+    }
+  });
+}, { threshold: 0.3 });
+page1Observer.observe(page1);
 
 // ===== 鼠标跟随星尘粒子 =====
 const canvas = document.getElementById('particle-canvas');
