@@ -629,11 +629,32 @@
       gap: 8px;
       line-height: 1.1;
     }
-    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 6px rgba(255,51,136,0.35); }
-    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 6px rgba(0,221,255,0.35); }
-    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 6px rgba(153,85,221,0.35); }
-    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 6px rgba(255,153,204,0.35); }
-    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 6px rgba(255,190,110,0.35); }
+    .neon-sign-title {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.1;
+      position: relative;
+    }
+    .neon-sign-title::before {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: scale(0.88);
+      transform-origin: left center;
+      color: var(--bg);
+      z-index: 2;
+    }
+    .ns-pink .neon-sign-title { color: var(--pink); }
+    .ns-cyan .neon-sign-title { color: var(--cyan); }
+    .ns-purple .neon-sign-title { color: #d4bbff; }
+    .ns-lpink .neon-sign-title { color: var(--light-pink); }
+    .ns-gold .neon-sign-title { color: #ffbe6e; }
 
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)) !important; }
     .neon-border-cyan::before { filter: drop-shadow(0 0 8px rgba(0,221,255,0.4)) drop-shadow(0 0 3px rgba(0,221,255,0.2)) !important; }
@@ -776,7 +797,7 @@
   <div class="neon-signs">
 
     <div class="neon-sign ns-pink neon-border-pink">
-      <div class="neon-sign-title">学习日志</div>
+      <div class="neon-sign-title" data-text="学习日志">学习日志</div>
       <div class="neon-sign-items">
         <a href="#">电气工程基础 · 课程笔记</a>
         <a href="#">自动控制原理 · 要点整理</a>
@@ -785,7 +806,7 @@
     </div>
 
     <div class="neon-sign ns-cyan neon-border-cyan">
-      <div class="neon-sign-title">技术笔记</div>
+      <div class="neon-sign-title" data-text="技术笔记">技术笔记</div>
       <div class="neon-sign-items">
         <a href="#">图书馆预约 API 逆向记录</a>
         <a href="#">自动签到系统搭建</a>
@@ -794,7 +815,7 @@
     </div>
 
     <div class="neon-sign ns-purple neon-border-purple">
-      <div class="neon-sign-title">读书摘录</div>
+      <div class="neon-sign-title" data-text="读书摘录">读书摘录</div>
       <div class="neon-sign-items">
         <a href="#">唐诗经典研读 · 笔记</a>
         <a class="dim" href="#">+ 添加新内容</a>
@@ -802,14 +823,14 @@
     </div>
 
     <div class="neon-sign ns-lpink neon-border-lpink">
-      <div class="neon-sign-title">创作</div>
+      <div class="neon-sign-title" data-text="创作">创作</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
     </div>
 
     <div class="neon-sign ns-gold neon-border-gold">
-      <div class="neon-sign-title">随想</div>
+      <div class="neon-sign-title" data-text="随想">随想</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
