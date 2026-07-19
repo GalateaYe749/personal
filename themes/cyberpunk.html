@@ -154,8 +154,17 @@
 
     /* ===== 第一页呼吸灯边框（空心立体） ===== */
     #page-1 .container {
-      border: 3px solid transparent;
+      position: relative;
+      border: none;
+      background: none;
+    }
+    /* 实际渐变边框（mask-composite 只留边框区域） */
+    #page-1 .container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
       border-radius: 14px;
+      border: 3px solid transparent;
       background:
         linear-gradient(var(--bg), var(--bg)) padding-box,
         linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--light-pink), var(--pink)) border-box;
@@ -168,6 +177,8 @@
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       mask-composite: exclude;
+      z-index: -2;
+      pointer-events: none;
       animation: borderBreathe 5s ease-in-out infinite;
     }
     /* 外发光层 — 立体感 */
@@ -175,21 +186,20 @@
       content: '';
       position: absolute;
       inset: -6px;
-      border-radius: 18px;
+      border-radius: 20px;
       background: linear-gradient(135deg, var(--pink), var(--cyan), var(--purple));
       background-size: 300% 300%;
-      z-index: -2;
-      filter: blur(12px);
+      z-index: -3;
+      filter: blur(14px);
       opacity: 0;
       animation: outerGlow 5s ease-in-out infinite;
       pointer-events: none;
     }
     /* 内层高光线 — 立体纵深感 */
-    #page-1 .container::after {
-      content: '';
+    .page-1-inner-edge {
       position: absolute;
       inset: 2px;
-      border-radius: 11px;
+      border-radius: 12px;
       border: 1px solid transparent;
       background:
         linear-gradient(var(--bg), var(--bg)) padding-box,
@@ -473,6 +483,7 @@
 <div class="scroll-wrap">
 
 <div class="page" id="page-1">
+  <div class="page-1-inner-edge"></div>
   <div class="container">
 
   <!-- 主标题 -->
