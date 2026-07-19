@@ -560,6 +560,27 @@
     .ns-gold.neon-sign::after { background: radial-gradient(ellipse, rgba(255,190,110,0.2), transparent 70%); }
 
     /* 边框（挪到 after 之前，用 before） */
+    @keyframes neonFlicker1 {
+      0%, 100% { opacity: 1; }
+      10% { opacity: 0.85; }
+      22% { opacity: 1; }
+      35% { opacity: 0.8; }
+      48% { opacity: 0.95; }
+      60% { opacity: 0.88; }
+      77% { opacity: 1; }
+      90% { opacity: 0.82; }
+    }
+
+    @keyframes neonFlicker2 {
+      0%, 100% { opacity: 0.7; }
+      15% { opacity: 0.6; }
+      28% { opacity: 0.75; }
+      40% { opacity: 0.65; }
+      57% { opacity: 0.7; }
+      70% { opacity: 0.58; }
+      85% { opacity: 0.68; }
+    }
+
     .neon-sign::before {
       content: '';
       position: absolute;
@@ -575,6 +596,17 @@
         linear-gradient(#fff 0 0);
       mask-composite: exclude;
       pointer-events: none;
+      animation: neonFlicker1 3s infinite;
+    }
+    .neon-sign::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 8px;
+      border: 2px solid currentColor;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: neonFlicker2 2.7s infinite;
     }
     .neon-border-pink::before {
       background: linear-gradient(135deg, var(--pink), #ff66aa, var(--pink)) border-box;
@@ -628,19 +660,52 @@
     .neon-sign-title {
       font-family: 'STCaiyun'; /* 华文彩云字体，天生镂空 */
       font-size: 38px;
-      font-weight: normal;
+      font-weight: 900;
       letter-spacing: 16px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
       line-height: 1.1;
+      -webkit-text-stroke: 0.8px currentColor; /* 加粗镂空轮廓 */
+      paint-order: stroke;
     }
-    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 4px rgba(255,51,136,0.5); }
-    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 4px rgba(0,221,255,0.5); }
-    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 4px rgba(153,85,221,0.5); }
-    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 4px rgba(255,153,204,0.5); }
-    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 4px rgba(255,190,110,0.5); }
+    /* 三层光晕：内圈亮+中圈泛光+外圈弥散，模拟真实霓虹灯管 */
+    .ns-pink .neon-sign-title { 
+      color: var(--pink); 
+      text-shadow: 
+        0 0 2px rgba(255,51,136,0.9),
+        0 0 8px rgba(255,51,136,0.6),
+        0 0 18px rgba(255,51,136,0.3);
+    }
+    .ns-cyan .neon-sign-title { 
+      color: var(--cyan); 
+      text-shadow: 
+        0 0 2px rgba(0,221,255,0.9),
+        0 0 8px rgba(0,221,255,0.6),
+        0 0 18px rgba(0,221,255,0.3);
+    }
+    .ns-purple .neon-sign-title { 
+      color: #d4bbff; 
+      text-shadow: 
+        0 0 2px rgba(153,85,221,0.9),
+        0 0 8px rgba(153,85,221,0.6),
+        0 0 18px rgba(153,85,221,0.3);
+    }
+    .ns-lpink .neon-sign-title { 
+      color: var(--light-pink); 
+      text-shadow: 
+        0 0 2px rgba(255,153,204,0.9),
+        0 0 8px rgba(255,153,204,0.6),
+        0 0 18px rgba(255,153,204,0.3);
+    }
+    .ns-gold .neon-sign-title { 
+      color: #ffbe6e; 
+      text-shadow: 
+        0 0 2px rgba(255,190,110,0.9),
+        0 0 8px rgba(255,190,110,0.6),
+        0 0 18px rgba(255,190,110,0.3);
+    }
 
     /* 边框光晕加强 */
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)); }
