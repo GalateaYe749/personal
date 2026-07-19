@@ -631,31 +631,22 @@
     }
     .neon-sign-title {
       font-size: 34px;
-      font-weight: 900;
+      font-weight: 800;
       letter-spacing: 14px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
       line-height: 1.1;
-      position: relative;
+      color: var(--bg); /* 内部填充和背景同色 */
+      -webkit-text-stroke: 1.8px currentColor; /* 彩色描边 */
+      paint-order: stroke; /* 先画描边，再画填充，避免描边侵入内部 */
     }
-    .neon-sign-title::before {
-      content: attr(data-text);
-      position: absolute;
-      left: 0;
-      top: 0;
-      transform: scale(0.92); /* 调大缩小比例，轮廓更粗 */
-      transform-origin: left center;
-      color: var(--bg);
-      z-index: 2;
-    }
-    /* 底层字加淡淡光晕，轮廓更突出 */
-    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 2px var(--pink); }
-    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 2px var(--cyan); }
-    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 2px #d4bbff; }
-    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 2px var(--light-pink); }
-    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 2px #ffbe6e; }
+    .ns-pink .neon-sign-title { -webkit-text-stroke-color: var(--pink); }
+    .ns-cyan .neon-sign-title { -webkit-text-stroke-color: var(--cyan); }
+    .ns-purple .neon-sign-title { -webkit-text-stroke-color: #d4bbff; }
+    .ns-lpink .neon-sign-title { -webkit-text-stroke-color: var(--light-pink); }
+    .ns-gold .neon-sign-title { -webkit-text-stroke-color: #ffbe6e; }
 
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)) !important; }
     .neon-border-cyan::before { filter: drop-shadow(0 0 8px rgba(0,221,255,0.4)) drop-shadow(0 0 3px rgba(0,221,255,0.2)) !important; }
