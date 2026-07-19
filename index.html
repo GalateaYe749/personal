@@ -135,11 +135,17 @@
         linear-gradient(135deg, rgba(13,7,22,0.55), rgba(13,7,22,0.6)),
         url('./assets/bg-cyberpunk.jpg') center/cover no-repeat;
       filter: blur(3px) brightness(0.8);
-      animation: bgBreath 12s ease-in-out infinite alternate;
+    }
+    .bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+      animation: bgBreath 8s ease-in-out infinite alternate;
+      pointer-events: none;
     }
     @keyframes bgBreath {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(1.04); opacity: 0.9; }
+      0% { opacity: 0.5; }
+      100% { opacity: 0.2; }
     }
 
     .bg-grid {
@@ -1050,37 +1056,29 @@ class Particle {
   }
 }
 
-// 流星 — 从屏幕边缘贯穿到另一边
+// 流星 — 统一从右上往左下划过
 let shootingStars = [];
 function spawnShootingStar() {
   if (Math.random() < 0.04 && shootingStars.length < 2) {
-    const fromSide = Math.floor(Math.random() * 3); // 0:左, 1:上, 2:右
-    let x, y, vx, vy;
-    const angle = (Math.random() * 0.4 + 0.3); // 30°~70° 斜角
-    const speed = 6 + Math.random() * 4;
+    const angle = Math.random() * 0.3 + 0.35; // 35°~55° 斜角
+    const speed = 7 + Math.random() * 4;
     
-    if (fromSide === 0) { // 左到右
-      x = -30;
-      y = Math.random() * canvas.height * 0.6;
-      vx = Math.cos(angle) * speed;
-      vy = Math.sin(angle) * speed;
-    } else if (fromSide === 1) { // 上到下（略左偏）
-      x = Math.random() * canvas.width * 0.8;
-      y = -30;
-      vx = Math.sin(angle) * speed * 0.5;
-      vy = Math.cos(angle) * speed;
-    } else { // 右到左
-      x = canvas.width + 30;
+    // 从右上区域出发（顶部或右侧）
+    const fromRight = Math.random() > 0.5;
+    let x, y, vx, vy;
+    if (fromRight) {
+      x = canvas.width + 20 + Math.random() * 60;
       y = Math.random() * canvas.height * 0.5;
-      vx = -Math.cos(angle) * speed;
-      vy = Math.sin(angle) * speed;
+    } else {
+      x = Math.random() * canvas.width * 0.5 + canvas.width * 0.3;
+      y = -20 - Math.random() * 40;
     }
+    vx = -Math.cos(angle) * speed;
+    vy = Math.sin(angle) * speed;
     
     shootingStars.push({
       x, y, vx, vy,
       length: 80 + Math.random() * 60,
-      life: 1,
-      maxLife: 1,
       color: ['#f0f0ff', '#ff99cc', '#66eeff'][Math.floor(Math.random() * 3)]
     });
   }
