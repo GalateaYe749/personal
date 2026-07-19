@@ -493,13 +493,14 @@
 
     /* ===== GALATEA 标题微闪 ===== */
     @keyframes glitch {
-      0%, 90%, 100% { opacity: 1; transform: skewX(2deg) translate(0); text-shadow: 0 0 25px rgba(255,51,136,0.15), 0 0 40px rgba(0,221,255,0.08); }
-      92% { opacity: 0.9; transform: skewX(2deg) translate(-2px, 1px); text-shadow: 2px 0 var(--cyan), -2px 0 var(--pink); }
-      94% { opacity: 0.95; transform: skewX(2deg) translate(2px, -1px); text-shadow: -2px 0 var(--cyan), 2px 0 var(--pink); }
-      96% { opacity: 1; transform: skewX(2deg) translate(0); text-shadow: 0 0 25px rgba(255,51,136,0.15), 0 0 40px rgba(0,221,255,0.08); }
+      0%, 44%, 50%, 94%, 100% { opacity: 1; transform: skewX(2deg) translate(0); text-shadow: 0 0 25px rgba(255,51,136,0.15), 0 0 40px rgba(0,221,255,0.08); }
+      46% { opacity: 0.9; transform: skewX(2deg) translate(-2px, 1px); text-shadow: 2px 0 var(--cyan), -2px 0 var(--pink); }
+      48% { opacity: 0.95; transform: skewX(2deg) translate(2px, -1px); text-shadow: -2px 0 var(--cyan), 2px 0 var(--pink); }
+      96% { opacity: 0.9; transform: skewX(2deg) translate(-2px, 1px); text-shadow: 2px 0 var(--cyan), -2px 0 var(--pink); }
+      98% { opacity: 0.95; transform: skewX(2deg) translate(2px, -1px); text-shadow: -2px 0 var(--cyan), 2px 0 var(--pink); }
     }
     #page-1.animate-in .hero .galatea {
-      animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards, glitch 8s ease-in-out 2s infinite;
+      animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards, glitch 4s ease-in-out 1s infinite;
     }
       z-index: 100;
       color: var(--dim-cyan);
