@@ -621,50 +621,23 @@
 
         .neon-sign-title {
       font-size: 32px;
-      font-weight: 900;
-      letter-spacing: 8px;
+      font-weight: 700;
+      letter-spacing: 12px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
       color: transparent;
+      paint-order: stroke;
+      -webkit-text-stroke: 2px currentColor;
       line-height: 1.1;
+      text-shadow: none;
     }
-    .ns-pink .neon-sign-title {
-      text-shadow:
-        -2px -2px 0 var(--pink),  2px -2px 0 var(--pink),
-        -2px  2px 0 var(--pink),  2px  2px 0 var(--pink),
-        -2px  0   0 var(--pink),  2px  0   0 var(--pink),
-         0   -2px 0 var(--pink),  0   2px 0 var(--pink);
-    }
-    .ns-cyan .neon-sign-title {
-      text-shadow:
-        -2px -2px 0 var(--cyan),  2px -2px 0 var(--cyan),
-        -2px  2px 0 var(--cyan),  2px  2px 0 var(--cyan),
-        -2px  0   0 var(--cyan),  2px  0   0 var(--cyan),
-         0   -2px 0 var(--cyan),  0   2px 0 var(--cyan);
-    }
-    .ns-purple .neon-sign-title {
-      text-shadow:
-        -2px -2px 0 #d4bbff,  2px -2px 0 #d4bbff,
-        -2px  2px 0 #d4bbff,  2px  2px 0 #d4bbff,
-        -2px  0   0 #d4bbff,  2px  0   0 #d4bbff,
-         0   -2px 0 #d4bbff,  0   2px 0 #d4bbff;
-    }
-    .ns-lpink .neon-sign-title {
-      text-shadow:
-        -2px -2px 0 var(--light-pink),  2px -2px 0 var(--light-pink),
-        -2px  2px 0 var(--light-pink),  2px  2px 0 var(--light-pink),
-        -2px  0   0 var(--light-pink),  2px  0   0 var(--light-pink),
-         0   -2px 0 var(--light-pink),  0   2px 0 var(--light-pink);
-    }
-    .ns-gold .neon-sign-title {
-      text-shadow:
-        -2px -2px 0 #ffbe6e,  2px -2px 0 #ffbe6e,
-        -2px  2px 0 #ffbe6e,  2px  2px 0 #ffbe6e,
-        -2px  0   0 #ffbe6e,  2px  0   0 #ffbe6e,
-         0   -2px 0 #ffbe6e,  0   2px 0 #ffbe6e;
-    }
+    .ns-pink .neon-sign-title { color: transparent; -webkit-text-stroke: 2.5px var(--pink); }
+    .ns-cyan .neon-sign-title { color: transparent; -webkit-text-stroke: 2.5px var(--cyan); }
+    .ns-purple .neon-sign-title { color: transparent; -webkit-text-stroke: 2.5px #d4bbff; }
+    .ns-lpink .neon-sign-title { color: transparent; -webkit-text-stroke: 2.5px var(--light-pink); }
+    .ns-gold .neon-sign-title { color: transparent; -webkit-text-stroke: 2.5px #ffbe6e; }
 
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)) !important; }
     .neon-border-cyan::before { filter: drop-shadow(0 0 8px rgba(0,221,255,0.4)) drop-shadow(0 0 3px rgba(0,221,255,0.2)) !important; }
