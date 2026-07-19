@@ -612,23 +612,38 @@
     /* 边框（挪到 after 之前，用 before） */
     @keyframes neonFlicker1 {
       0%, 100% { opacity: 1; }
-      10% { opacity: 0.85; }
-      22% { opacity: 1; }
-      35% { opacity: 0.8; }
-      48% { opacity: 0.95; }
-      60% { opacity: 0.88; }
-      77% { opacity: 1; }
-      90% { opacity: 0.82; }
+      4% { opacity: 0.5; }
+      8% { opacity: 1; }
+      14% { opacity: 0.3; }
+      18% { opacity: 0.9; }
+      22% { opacity: 0.4; }
+      28% { opacity: 1; }
+      35% { opacity: 0.55; }
+      42% { opacity: 1; }
+      50% { opacity: 0.35; }
+      56% { opacity: 0.85; }
+      62% { opacity: 0.45; }
+      70% { opacity: 1; }
+      78% { opacity: 0.5; }
+      85% { opacity: 1; }
+      92% { opacity: 0.4; }
     }
 
     @keyframes neonFlicker2 {
       0%, 100% { opacity: 0.7; }
-      15% { opacity: 0.6; }
-      28% { opacity: 0.75; }
-      40% { opacity: 0.65; }
-      57% { opacity: 0.7; }
-      70% { opacity: 0.58; }
-      85% { opacity: 0.68; }
+      6% { opacity: 0.25; }
+      12% { opacity: 0.65; }
+      18% { opacity: 0.2; }
+      25% { opacity: 0.6; }
+      32% { opacity: 0.3; }
+      40% { opacity: 0.7; }
+      48% { opacity: 0.2; }
+      55% { opacity: 0.5; }
+      63% { opacity: 0.3; }
+      72% { opacity: 0.7; }
+      80% { opacity: 0.15; }
+      88% { opacity: 0.6; }
+      95% { opacity: 0.3; }
     }
 
     .neon-sign::before {
@@ -646,7 +661,7 @@
         linear-gradient(#fff 0 0);
       mask-composite: exclude;
       pointer-events: none;
-      animation: neonFlicker1 3s infinite;
+      animation: neonFlicker1 2.5s infinite;
     }
     .neon-sign::after {
       content: '';
@@ -656,37 +671,38 @@
       border: 2px solid currentColor;
       pointer-events: none;
       opacity: 0.7;
-      animation: neonFlicker2 2.7s infinite;
+      animation: neonFlicker2 2s infinite;
+      filter: drop-shadow(0 0 8px currentColor);
     }
     .neon-border-pink::before {
       background: linear-gradient(135deg, var(--pink), #ff66aa, var(--pink)) border-box;
       background-size: 200% 200%;
       animation: neonPulsePink 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px rgba(255,51,136,0.3)) drop-shadow(0 0 2px rgba(255,51,136,0.15));
+      filter: drop-shadow(0 0 12px rgba(255,51,136,0.7)) drop-shadow(0 0 24px rgba(255,51,136,0.4));
     }
     .neon-border-cyan::before {
       background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
       background-size: 200% 200%;
       animation: neonPulseCyan 3.5s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px rgba(0,221,255,0.3)) drop-shadow(0 0 2px rgba(0,221,255,0.15));
+      filter: drop-shadow(0 0 12px rgba(0,221,255,0.7)) drop-shadow(0 0 24px rgba(0,221,255,0.4));
     }
     .neon-border-purple::before {
       background: linear-gradient(135deg, var(--purple), #bb77ff, var(--purple)) border-box;
       background-size: 200% 200%;
       animation: neonPulsePurple 4s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px rgba(153,85,221,0.3)) drop-shadow(0 0 2px rgba(153,85,221,0.15));
+      filter: drop-shadow(0 0 12px rgba(153,85,221,0.7)) drop-shadow(0 0 24px rgba(153,85,221,0.4));
     }
     .neon-border-lpink::before {
       background: linear-gradient(135deg, var(--light-pink), #ffbbdd, var(--light-pink)) border-box;
       background-size: 200% 200%;
       animation: neonPulseLpink 2.8s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px rgba(255,153,204,0.3)) drop-shadow(0 0 2px rgba(255,153,204,0.15));
+      filter: drop-shadow(0 0 12px rgba(255,153,204,0.7)) drop-shadow(0 0 24px rgba(255,153,204,0.4));
     }
     .neon-border-gold::before {
       background: linear-gradient(135deg, #ffbe6e, #ffdbaa, #ffbe6e) border-box;
       background-size: 200% 200%;
       animation: neonPulseGold 3.2s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px rgba(255,190,110,0.3)) drop-shadow(0 0 2px rgba(255,190,110,0.15));
+      filter: drop-shadow(0 0 12px rgba(255,190,110,0.7)) drop-shadow(0 0 24px rgba(255,190,110,0.4));
     }
 
     /* 每个灯牌不同角度 — 大都市错落感（加大错落幅度） */
