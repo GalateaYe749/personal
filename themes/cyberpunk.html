@@ -122,6 +122,96 @@
 
     .container { max-width: 720px; margin: 0 auto; padding: 16px 20px; position: relative; z-index: 10; width: 100%; }
 
+    /* ===== 第一页放大 + 动画 + 呼吸灯 ===== */
+    #page-1 .container { max-width: 860px; }
+    #page-1 .hero { margin-bottom: 20px; }
+    #page-1 .hero .title-wrap {
+      padding: 40px 28px 30px;
+      transform: rotate(-0.8deg);
+    }
+    #page-1 .hero .galatea {
+      font-size: 68px;
+      letter-spacing: 24px;
+    }
+    #page-1 .hero .sub {
+      font-size: 15px;
+      letter-spacing: 10px;
+      margin-top: 12px;
+    }
+    #page-1 .hero .desc {
+      font-size: 17px;
+      margin-top: 14px;
+    }
+    #page-1 .tags {
+      gap: 12px;
+      margin: 28px 0;
+    }
+    #page-1 .tags .tag {
+      font-size: 14px;
+      padding: 8px 26px;
+      letter-spacing: 4px;
+    }
+
+    /* 呼吸灯边框 */
+    #page-1 .container::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--light-pink), var(--pink));
+      background-size: 300% 300%;
+      z-index: -1;
+      animation: breathGlow 5s ease-in-out infinite;
+      filter: blur(8px);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    #page-1 .container::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--light-pink), var(--pink));
+      background-size: 300% 300%;
+      z-index: -1;
+      animation: breathGlow 5s ease-in-out infinite;
+      animation-delay: 0.3s;
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    @keyframes breathGlow {
+      0%, 100% { background-position: 0% 50%; opacity: 0.35; }
+      25% { opacity: 0.55; }
+      50% { background-position: 100% 50%; opacity: 0.4; }
+      75% { opacity: 0.55; }
+    }
+
+    /* 入场动画：淡入 + 上浮 */
+    #page-1 .container > * {
+      opacity: 0;
+      transform: translateY(36px);
+      animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #page-1 .hero  { animation-delay: 0.15s; }
+    #page-1 .tags  { animation-delay: 0.55s; }
+    #page-1 .tags .tag {
+      opacity: 0;
+      transform: translateY(20px) skewX(-4deg);
+      animation: tagPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #page-1 .tags .tag:nth-child(1) { animation-delay: 0.70s; }
+    #page-1 .tags .tag:nth-child(2) { animation-delay: 0.80s; }
+    #page-1 .tags .tag:nth-child(3) { animation-delay: 0.90s; }
+    #page-1 .tags .tag:nth-child(4) { animation-delay: 1.00s; }
+    #page-1 .tags .tag:nth-child(5) { animation-delay: 1.10s; }
+
+    @keyframes fadeFlyIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes tagPopIn {
+      to { opacity: 1; transform: translateY(0) skewX(-4deg); }
+    }
+
     /* ===== 主标题 ===== */
     .hero {
       margin-bottom: 32px;
@@ -305,7 +395,10 @@
     @media (max-width: 520px) {
       .page { padding: 16px; }
       .container { padding: 16px 12px; }
-      .hero .galatea { font-size: 32px; letter-spacing: 8px; }
+      #page-1 .hero .galatea { font-size: 34px; letter-spacing: 10px; }
+      #page-1 .hero .sub { font-size: 12px; letter-spacing: 6px; }
+      #page-1 .hero .desc { font-size: 14px; }
+      #page-1 .tags .tag { font-size: 11px; padding: 6px 16px; letter-spacing: 2px; }
       .card-grid { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
       .corner, .cyber-border { display: none; }
