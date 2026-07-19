@@ -503,42 +503,159 @@
       animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards, glitch 4s ease-in-out 1s infinite;
     }
 
-    /* ===== 第二页目录 ===== */
-    .dir-section { margin-bottom: 20px; }
-    .dir-cat {
-      margin-bottom: 16px;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.015);
-      border: 1px solid rgba(255,51,136,0.06);
-      border-radius: 6px;
-      backdrop-filter: blur(4px);
+    /* ===== 第二页霓虹灯牌目录 ===== */
+    #page-2 .container { max-width: 820px; }
+
+    .neon-signs {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 10px 0;
+      margin-bottom: 20px;
     }
-    .dir-cat-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 8px;
-      letter-spacing: 2px;
+
+    .neon-sign {
+      position: relative;
+      padding: 18px 22px;
+      background: rgba(13,7,22,0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 4px;
+      transition: all 0.3s;
+      overflow: visible;
     }
-    .dir-icon { margin-right: 6px; }
-    .dir-items { display: flex; flex-direction: column; gap: 4px; }
-    .dir-item {
+    .neon-sign:hover { filter: brightness(1.15); }
+
+    /* 霓虹灯边框（mask-composite 只留边框区域） */
+    .neon-sign::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .neon-border-pink::before {
+      background: linear-gradient(135deg, var(--pink), #ff66aa) border-box;
+      animation: neonPulsePink 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(255,51,136,0.3));
+    }
+    .neon-border-cyan::before {
+      background: linear-gradient(135deg, var(--cyan), #66eeff) border-box;
+      animation: neonPulseCyan 3.5s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(0,221,255,0.3));
+    }
+    .neon-border-purple::before {
+      background: linear-gradient(135deg, var(--purple), #bb77ff) border-box;
+      animation: neonPulsePurple 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(153,85,221,0.3));
+    }
+    .neon-border-lpink::before {
+      background: linear-gradient(135deg, var(--light-pink), #ffbbdd) border-box;
+      animation: neonPulseLpink 2.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(255,153,204,0.3));
+    }
+    .neon-border-gold::before {
+      background: linear-gradient(135deg, #ffbe6e, #ffdbaa) border-box;
+      animation: neonPulseGold 3.2s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(255,190,110,0.3));
+    }
+
+    /* 每个灯牌不同角度 — 大都市错落感 */
+    .neon-sign:nth-child(1) { transform: rotate(-1.8deg) translateX(-6px); margin-right: 30px; }
+    .neon-sign:nth-child(2) { transform: rotate(1.2deg) translateX(12px); margin-left: 40px; }
+    .neon-sign:nth-child(3) { transform: rotate(-0.6deg) translateX(-4px); margin-right: 20px; }
+    .neon-sign:nth-child(4) { transform: rotate(2.4deg) translateX(8px); margin-left: 50px; }
+    .neon-sign:nth-child(5) { transform: rotate(-2.2deg) translateX(-10px); margin-right: 35px; }
+
+    .neon-sign-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 12px rgba(255,51,136,0.3); }
+    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 12px rgba(0,221,255,0.3); }
+    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 12px rgba(153,85,221,0.3); }
+    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 12px rgba(255,153,204,0.3); }
+    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 12px rgba(255,190,110,0.3); }
+
+    .neon-sign-items { display: flex; flex-direction: column; gap: 3px; }
+    .neon-sign-items a {
       display: block;
-      padding: 5px 12px;
+      padding: 4px 0 4px 14px;
       font-size: 12px;
-      color: var(--dim-cyan);
+      color: rgba(240,240,255,0.55);
       text-decoration: none;
-      border-radius: 3px;
-      transition: all 0.2s;
       letter-spacing: 1px;
+      border-left: 1px solid rgba(240,240,255,0.08);
+      transition: all 0.25s;
     }
-    .dir-item:hover {
-      background: rgba(0,221,255,0.05);
-      color: var(--cyan);
-      padding-left: 16px;
+    .neon-sign-items a:hover {
+      color: var(--white);
+      border-left-color: var(--cyan);
+      padding-left: 20px;
     }
-    .dir-item.dim { color: rgba(240,240,255,0.15); font-style: italic; }
-    .dir-item.dim:hover { color: rgba(240,240,255,0.3); background: none; padding-left: 12px; }
+    .neon-sign-items a.dim {
+      color: rgba(240,240,255,0.12);
+      font-style: italic;
+      border-left: none;
+      padding-left: 14px;
+    }
+    .neon-sign-items a.dim:hover {
+      color: rgba(240,240,255,0.25);
+      border-left: none;
+      padding-left: 14px;
+    }
+
+    /* 霓虹呼吸 + 微闪 */
+    @keyframes neonPulsePink {
+      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(255,51,136,0.3)); }
+      45% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,51,136,0.5)); }
+      48% { opacity: 0.6; }
+      50% { opacity: 1; }
+      52% { opacity: 0.7; }
+      55% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,51,136,0.5)); }
+      70% { opacity: 0.9; }
+    }
+    @keyframes neonPulseCyan {
+      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(0,221,255,0.3)); }
+      40% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
+      43% { opacity: 0.5; }
+      45% { opacity: 1; }
+      48% { opacity: 0.6; }
+      50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
+      65% { opacity: 0.85; }
+    }
+    @keyframes neonPulsePurple {
+      0%, 100% { opacity: 0.65; filter: drop-shadow(0 0 4px rgba(153,85,221,0.3)); }
+      50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(153,85,221,0.5)); }
+      53% { opacity: 0.7; }
+      55% { opacity: 1; filter: drop-shadow(0 0 10px rgba(153,85,221,0.5)); }
+      60% { opacity: 0.9; }
+    }
+    @keyframes neonPulseLpink {
+      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(255,153,204,0.3)); }
+      30% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255,153,204,0.5)); }
+      33% { opacity: 0.5; }
+      35% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+    @keyframes neonPulseGold {
+      0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(255,190,110,0.3)); }
+      35% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255,190,110,0.5)); }
+      55% { opacity: 0.85; }
+    }
 
     /* ===== 翻页提示箭头 ===== */
     .scroll-hint {
@@ -610,42 +727,48 @@
   <!-- 内容目录 -->
   <div class="sec-title mono">DIRECTORY</div>
 
-  <div class="dir-section">
-    <div class="dir-cat">
-      <div class="dir-cat-title"><span class="dir-icon">📚</span> 学习日志</div>
-      <div class="dir-items">
-        <a class="dir-item" href="#">电气工程基础 · 课程笔记</a>
-        <a class="dir-item" href="#">自动控制原理 · 要点整理</a>
-        <a class="dir-item dim" href="#">+ 添加新内容</a>
+  <div class="neon-signs">
+
+    <div class="neon-sign ns-pink neon-border-pink">
+      <div class="neon-sign-title">📚 学习日志</div>
+      <div class="neon-sign-items">
+        <a href="#">电气工程基础 · 课程笔记</a>
+        <a href="#">自动控制原理 · 要点整理</a>
+        <a class="dim" href="#">+ 添加新内容</a>
       </div>
     </div>
-    <div class="dir-cat">
-      <div class="dir-cat-title"><span class="dir-icon">🔬</span> 技术笔记</div>
-      <div class="dir-items">
-        <a class="dir-item" href="#">图书馆预约 API 逆向记录</a>
-        <a class="dir-item" href="#">自动签到系统搭建</a>
-        <a class="dir-item dim" href="#">+ 添加新内容</a>
+
+    <div class="neon-sign ns-cyan neon-border-cyan">
+      <div class="neon-sign-title">🔬 技术笔记</div>
+      <div class="neon-sign-items">
+        <a href="#">图书馆预约 API 逆向记录</a>
+        <a href="#">自动签到系统搭建</a>
+        <a class="dim" href="#">+ 添加新内容</a>
       </div>
     </div>
-    <div class="dir-cat">
-      <div class="dir-cat-title"><span class="dir-icon">📖</span> 读书摘录</div>
-      <div class="dir-items">
-        <a class="dir-item" href="#">唐诗经典研读 · 笔记</a>
-        <a class="dir-item dim" href="#">+ 添加新内容</a>
+
+    <div class="neon-sign ns-purple neon-border-purple">
+      <div class="neon-sign-title">📖 读书摘录</div>
+      <div class="neon-sign-items">
+        <a href="#">唐诗经典研读 · 笔记</a>
+        <a class="dim" href="#">+ 添加新内容</a>
       </div>
     </div>
-    <div class="dir-cat">
-      <div class="dir-cat-title"><span class="dir-icon">🎵</span> 创作</div>
-      <div class="dir-items">
-        <a class="dir-item dim" href="#">等待填充……</a>
+
+    <div class="neon-sign ns-lpink neon-border-lpink">
+      <div class="neon-sign-title">🎵 创作</div>
+      <div class="neon-sign-items">
+        <a class="dim" href="#">等待填充……</a>
       </div>
     </div>
-    <div class="dir-cat">
-      <div class="dir-cat-title"><span class="dir-icon">💭</span> 随想</div>
-      <div class="dir-items">
-        <a class="dir-item dim" href="#">等待填充……</a>
+
+    <div class="neon-sign ns-gold neon-border-gold">
+      <div class="neon-sign-title">💭 随想</div>
+      <div class="neon-sign-items">
+        <a class="dim" href="#">等待填充……</a>
       </div>
     </div>
+
   </div>
 
   </div>
