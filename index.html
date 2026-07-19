@@ -483,12 +483,12 @@
     /* ===== 鼠标光晕 ===== */
     .cursor-glow {
       position: fixed;
-      width: 500px; height: 500px;
+      width: 280px; height: 280px;
       border-radius: 50%;
       background: radial-gradient(circle, 
-        rgba(255,51,136,0.25) 0%,
-        rgba(255,153,204,0.12) 20%,
-        rgba(0,221,255,0.08) 40%,
+        rgba(255,51,136,0.2) 0%,
+        rgba(255,153,204,0.1) 20%,
+        rgba(0,221,255,0.06) 40%,
         transparent 65%
       );
       pointer-events: none;
@@ -1050,17 +1050,37 @@ class Particle {
   }
 }
 
-// 流星
+// 流星 — 从屏幕边缘贯穿到另一边
 let shootingStars = [];
 function spawnShootingStar() {
-  if (Math.random() < 0.05 && shootingStars.length < 3) {
+  if (Math.random() < 0.04 && shootingStars.length < 2) {
+    const fromSide = Math.floor(Math.random() * 3); // 0:左, 1:上, 2:右
+    let x, y, vx, vy;
+    const angle = (Math.random() * 0.4 + 0.3); // 30°~70° 斜角
+    const speed = 6 + Math.random() * 4;
+    
+    if (fromSide === 0) { // 左到右
+      x = -30;
+      y = Math.random() * canvas.height * 0.6;
+      vx = Math.cos(angle) * speed;
+      vy = Math.sin(angle) * speed;
+    } else if (fromSide === 1) { // 上到下（略左偏）
+      x = Math.random() * canvas.width * 0.8;
+      y = -30;
+      vx = Math.sin(angle) * speed * 0.5;
+      vy = Math.cos(angle) * speed;
+    } else { // 右到左
+      x = canvas.width + 30;
+      y = Math.random() * canvas.height * 0.5;
+      vx = -Math.cos(angle) * speed;
+      vy = Math.sin(angle) * speed;
+    }
+    
     shootingStars.push({
-      x: Math.random() * canvas.width,
-      y: -20,
-      speedX: (Math.random() * 3 + 2),
-      speedY: (Math.random() * 1.5 + 1.5),
+      x, y, vx, vy,
+      length: 80 + Math.random() * 60,
       life: 1,
-      length: 60 + Math.random() * 40,
+      maxLife: 1,
       color: ['#f0f0ff', '#ff99cc', '#66eeff'][Math.floor(Math.random() * 3)]
     });
   }
@@ -1114,18 +1134,18 @@ function animate() {
   // 4. 画流星
   spawnShootingStar();
   shootingStars = shootingStars.filter(s => {
-    s.x += s.speedX;
-    s.y += s.speedY;
-    s.life -= 0.02;
-    if (s.life <= 0) return false;
+    s.x += s.vx;
+    s.y += s.vy;
+    // 完全离开画面才消失
+    if (s.x < -200 || s.x > canvas.width + 200 || s.y > canvas.height + 200 || s.y < -200) return false;
 
-    const gradient = ctx.createLinearGradient(s.x, s.y, s.x - s.speedX * s.length, s.y - s.speedY * s.length);
+    const gradient = ctx.createLinearGradient(s.x, s.y, s.x - s.vx / Math.hypot(s.vx, s.vy) * s.length, s.y - s.vy / Math.hypot(s.vx, s.vy) * s.length);
     gradient.addColorStop(0, s.color + '80');
     gradient.addColorStop(0.6, s.color + '20');
     gradient.addColorStop(1, 'transparent');
     ctx.beginPath();
     ctx.moveTo(s.x, s.y);
-    ctx.lineTo(s.x - s.speedX * s.length, s.y - s.speedY * s.length);
+    ctx.lineTo(s.x - s.vx / Math.hypot(s.vx, s.vy) * s.length, s.y - s.vy / Math.hypot(s.vx, s.vy) * s.length);
     ctx.strokeStyle = gradient;
     ctx.lineWidth = 1.5;
     ctx.stroke();
