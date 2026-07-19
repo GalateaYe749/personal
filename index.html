@@ -747,18 +747,25 @@ window.addEventListener('resize', () => {
 });
 
 // ===== 密码门解锁 =====
-const SERVER = 'http://120.55.242.84';
-
-// 从服务器跳回时显示密码错误
-if (new URLSearchParams(location.search).get('err')) {
-  const err = document.getElementById('err');
-  if (err) { err.style.display = 'block'; setTimeout(() => err.style.display = 'none', 3000); }
-}
-
+// ===== 密码门解锁 =====
 function unlock() {
   const input = document.getElementById('k').value;
-  const from = location.hostname === 'galateaye749.github.io' ? 'gh' : '';
-  location.href = SERVER + '/login?key=' + encodeURIComponent(input) + '&from=' + from;
+  const err = document.getElementById('err');
+
+  // GalateaYe → 客户端跳转 GitHub Pages（密码明文在源码，可接受）
+  if (input === 'GalateaYe') {
+    location.href = 'private/galatea/';
+    return;
+  }
+
+  // EasonQian → 服务器验证（更安全，密码不在源码）
+  if (input === 'EasonQian') {
+    location.href = 'http://120.55.242.84/login?key=EasonQian&from=gh';
+    return;
+  }
+
+  err.style.display = 'block';
+  setTimeout(() => err.style.display = 'none', 2000);
 }
 </script>
 
