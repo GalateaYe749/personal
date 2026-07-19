@@ -448,6 +448,60 @@
       .corner, .cyber-border { display: none; }
     }
 
+    /* ===== 鼠标光晕 ===== */
+    .cursor-glow {
+      position: fixed;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,51,136,0.06), rgba(0,221,255,0.03), transparent 70%);
+      pointer-events: none;
+      z-index: 5;
+      transform: translate(-50%, -50%);
+      transition: left 0.3s ease-out, top 0.3s ease-out;
+      mix-blend-mode: screen;
+    }
+
+    /* ===== CRT 扫描线 ===== */
+    .scanlines {
+      position: fixed; inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* ===== 第一页浮动动画 ===== */
+    #page-1 .hero .title-wrap {
+      animation: float 6s ease-in-out infinite;
+    }
+    #page-1 .tags {
+      animation: floatReverse 7s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: rotate(-0.8deg) translateY(0); }
+      50% { transform: rotate(-0.8deg) translateY(-8px); }
+    }
+    @keyframes floatReverse {
+      0%,100% { transform: rotate(-1deg) translateY(0); }
+      50% { transform: rotate(-1deg) translateY(6px); }
+    }
+
+    /* ===== GALATEA 标题微闪 ===== */
+    @keyframes glitch {
+      0%, 90%, 100% { opacity: 1; transform: skewX(2deg) translate(0); text-shadow: 0 0 25px rgba(255,51,136,0.15), 0 0 40px rgba(0,221,255,0.08); }
+      92% { opacity: 0.9; transform: skewX(2deg) translate(-2px, 1px); text-shadow: 2px 0 var(--cyan), -2px 0 var(--pink); }
+      94% { opacity: 0.95; transform: skewX(2deg) translate(2px, -1px); text-shadow: -2px 0 var(--cyan), 2px 0 var(--pink); }
+      96% { opacity: 1; transform: skewX(2deg) translate(0); text-shadow: 0 0 25px rgba(255,51,136,0.15), 0 0 40px rgba(0,221,255,0.08); }
+    }
+    #page-1.animate-in .hero .galatea {
+      animation: fadeFlyIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards, glitch 8s ease-in-out 2s infinite;
+    }
+
     /* 翻页提示箭头 */
     .scroll-hint {
       position: fixed;
@@ -481,6 +535,9 @@
 <canvas id="particle-canvas"></canvas>
 <div class="bg"></div>
 <div class="bg-grid"></div>
+
+<div class="scanlines"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
 
 <div class="scroll-wrap">
 
@@ -578,6 +635,13 @@
 <div class="scroll-hint mono" id="scrollHint">▼ SCROLL ▼</div>
 
 <script>
+// ===== 鼠标光晕跟随 =====
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', (e) => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
 // ===== 翻页提示隐藏 =====
 const scrollWrap = document.querySelector('.scroll-wrap');
 const hint = document.getElementById('scrollHint');
