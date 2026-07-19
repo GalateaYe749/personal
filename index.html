@@ -576,15 +576,15 @@
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    #page-2.animate-in .neon-sign {
+    #page-2.animate-in .sign-wrap {
       animation-fill-mode: forwards;
       opacity: 0;
     }
-    #page-2.animate-in .neon-sign:nth-child(1) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(2) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.25s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(3) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(4) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(5) { animation: signSlideInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.7s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(1) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(2) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.25s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(3) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(4) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(5) { animation: signSlideInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.7s forwards; }
 
     .neon-signs {
       display: grid;
@@ -950,45 +950,45 @@
 
   <div class="neon-signs">
 
-    <div class="neon-sign ns-pink neon-border-pink" style="transform: rotate(-4.2deg) translateY(-18px) translateX(-12px);">
+    <div class="sign-wrap"><div class="neon-sign ns-pink neon-border-pink" style="transform: rotate(-4.2deg) translateY(-18px) translateX(-12px);">
       <div class="neon-sign-title flicker-d1" data-text="学习日志">学习日志</div>
       <div class="neon-sign-items">
         <a href="#">电气工程基础 · 课程笔记</a>
         <a href="#">自动控制原理 · 要点整理</a>
         <a class="dim" href="#">+ 添加新内容</a>
       </div>
-    </div>
+    </div></div>
 
-    <div class="neon-sign ns-cyan neon-border-cyan" style="transform: rotate(3.5deg) translateY(8px) translateX(8px);">
+    <div class="sign-wrap"><div class="neon-sign ns-cyan neon-border-cyan" style="transform: rotate(3.5deg) translateY(8px) translateX(8px);">
       <div class="neon-sign-title flicker" data-text="技术笔记">技术笔记</div>
       <div class="neon-sign-items">
         <a href="#">图书馆预约 API 逆向记录</a>
         <a href="#">自动签到系统搭建</a>
         <a class="dim" href="#">+ 添加新内容</a>
       </div>
-    </div>
+    </div></div>
 
-    <div class="neon-sign ns-purple neon-border-purple" style="transform: rotate(-2.8deg) translateY(5px) translateX(6px);">
+    <div class="sign-wrap"><div class="neon-sign ns-purple neon-border-purple" style="transform: rotate(-2.8deg) translateY(5px) translateX(6px);">
       <div class="neon-sign-title flicker-d2" data-text="读书摘录">读书摘录</div>
       <div class="neon-sign-items">
         <a href="#">唐诗经典研读 · 笔记</a>
         <a class="dim" href="#">+ 添加新内容</a>
       </div>
-    </div>
+    </div></div>
 
-    <div class="neon-sign ns-lpink neon-border-lpink" style="transform: rotate(4.1deg) translateY(-10px) translateX(-8px);">
+    <div class="sign-wrap"><div class="neon-sign ns-lpink neon-border-lpink" style="transform: rotate(4.1deg) translateY(-10px) translateX(-8px);">
       <div class="neon-sign-title flicker-d3" data-text="创作">创作</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
-    </div>
+    </div></div>
 
-    <div class="neon-sign ns-gold neon-border-gold" style="transform: rotate(-1.8deg) translateY(12px) translateX(50%); grid-column: 1 / 3; max-width: calc(50% - 15px);">
+    <div class="sign-wrap"><div class="neon-sign ns-gold neon-border-gold" style="transform: rotate(-1.8deg) translateY(12px) translateX(50%); grid-column: 1 / 3; max-width: calc(50% - 15px);">
       <div class="neon-sign-title flicker-delay" data-text="随想">随想</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
-    </div>
+    </div></div>
 
   </div>
 

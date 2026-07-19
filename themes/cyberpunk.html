@@ -545,16 +545,17 @@
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    #page-2.animate-in .neon-sign {
+    #page-2.animate-in .sign-wrap {
       animation-fill-mode: forwards;
       opacity: 0;
     }
-    #page-2.animate-in .neon-sign:nth-child(1) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(2) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.25s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(3) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(4) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
-    #page-2.animate-in .neon-sign:nth-child(5) { animation: signSlideInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.7s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(1) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(2) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.25s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(3) { animation: signSlideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(4) { animation: signSlideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
+    #page-2.animate-in .sign-wrap:nth-child(5) { animation: signSlideInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.7s forwards; }
 
+    .sign-wrap { width: 100%; }
     .neon-signs {
       display: flex;
       flex-direction: column;
@@ -707,11 +708,11 @@
     }
 
     
-    .neon-sign:nth-child(1) { transform: rotate(-2.4deg) translateX(-8px) translateY(-4px); margin-right: 50px; }
-    .neon-sign:nth-child(2) { transform: rotate(1.8deg) translateX(20px) translateY(2px); margin-left: 60px; }
-    .neon-sign:nth-child(3) { transform: rotate(-1.2deg) translateX(-6px) translateY(-2px); margin-right: 30px; }
-    .neon-sign:nth-child(4) { transform: rotate(3.2deg) translateX(14px) translateY(6px); margin-left: 70px; }
-    .neon-sign:nth-child(5) { transform: rotate(-2.8deg) translateX(-14px) translateY(4px); margin-right: 45px; }
+    .sign-wrap:nth-child(1) .neon-sign { transform: rotate(-2.4deg) translateX(-8px) translateY(-4px); margin-right: 50px; }
+    .sign-wrap:nth-child(2) .neon-sign { transform: rotate(1.8deg) translateX(20px) translateY(2px); margin-left: 60px; }
+    .sign-wrap:nth-child(3) .neon-sign { transform: rotate(-1.2deg) translateX(-6px) translateY(-2px); margin-right: 30px; }
+    .sign-wrap:nth-child(4) .neon-sign { transform: rotate(3.2deg) translateX(14px) translateY(6px); margin-left: 70px; }
+    .sign-wrap:nth-child(5) .neon-sign { transform: rotate(-2.8deg) translateX(-14px) translateY(4px); margin-right: 45px; }
 
         .neon-sign-title {
       font-size: 34px;
@@ -880,6 +881,7 @@
   <div class="sec-title mono">DIRECTORY</div>
   <div class="neon-signs">
 
+<div class="sign-wrap">
     <div class="neon-sign ns-pink neon-border-pink">
       <div class="neon-sign-title flicker-d1" data-text="学习日志">学习日志</div>
       <div class="neon-sign-items">
@@ -887,8 +889,10 @@
         <a href="#">自动控制原理 · 要点整理</a>
         <a class="dim" href="#">+ 添加新内容</a>
       </div>
-    </div>
+  </div>
+</div>
 
+<div class="sign-wrap">
     <div class="neon-sign ns-cyan neon-border-cyan">
       <div class="neon-sign-title flicker" data-text="技术笔记">技术笔记</div>
       <div class="neon-sign-items">
@@ -896,29 +900,36 @@
         <a href="#">自动签到系统搭建</a>
         <a class="dim" href="#">+ 添加新内容</a>
       </div>
-    </div>
+  </div>
+</div>
 
+<div class="sign-wrap">
     <div class="neon-sign ns-purple neon-border-purple">
       <div class="neon-sign-title flicker-d2" data-text="读书摘录">读书摘录</div>
       <div class="neon-sign-items">
         <a href="#">唐诗经典研读 · 笔记</a>
         <a class="dim" href="#">+ 添加新内容</a>
       </div>
-    </div>
+  </div>
+</div>
 
+<div class="sign-wrap">
     <div class="neon-sign ns-lpink neon-border-lpink">
       <div class="neon-sign-title flicker-d3" data-text="创作">创作</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
-    </div>
+  </div>
+</div>
 
+<div class="sign-wrap">
     <div class="neon-sign ns-gold neon-border-gold">
       <div class="neon-sign-title flicker-delay" data-text="随想">随想</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充……</a>
       </div>
-    </div>
+  </div>
+</div>
 
   </div>
 
