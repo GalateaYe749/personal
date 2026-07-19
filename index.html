@@ -477,14 +477,20 @@
     /* ===== 鼠标光晕 ===== */
     .cursor-glow {
       position: fixed;
-      width: 300px; height: 300px;
+      width: 500px; height: 500px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,51,136,0.06), rgba(0,221,255,0.03), transparent 70%);
+      background: radial-gradient(circle, 
+        rgba(255,51,136,0.25) 0%,
+        rgba(255,153,204,0.12) 20%,
+        rgba(0,221,255,0.08) 40%,
+        transparent 65%
+      );
       pointer-events: none;
       z-index: 5;
       transform: translate(-50%, -50%);
-      transition: left 0.3s ease-out, top 0.3s ease-out;
+      transition: left 0.15s ease-out, top 0.15s ease-out;
       mix-blend-mode: screen;
+      filter: blur(20px);
     }
 
     /* ===== CRT 扫描线 ===== */
