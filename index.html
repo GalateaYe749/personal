@@ -633,16 +633,17 @@
       position: absolute;
       left: 0;
       top: 0;
-      transform: scale(0.88);
+      transform: scale(0.92); /* 调大缩小比例，轮廓更粗 */
       transform-origin: left center;
       color: var(--bg);
       z-index: 2;
     }
-    .ns-pink .neon-sign-title { color: var(--pink); }
-    .ns-cyan .neon-sign-title { color: var(--cyan); }
-    .ns-purple .neon-sign-title { color: #d4bbff; }
-    .ns-lpink .neon-sign-title { color: var(--light-pink); }
-    .ns-gold .neon-sign-title { color: #ffbe6e; }
+    /* 底层字加淡淡光晕，轮廓更突出 */
+    .ns-pink .neon-sign-title { color: var(--pink); text-shadow: 0 0 2px var(--pink); }
+    .ns-cyan .neon-sign-title { color: var(--cyan); text-shadow: 0 0 2px var(--cyan); }
+    .ns-purple .neon-sign-title { color: #d4bbff; text-shadow: 0 0 2px #d4bbff; }
+    .ns-lpink .neon-sign-title { color: var(--light-pink); text-shadow: 0 0 2px var(--light-pink); }
+    .ns-gold .neon-sign-title { color: #ffbe6e; text-shadow: 0 0 2px #ffbe6e; }
 
     /* 边框光晕加强 */
     .neon-border-pink::before { filter: drop-shadow(0 0 8px rgba(255,51,136,0.4)) drop-shadow(0 0 3px rgba(255,51,136,0.2)); }
