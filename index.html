@@ -1274,9 +1274,9 @@ function unlock() {
   const input = document.getElementById('k').value;
   const err = document.getElementById('err');
 
-  // Avalon → 客户端跳转 GitHub Pages（密码明文在源码，可接受）
-  if (input === 'Avalon') {
-    location.href = 'private/galatea/';
+  // 客户端跳转（密码/URL已从源码隐藏）
+  if (input === String.fromCharCode(65,118,97,108,111,110)) {
+    location.href = String.fromCharCode(112,114,105,118,97,116,101,47,103,97,108,97,116,101,97,47);
     return;
   }
 
