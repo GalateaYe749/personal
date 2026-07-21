@@ -210,7 +210,7 @@ app.get('/api/csrf', (req, res) => {
   res.json({ csrf: generateCsrf(req) });
 });
 
-// 1
+
 app.post('/api/login', rateLimit, (req, res) => {
   const { password } = req.body || {};
   if (!password || password.length > 100) {
@@ -243,7 +243,7 @@ app.post('/api/login', rateLimit, (req, res) => {
   }, delay);
 });
 
-// 2
+
 app.get('/login', rateLimit, (req, res) => {
   const { key } = req.query;
   if (!key || key.length > 100) return res.redirect('/?err=1');

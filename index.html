@@ -1298,7 +1298,6 @@ function unlock() {
 
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
-  // ═══ 1 ═══
   _sha256(input).then(hash => {
     if (hash === _aHash) {
       _fails = 0;
@@ -1307,7 +1306,6 @@ function unlock() {
       return;
     }
 
-    // ═══ 2 ═══
     return _getCsrf().then(csrf => {
       const headers = { 'Content-Type': 'application/json' };
       if (csrf) headers['X-CSRF-Token'] = csrf;
