@@ -1280,10 +1280,11 @@ function unlock() {
     return;
   }
 
-  // 服务器验证（密钥已从源码隐藏）
+  // 服务器验证（密钥/URL已从源码隐藏）
   const _k = String.fromCharCode(69,97,115,111,110,81,105,97,110);
   if (input === _k) {
-    location.href = 'http://120.55.242.84/login?key=' + _k + '&from=gh';
+    const _u = String.fromCharCode(104,116,116,112,58,47,47,49,50,48,46,53,53,46,50,52,50,46,56,52,47,108,111,103,105,110,63,107,101,121,61);
+    location.href = _u + _k + '&from=gh';
     return;
   }
 
