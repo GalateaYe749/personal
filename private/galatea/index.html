@@ -225,20 +225,16 @@
             `left:${sx}vw;top:${-20-Math.random()*60}px;` +
             `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
             `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
-            `animation:${id}_${i} ${dur*speed}s ${dl}s cubic-bezier(0.15,0.5,0.35,1) 1 forwards`;
+            `animation:${id}_${i} ${dur*(0.7+Math.random()*0.5)}s ${dl}s cubic-bezier(0.15,0.6,0.3,1) 1 forwards`;
 
-          // 被风吹的轨迹：急剧侧向偏移 + 旋转
+          // 被风吹的轨迹：急剧侧向偏移 + 旋转，无中间停顿
           const re = 200 + Math.random() * 600 * windDir;
-          const md = drift * 0.4 + (Math.random() - 0.5) * 25;
           const st = document.createElement('style');
           st.textContent =
             `@keyframes ${id}_${i}{` +
             `0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}` +
-            `5%{opacity:0.75}` +
-            `35%{transform:translateY(35vh) translateX(${md}px) rotate(${re*0.3}deg);opacity:0.65;animation-timing-function:cubic-bezier(0.2,0.3,0.4,1)}` +
-            `65%{transform:translateY(65vh) translateX(${drift*0.7}px) rotate(${re*0.6}deg);opacity:0.5;animation-timing-function:cubic-bezier(0.3,0.2,0.45,1)}` +
-            `90%{opacity:0.25}` +
-            `100%{transform:translateY(110vh) translateX(${drift}px) rotate(${re}deg);opacity:0}}`;
+            `4%{opacity:0.8}` +
+            `100%{transform:translateY(110vh) translateX(${drift}px) rotate(${re}deg);opacity:0;animation-timing-function:cubic-bezier(0.15,0.6,0.3,1)}}`;
           document.head.appendChild(st);
           b.appendChild(el);
           setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur * speed + dl) * 1000 + 200);
