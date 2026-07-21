@@ -1092,8 +1092,11 @@ window.addEventListener('resize', () => {
 //
 //
 //
-const _x=a=>a.map((v,j)=>String.fromCharCode(v^[142,73,211,57][j%4])).join('');
-const _h=_x([189, 124, 183, 14, 239, 43, 226, 95, 236, 122, 181, 11, 235, 126, 181, 95, 186, 43, 231, 95, 190, 43, 230, 91, 191, 120, 176, 10, 183, 112, 176, 14, 184, 112, 229, 14, 186, 120, 176, 13, 191, 40, 181, 1, 235, 42, 227, 88, 237, 40, 224, 90, 189, 122, 183, 12, 239, 126, 181, 88, 189, 122, 225, 1]);
+const _x=(a,k)=>a.map((v,j)=>String.fromCharCode(v^k[j%k.length])).join('');
+const _k1=[78,156,62,62];
+const _k2=[179,56,77,225];
+const _eK=[122,164,7,14,131,92,44,128,42,255,93,11,210,9,44,213,122,255,91,14,128,89,116,130,123,170,10,92,129,13,116,214,125,175,15,93,133,14,43,216,124,250,15,88,135,89,43,210,45,175,15,92,214,12,124,132,120,253,95,6,130,90,46,130];
+const _eH=[45,250,13,90,208,89,47,132,45,170,15,6,130,93,121,210,43,165,11,95,139,0,46,135,47,249,6,8,215,8,126,212,126,171,10,90,214,8,127,210,121,165,7,91,138,91,40,210,126,171,90,9,135,15,124,213,123,249,9,9,131,12,122,130];
 let _fails = 0;
 let _locked = false;
 
@@ -1115,8 +1118,14 @@ function unlock() {
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
   (async()=>{
-    const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input)))).map(x=>x.toString(16).padStart(2,'0')).join('');
-    if(h===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}
+    const _K=_k1.concat(_k2);
+    const _k=Uint8Array.from(_x(_eK,_K).match(/.{2}/g).map(x=>parseInt(x,16)));
+    const _h=_x(_eH,_K);
+    const _i=await crypto.subtle.importKey('raw',_k,{name:'HMAC',hash:'SHA-256'},false,['sign']);
+    let _b=new TextEncoder().encode(input);
+    for(let _r=0;_r<50;_r++)_b=await crypto.subtle.sign('HMAC',_i,_b);
+    const _c=Array.from(new Uint8Array(_b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+    if(_c===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}
     throw new Error('fail');
   })().catch(e => {
     _fails++;
