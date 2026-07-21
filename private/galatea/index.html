@@ -205,39 +205,48 @@
         }
       }
 
-      // ── 特效2：一阵狂风（花瓣被风吹散）──
+      // ── 特效2：一阵狂风（几百瓣花瓣斜吹过屏）──
       function burst() {
-        const n = 55 + Math.floor(Math.random() * 25);  // 55-79片
+        const n = 180 + Math.floor(Math.random() * 150);  // 180-329片
         const id = 'bu' + (sid++);
-        const dur = 2 + Math.random() * 1.5;   // 2-3.5s
-        const windDir = Math.random() > 0.5 ? 1 : -1;  // 风向
+        const baseDur = 1.8 + Math.random() * 1.2;  // 1.8-3s
+        const windDir = Math.random() > 0.5 ? 1 : -1;
+        // 风从一侧吹向另一侧，分多层（高度不同风速略有不同）
 
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
-          const sx = windDir > 0 ? Math.random() * 30 : 70 + Math.random() * 30;  // 风来的方向
-          const drift = windDir * (40 + Math.random() * 80);  // 被风吹走的方向
-          const dl = Math.random() * 0.8;
-          const fast = Math.random() > 0.6;
-          const speed = fast ? 1 : 0.6 + Math.random() * 0.4;
+
+          // 风从一侧来：所有花瓣从风的来向起始，斜穿到另一侧
+          const fromSide = windDir > 0 ? -10 : 110;  // 从左侧外或右侧外来
+          const sx = fromSide + (Math.random() - 0.5) * 30;  // 起始x有散布
+          const sy = -20 - Math.random() * 80;  // 起始y
+          const dl = Math.random() * 0.6;       // 微错开
+
+          // 该花瓣的时长（每片微差）
+          const myDur = baseDur * (0.6 + Math.random() * 0.6);
+          // 被风吹斜：水平穿透 + 缓慢下沉
+          const hDrift = windDir * (80 + Math.random() * 40 + sy * 0.3);  // 水平穿越大，高度越高飘越远
+          const vDrift = 40 + Math.random() * 30;  // 垂直下落量（风吹斜所以下落的少）
+          // 有些花瓣被风吹得更高再落下
+          const riseUp = Math.random() > 0.7 ? -(5 + Math.random() * 15) : 0;
 
           el.style.cssText =
-            `left:${sx}vw;top:${-20-Math.random()*60}px;` +
+            `left:${sx}vw;top:${sy}px;` +
             `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
             `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
-            `animation:${id}_${i} ${dur*(0.7+Math.random()*0.5)}s ${dl}s cubic-bezier(0.15,0.6,0.3,1) 1 forwards`;
+            `animation:${id}_${i} ${myDur}s ${dl}s cubic-bezier(0.1,0.5,0.3,1) 1 forwards`;
 
-          // 被风吹的轨迹：急剧侧向偏移 + 旋转，无中间停顿
-          const re = 200 + Math.random() * 600 * windDir;
+          const re = windDir * (100 + Math.random() * 400);
           const st = document.createElement('style');
           st.textContent =
             `@keyframes ${id}_${i}{` +
             `0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}` +
-            `4%{opacity:0.8}` +
-            `100%{transform:translateY(110vh) translateX(${drift}px) rotate(${re}deg);opacity:0;animation-timing-function:cubic-bezier(0.15,0.6,0.3,1)}}`;
+            `2%{opacity:0.8}` +
+            `100%{transform:translateY(${vDrift+riseUp}vh) translateX(${hDrift}px) rotate(${re}deg);opacity:0;animation-timing-function:cubic-bezier(0.1,0.5,0.3,1)}}`;
           document.head.appendChild(st);
           b.appendChild(el);
-          setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur * speed + dl) * 1000 + 200);
+          setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (myDur + dl) * 1000 + 300);
         }
       }
 
