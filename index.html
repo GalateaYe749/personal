@@ -1342,6 +1342,45 @@ function unlock() {
 </script>
 
 <script>
+(function(){
+  const p=['#ff3388','#00ddff','#9955dd','#ff99cc','#66eeff'];
+  let id=0;
+  document.addEventListener('click',e=>{
+    const cx=e.clientX,cy=e.clientY;
+    const c=p[Math.floor(Math.random()*p.length)];
+    const r=document.createElement('div');
+    r.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;width:0;height:0;border-radius:50%;border:2px solid '+c+';pointer-events:none;z-index:99;transform:translate(-50%,-50%);animation:r'+(id)+' 1s ease-out forwards';
+    const rs=document.createElement('style');
+    rs.textContent='@keyframes r'+(id)+'{0%{width:0;height:0;opacity:0.9;box-shadow:0 0 20px '+c+'}100%{width:130px;height:130px;opacity:0}}';
+    document.head.appendChild(rs);
+    document.body.appendChild(r);
+    setTimeout(()=>{if(r.parentNode)r.parentNode.removeChild(r)},1200);
+    const n=3+Math.floor(Math.random()*3);
+    for(let i=0;i<n;i++){
+      const a=(i/n)*360+(Math.random()-0.5)*20;
+      const l=20+Math.random()*70;
+      const dx=Math.cos(a*Math.PI/180)*l,dy=Math.sin(a*Math.PI/180)*l;
+      const seg=4+Math.floor(Math.random()*3);
+      const b=document.createElement('div');
+      const bi='z'+(id++)+i;
+      let pts='0%{transform:translate(0,0);opacity:0.9}';
+      for(let s=1;s<=seg;s++){
+        const pct=(s/seg)*100;
+        const bx=dx*(s/seg)+(Math.random()-0.5)*10;
+        const by=dy*(s/seg)+(Math.random()-0.5)*10;
+        pts+=pct+'%{transform:translate('+bx+'px,'+by+'px);opacity:'+(0.9*(1-s/seg*0.85))+'}';
+      }
+      b.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;width:2px;height:2px;background:'+c+';border-radius:50%;pointer-events:none;z-index:98;animation:'+bi+' 0.7s ease-out forwards;box-shadow:0 0 6px '+c;
+      const bs=document.createElement('style');
+      bs.textContent='@keyframes '+bi+'{'+pts+'}';
+      document.head.appendChild(bs);
+      document.body.appendChild(b);
+      setTimeout(()=>{if(b.parentNode)b.parentNode.removeChild(b)},900);
+    }
+    id++;
+  });
+})();
+
 // 翻页过渡动画
 const fadeObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
