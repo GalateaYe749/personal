@@ -215,49 +215,59 @@
           el.className = 'petal';
 
           // 统一从右上角外起始，斜穿到左下角外
-          const sx = 95 + Math.random() * 35;    // 屏幕右侧外开始
-          const sy = -20 - Math.random() * 20;   // 屏幕顶部上方
-          const dl = Math.random() * 0.6;
+          const sx = 95 + Math.random() * 35;
+          const sy = -25 - Math.random() * 20;
+          const dl = Math.random() * 1.2;
 
-          // 三种轨迹类型
+          // ── 三种真实轨迹类型 ──
           const type = Math.floor(Math.random() * 3);
-          let dur, hLen, vLen, re, timing;
+          let dur, hEnd, vEnd, rotEnd, tf;
 
           if (type === 0) {
-            // 轻花瓣：飘得高，慢慢对角飘
-            dur = 2.5 + Math.random() * 1.5;
-            hLen = -150 - Math.random() * 40;   // 向左横穿到左外
-            vLen = 90 + Math.random() * 40;     // 向下到画面外
-            re = 200 + Math.random() * 400;
-            timing = 'cubic-bezier(0.2,0.4,0.4,1)';
+            // 飘舞型：被风托着，慢悠悠弧线飘落，中途有起伏
+            dur = 6 + Math.random() * 4;        // 6-10s
+            hEnd = -150 - Math.random() * 40;
+            vEnd = 75 + Math.random() * 35;
+            rotEnd = 300 + Math.random() * 500;
+            tf = 'cubic-bezier(0.25,0.3,0.4,1)';
           } else if (type === 1) {
-            // 中等花瓣：正常对角速度
-            dur = 1.5 + Math.random() * 1;
-            hLen = -130 - Math.random() * 30;
-            vLen = 110 + Math.random() * 30;
-            re = 300 + Math.random() * 500;
-            timing = 'cubic-bezier(0.15,0.5,0.35,1)';
+            // 翻滚型：边转边落，轨迹有S形弯曲
+            dur = 4 + Math.random() * 3;         // 4-7s
+            hEnd = -135 - Math.random() * 30;
+            vEnd = 90 + Math.random() * 30;
+            rotEnd = 400 + Math.random() * 600;
+            tf = 'cubic-bezier(0.2,0.4,0.35,1)';
           } else {
-            // 重花瓣：快速掠过
-            dur = 0.8 + Math.random() * 0.7;
-            hLen = -110 - Math.random() * 20;
-            vLen = 130 + Math.random() * 20;
-            re = 100 + Math.random() * 200;
-            timing = 'cubic-bezier(0.1,0.7,0.3,1)';
+            // 滑翔型：相对平稳地下滑
+            dur = 3 + Math.random() * 2;         // 3-5s
+            hEnd = -120 - Math.random() * 25;
+            vEnd = 100 + Math.random() * 25;
+            rotEnd = 150 + Math.random() * 300;
+            tf = 'cubic-bezier(0.15,0.5,0.3,1)';
           }
+
+          // 中间路径点：让轨迹更自然（曲线/摆动）
+          const midH = hEnd * (0.4 + Math.random() * 0.15) + (Math.random() - 0.5) * 30;
+          const midV = vEnd * (0.45 + Math.random() * 0.1);
+          const midR = rotEnd * (0.35 + Math.random() * 0.15);
+          const lateH = hEnd * (0.7 + Math.random() * 0.1) + (Math.random() - 0.5) * 15;
+          const lateV = vEnd * (0.7 + Math.random() * 0.1);
+          const lateR = rotEnd * (0.65 + Math.random() * 0.15);
 
           el.style.cssText =
             `left:${sx}vw;top:${sy}vh;` +
             `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
             `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
-            `animation:${id}_${i} ${dur}s ${dl}s ${timing} 1 forwards`;
+            `animation:${id}_${i} ${dur}s ${dl}s ${tf} 1 forwards`;
 
           const st = document.createElement('style');
           st.textContent =
             `@keyframes ${id}_${i}{` +
             `0%{transform:translateX(0) translateY(0) rotate(0deg);opacity:0}` +
-            `3%{opacity:0.85}` +
-            `100%{transform:translateX(${hLen}vw) translateY(${vLen}vh) rotate(${re}deg);opacity:0}}`;
+            `4%{opacity:0.8}` +
+            `40%{transform:translateX(${midH}vw) translateY(${midV}vh) rotate(${midR}deg);opacity:0.7}` +
+            `75%{transform:translateX(${lateH}vw) translateY(${lateV}vh) rotate(${lateR}deg);opacity:0.4}` +
+            `100%{transform:translateX(${hEnd}vw) translateY(${vEnd}vh) rotate(${rotEnd}deg);opacity:0}}`;
           document.head.appendChild(st);
           b.appendChild(el);
           setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur + dl) * 1000 + 300);
