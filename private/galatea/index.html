@@ -214,9 +214,9 @@
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
 
-          // 统一从右上角外起始，陡峭对角线斜穿到左下角外
-          const sx = 100 + Math.random() * 30;     // 右侧外
-          const sy = -60 - Math.random() * 25;     // 更高处开始，角度更陡
+          // 统一从更远右上角外起始，超大范围对角斜穿到左下角外
+          const sx = 140 + Math.random() * 40;     // 更远的右侧外
+          const sy = -90 - Math.random() * 30;     // 更高的上方
           const dl = Math.random() * 1.2;
 
           // ── 三种真实轨迹类型 ──
@@ -224,24 +224,24 @@
           let dur, hEnd, vEnd, rotEnd, tf;
 
           if (type === 0) {
-            // 飘舞型：被风托着，慢悠悠大对角飘
+            // 飘舞型：被风托着，慢悠悠超大对角飘
             dur = 6 + Math.random() * 4;        // 6-10s
-            hEnd = -170 - Math.random() * 40;   // 更远
-            vEnd = 130 + Math.random() * 40;    // 下落更陡
+            hEnd = -220 - Math.random() * 40;   // 左外更远
+            vEnd = 170 + Math.random() * 40;    // 下落更深
             rotEnd = 300 + Math.random() * 500;
             tf = 'cubic-bezier(0.25,0.3,0.4,1)';
           } else if (type === 1) {
-            // 翻滚型：边转边落，大对角
+            // 翻滚型：边转边落，超大对角
             dur = 4 + Math.random() * 3;         // 4-7s
-            hEnd = -150 - Math.random() * 30;
-            vEnd = 140 + Math.random() * 30;
+            hEnd = -190 - Math.random() * 30;
+            vEnd = 180 + Math.random() * 30;
             rotEnd = 400 + Math.random() * 600;
             tf = 'cubic-bezier(0.2,0.4,0.35,1)';
           } else {
             // 滑翔型：平稳大角度下滑
             dur = 3 + Math.random() * 2;         // 3-5s
-            hEnd = -130 - Math.random() * 25;
-            vEnd = 150 + Math.random() * 30;
+            hEnd = -160 - Math.random() * 25;
+            vEnd = 190 + Math.random() * 30;
             rotEnd = 150 + Math.random() * 300;
             tf = 'cubic-bezier(0.15,0.5,0.3,1)';
           }
