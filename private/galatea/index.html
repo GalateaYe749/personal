@@ -24,7 +24,7 @@
       overflow: hidden;
     }
 
-    /* ── 背景图 + 高不透明度白底 ── */
+    /* 背景图 */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: -2;
@@ -44,18 +44,16 @@
       100% { transform: scale(1.06); }
     }
 
-    /* ── 樱花瓣 ── */
+    /* 樱花瓣基础样式 */
     .petal {
       position: fixed;
       pointer-events: none;
       z-index: 10;
       border-radius: 50% 0 50% 0;
       opacity: 0;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
     }
 
-    /* ── 内容 ── */
+    /* 内容 */
     .container {
       max-width: 600px; text-align: center;
       position: relative; z-index: 20;
@@ -94,10 +92,8 @@
 </head>
 <body>
 
-  <!-- 高不透明度白底 -->
   <div class="white-layer"></div>
 
-  <!-- 内容 -->
   <div class="container">
     <h1>GALATEA</h1>
     <p class="sub">✦ 私藏空间 ✦</p>
@@ -106,63 +102,87 @@
   </div>
 
   <script>
-    // ── 生成樱花瓣 ──
-    (function createPetals() {
-      const petalCount = 55;
-      const body = document.body;
-      for (let i = 0; i < petalCount; i++) {
-        const petal = document.createElement('div');
-        petal.className = 'petal';
-        const size = 6 + Math.random() * 14;            // 6-20px
-        const startX = Math.random() * 110 - 5;           // -5~105vw
-        const duration = 12 + Math.random() * 10;         // 12-22s
-        const delay = Math.random() * 30;                 // 0-30s
-        const hue = 325 + Math.random() * 25;
-        const sat = 50 + Math.random() * 30;
-        const light = 72 + Math.random() * 18;
-        const petalOpacity = 0.35 + Math.random() * 0.45; // 0.35-0.8
-        const btr1 = 35 + Math.random() * 35;
-        const bbr1 = 35 + Math.random() * 35;
+    // ── 持续飘落的樱花瓣（55片）──
+    (function() {
+      const n = 55, b = document.body;
+      for (let i = 0; i < n; i++) {
+        const el = document.createElement('div');
+        el.className = 'petal';
+        const sz = 6 + Math.random() * 14;
+        const x = Math.random() * 110 - 5;
+        const dur = 12 + Math.random() * 10;
+        const del = Math.random() * 30;
+        const h = 325 + Math.random() * 25, s = 50 + Math.random() * 30, l = 72 + Math.random() * 18;
+        const op = 0.35 + Math.random() * 0.45;
+        const bt = 35 + Math.random() * 35, bb = 35 + Math.random() * 35;
         const tall = Math.random() > 0.5;
+        el.style.cssText = `left:${x}vw;top:-40px;width:${sz}px;height:${tall?sz*(0.9+Math.random()*0.6):sz*(0.6+Math.random()*0.4)}px;background:hsla(${h},${s}%,${l}%,${op});border-radius:${bt}% 0 ${bb}% 0;animation:pa${i} ${dur}s ${del}s infinite`;
 
-        petal.style.cssText = `
-          left: ${startX}vw;
-          top: -40px;
-          width: ${size}px;
-          height: ${tall ? size * (0.9 + Math.random() * 0.6) : size * (0.6 + Math.random() * 0.4)}px;
-          background: hsla(${hue}, ${sat}%, ${light}%, ${petalOpacity});
-          border-radius: ${btr1}% 0 ${bbr1}% 0;
-          animation: petalAnim${i} ${duration}s ${delay}s infinite;
-        `;
-
-        // 多点路径：S 形摇摆下落，更接近真实花瓣
-        const totalDrift = -40 + Math.random() * 80;
-        const p25 = totalDrift * 0.3 + (Math.random() - 0.5) * 25;
-        const p50 = totalDrift * 0.6 + (Math.random() - 0.5) * 20;
-        const p75 = totalDrift * 0.85 + (Math.random() - 0.5) * 15;
-        const rot1 = 60 + Math.random() * 120;
-        const rot2 = rot1 + 40 + Math.random() * 100;
-        const rot3 = rot2 + 30 + Math.random() * 80;
-        const rot4 = rot3 + 60 + Math.random() * 180;
-
-        // 随机 timing function，有些飘忽有些稳定
-        const tfs = ['ease-in-out', 'ease-out', 'linear'];
-        const tf = tfs[Math.floor(Math.random() * tfs.length)];
-
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes petalAnim${i} {
-            0%   { transform: translateY(0)    translateX(0)    rotate(0deg);   opacity: 0; }
-            5%   { opacity: ${petalOpacity}; }
-            25%  { transform: translateY(25vh) translateX(${p25}px) rotate(${rot1}deg);   opacity: ${petalOpacity}; animation-timing-function: ${tf}; }
-            50%  { transform: translateY(50vh) translateX(${p50}px) rotate(${rot2}deg);   opacity: ${petalOpacity}; animation-timing-function: ${tf}; }
-            75%  { transform: translateY(78vh) translateX(${p75}px) rotate(${rot3}deg);   opacity: ${petalOpacity}; animation-timing-function: ${tf}; }
-            95%  { opacity: ${petalOpacity * 0.6}; }
-            100% { transform: translateY(108vh) translateX(${totalDrift}px) rotate(${rot4}deg); opacity: 0; }
-          }`;
-        document.head.appendChild(style);
-        body.appendChild(petal);
+        const td = -40 + Math.random() * 80;
+        const p25 = td*0.3+(Math.random()-0.5)*25, p50 = td*0.6+(Math.random()-0.5)*20, p75 = td*0.85+(Math.random()-0.5)*15;
+        const r1 = 60+Math.random()*120, r2 = r1+40+Math.random()*100, r3 = r2+30+Math.random()*80, r4 = r3+60+Math.random()*180;
+        const tf = ['ease-in-out','ease-out','linear'][Math.floor(Math.random()*3)];
+        const st = document.createElement('style');
+        st.textContent = `@keyframes pa${i}{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}5%{opacity:${op}}25%{transform:translateY(25vh) translateX(${p25}px) rotate(${r1}deg);opacity:${op};animation-timing-function:${tf}}50%{transform:translateY(50vh) translateX(${p50}px) rotate(${r2}deg);opacity:${op};animation-timing-function:${tf}}75%{transform:translateY(78vh) translateX(${p75}px) rotate(${r3}deg);opacity:${op};animation-timing-function:${tf}}95%{opacity:${op*0.6}}100%{transform:translateY(108vh) translateX(${td}px) rotate(${r4}deg);opacity:0}}`;
+        document.head.appendChild(st);
+        b.appendChild(el);
       }
+    })();
+
+    // ── 时不时触发特效（樱花漩涡 / 花瓣暴雨）──
+    (function() {
+      const b = document.body;
+      let sid = 0;
+
+      function rpp() {
+        const sz = 6 + Math.random() * 14;
+        return {w:sz, h:sz*(0.6+Math.random()*0.5), bg:`hsla(${320+Math.random()*30},${50+Math.random()*30}%,${70+Math.random()*20}%,${0.35+Math.random()*0.5})`, bt:35+Math.random()*35, bb:35+Math.random()*35};
+      }
+
+      // 特效1: 樱花漩涡
+      function swirl() {
+        const n = 20, cx = 15 + Math.random() * 70, id = 's' + (sid++), d = 3.5 + Math.random() * 1.5;
+        for (let i = 0; i < n; i++) {
+          const p = rpp(), el = document.createElement('div');
+          el.className = 'petal';
+          const ang = (i / n) * 360, rad = 10 + Math.random() * 25, sd = (i / n) * 0.3, rise = 30 + Math.random() * 20;
+          el.style.cssText = `left:${cx}vw;top:${40+Math.random()*20}vh;width:${p.w}px;height:${p.h}px;background:${p.bg};border-radius:${p.bt}% 0 ${p.bb}% 0;animation:${id}_${i} ${d}s ${sd}s ease-in-out 1 forwards`;
+
+          const st = document.createElement('style');
+          const a1 = ang, a2 = ang + 120, a3 = ang + 240, a4 = ang + 360;
+          const rIn = rad * 0.6;
+          st.textContent = `@keyframes ${id}_${i}{0%{transform:translate(0,0) rotate(${a1}deg);opacity:0}10%{opacity:0.7}30%{transform:translate(${Math.cos(a1*Math.PI/180)*rad}px,${-rise*0.3}px) rotate(${a2}deg);opacity:0.8}55%{transform:translate(${Math.cos(a2*Math.PI/180)*rIn}px,${-rise*0.6}px) rotate(${a3}deg);opacity:0.7}80%{transform:translate(${Math.cos(a3*Math.PI/180)*(rad*0.4)}px,${-rise*0.85}px) rotate(${a4}deg);opacity:0.5}100%{transform:translate(0,${-rise}px) rotate(${a4+180}deg);opacity:0}}`;
+          document.head.appendChild(st);
+          b.appendChild(el);
+          setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, (d + sd) * 1000 + 100);
+        }
+      }
+
+      // 特效2: 樱花暴雨
+      function burst() {
+        const n = 30 + Math.floor(Math.random() * 15), id = 'b' + (sid++), d = 4 + Math.random() * 2;
+        for (let i = 0; i < n; i++) {
+          const p = rpp(), el = document.createElement('div');
+          el.className = 'petal';
+          const sx = Math.random() * 100, dr = -50 + Math.random() * 100, dl = Math.random() * 1.5, re = 180 + Math.random() * 540;
+          el.style.cssText = `left:${sx}vw;top:-30px;width:${p.w}px;height:${p.h}px;background:${p.bg};border-radius:${p.bt}% 0 ${p.bb}% 0;animation:${id}_${i} ${d}s ${dl}s ease-out 1 forwards`;
+
+          const md = dr*0.5+(Math.random()-0.5)*20;
+          const st = document.createElement('style');
+          st.textContent = `@keyframes ${id}_${i}{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}5%{opacity:0.8}50%{transform:translateY(55vh) translateX(${md}px) rotate(${re*0.5}deg);opacity:0.7}90%{opacity:0.4}100%{transform:translateY(108vh) translateX(${dr}px) rotate(${re}deg);opacity:0}}`;
+          document.head.appendChild(st);
+          b.appendChild(el);
+          setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, (d + dl) * 1000 + 100);
+        }
+      }
+
+      function next() {
+        setTimeout(() => {
+          Math.random() < 0.45 ? swirl() : burst();
+          next();
+        }, 12000 + Math.random() * 20000);
+      }
+      next();
     })();
   </script>
 
