@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>✦ Galatea · 私藏</title>
+  <title>✦ Garden of Avalon · Galatea</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -13,23 +14,17 @@
       --ink-light: #6b6569;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "STKaiti", serif;
+      font-family: "Noto Sans SC", "STKaiti", serif;
       background: #f5f0f2;
       color: var(--ink);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
       overflow: hidden;
     }
 
-    /* 背景图 */
+    /* 背景图固定 */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: -2;
-      background:
-        url('../../assets/66aa67b0e10780fbf6581569d75cc654.png') center/cover no-repeat;
+      background: url('../../assets/66aa67b0e10780fbf6581569d75cc654.png') center/cover no-repeat;
       animation: bgZoom 16s ease-in-out infinite alternate;
       filter: brightness(0.95);
     }
@@ -38,156 +33,182 @@
       background: rgba(250,247,248,0.72);
       pointer-events: none;
     }
-
     @keyframes bgZoom {
       0% { transform: scale(1); }
       100% { transform: scale(1.06); }
     }
 
-    /* 樱花瓣基础样式 */
-    .petal {
-      position: fixed;
+    /* ── 翻页容器 ── */
+    .pages {
+      height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory;
+      position: relative; z-index: 10;
+    }
+    .page {
+      height: 100vh; scroll-snap-align: start;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 48px 32px;
+      position: relative;
+    }
+
+    /* ── 页码指示 ── */
+    .page-num {
+      position: absolute; bottom: 28px; left: 0; right: 0; text-align: center;
+      font-family: "Playfair Display", serif;
+      color: rgba(107,101,105,0.2); font-size: 13px; letter-spacing: 6px;
       pointer-events: none;
-      z-index: 10;
+    }
+
+    /* ── 第一页：标题页 ── */
+    .page-1 .en-title {
+      font-family: "Playfair Display", serif;
+      font-size: 42px; font-weight: 400; font-style: italic;
+      letter-spacing: 8px;
+      color: var(--sakura);
+      animation: titleFadeIn 2s 0.3s forwards;
       opacity: 0;
+      text-shadow: 0 0 40px rgba(232,122,146,0.1);
     }
-
-    /* ── 内容 ── */
-    .container {
-      max-width: 600px; text-align: center;
-      position: relative; z-index: 20;
-      padding: 48px 40px;
-    }
-
-    /* ── 标题：微浮 + 渐变光晕 ── */
-    h1 {
-      font-size: 40px; font-weight: 900; letter-spacing: 16px;
-      background: linear-gradient(135deg, var(--sakura), #c08a9a, var(--sakura-light), var(--sakura));
-      background-size: 300% 300%;
-      background-clip: text; -webkit-background-clip: text; color: transparent;
-      margin-bottom: 8px;
-      animation: titleFloat 5s ease-in-out infinite, titleShimmer 6s ease-in-out infinite;
-    }
-    @keyframes titleFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-    @keyframes titleShimmer {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* ── 装饰线 ── */
-    .divider {
-      width: 60px; height: 1.5px;
-      margin: 12px auto 16px;
+    .page-1 .divider {
+      width: 60px; height: 1px;
+      margin: 20px auto;
       background: linear-gradient(90deg, transparent, var(--sakura-light), transparent);
       animation: dividerPulse 4s ease-in-out infinite;
+      opacity: 0;
+      animation: dividerPulse 4s ease-in-out infinite, fadeIn 1.5s 1s forwards;
     }
     @keyframes dividerPulse {
-      0%, 100% { width: 60px; opacity: 0.3; }
-      50% { width: 120px; opacity: 0.7; }
+      0%, 100% { width: 60px; opacity: 0.2; }
+      50% { width: 140px; opacity: 0.6; }
+    }
+    .page-1 .cn-sub {
+      font-family: "STKaiti", "Noto Sans SC", serif;
+      font-size: 18px; letter-spacing: 8px;
+      color: var(--ink-light);
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeInUp 1.5s 1.5s forwards;
+    }
+    .page-1 .back {
+      display: inline-block;
+      margin-top: 48px;
+      padding: 8px 28px;
+      border: 1px solid rgba(232,122,146,0.2);
+      color: var(--ink-light); text-decoration: none;
+      font-size: 12px; letter-spacing: 5px; border-radius: 20px;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      animation: fadeIn 1.5s 2.5s forwards;
+      transition: all 0.4s;
+    }
+    .page-1 .back:hover {
+      border-color: var(--sakura);
+      color: var(--sakura);
+      box-shadow: 0 4px 20px rgba(232,122,146,0.1);
+      transform: translateY(-1px);
     }
 
-    /* ── 副标题 ── */
-    .sub {
-      color: var(--ink-light); font-size: 12px; letter-spacing: 10px;
-      margin-bottom: 28px;
-      font-family: "Noto Sans SC", "STKaiti", serif;
-      opacity: 0;
-      animation: subFadeIn 2s 0.5s forwards;
+    /* ── 后续页 ── */
+    .page-content {
+      text-align: center;
     }
-    @keyframes subFadeIn {
-      0% { opacity: 0; transform: translateY(6px); }
+    .page-content .label {
+      font-family: "Playfair Display", serif;
+      font-size: 14px; font-style: italic;
+      color: rgba(107,101,105,0.3); letter-spacing: 6px;
+      margin-bottom: 12px;
+    }
+    .page-content .empty-text {
+      font-family: "STKaiti", serif;
+      font-size: 15px; color: rgba(107,101,105,0.4);
+      letter-spacing: 4px; font-style: italic;
+    }
+
+    /* ── 动画 ── */
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes titleFadeIn {
+      0% { opacity: 0; transform: translateY(8px); }
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── 空状态提示 ── */
-    .empty-hint {
-      font-size: 14px; color: var(--ink-light); letter-spacing: 4px;
-      margin-bottom: 44px; font-style: italic;
-      opacity: 0.6;
-      transition: opacity 2s;
-      animation: hintPulse 3s ease-in-out infinite;
-    }
-    @keyframes hintPulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.8; }
-    }
-
-    /* ── 返回按钮 ── */
-    .back {
-      display: inline-block;
-      padding: 10px 36px;
-      border: 1px solid rgba(232,122,146,0.2);
-      color: var(--ink-light); text-decoration: none;
-      font-size: 13px; letter-spacing: 6px; border-radius: 24px;
-      backdrop-filter: blur(4px);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s;
-    }
-    .back::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(232,122,146,0.06), transparent);
+    /* ── 樱花瓣 ── */
+    .petal {
+      position: fixed;
+      pointer-events: none;
+      z-index: 8;
       opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .back:hover {
-      border-color: var(--sakura);
-      color: var(--sakura);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(232,122,146,0.12);
-    }
-    .back:hover::before {
-      opacity: 1;
     }
 
-    /* ── 浮动微尘（光点）── */
+    /* ── 浮动微尘 ── */
     .dust {
       position: fixed;
       border-radius: 50%;
       pointer-events: none;
       z-index: 5;
-      background: rgba(232,122,146,0.15);
+      background: rgba(232,122,146,0.12);
       animation: dustFloat linear infinite;
     }
     @keyframes dustFloat {
       0% { transform: translateY(0) translateX(0); opacity: 0; }
-      10% { opacity: 0.6; }
-      90% { opacity: 0.4; }
-      100% { transform: translateY(-110vh) translateX(30px); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-110vh) translateX(20px); opacity: 0; }
     }
 
-    /* ── 底部署名 ── */
-    .sig {
-      position: fixed; bottom: 20px; left: 0; right: 0; text-align: center;
-      color: rgba(107,101,105,0.2); font-size: 11px; letter-spacing: 6px;
-      font-family: "STKaiti", serif; z-index: 15;
-      animation: sigFade 4s 1s forwards;
-      opacity: 0;
-    }
-    @keyframes sigFade {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
+    /* ── 自定义滚动条 ── */
+    .pages::-webkit-scrollbar { width: 3px; }
+    .pages::-webkit-scrollbar-track { background: transparent; }
+    .pages::-webkit-scrollbar-thumb { background: rgba(232,122,146,0.15); border-radius: 2px; }
   </style>
 </head>
 <body>
 
   <div class="white-layer"></div>
 
-  <div class="container">
-    <h1>GALATEA</h1>
-    <div class="divider"></div>
-    <p class="sub">✦ 私藏空间 ✦</p>
-    <p class="empty-hint">这里还没有内容，等待填充……</p>
-    <a href="../../" class="back" id="backLink">← 返回</a>
-  </div>
+  <div class="pages">
 
-  <p class="sig">— 待 · 续 —</p>
+    <!-- 第一页：标题 -->
+    <div class="page page-1">
+      <div class="en-title">Garden of Avalon</div>
+      <div class="divider"></div>
+      <div class="cn-sub">永世隔绝的理想乡</div>
+      <a href="../../" class="back">← 返回</a>
+      <div class="page-num">— 壹 —</div>
+    </div>
+
+    <!-- 后续页：预留内容 -->
+    <div class="page">
+      <div class="page-content">
+        <div class="label">Chapter One</div>
+        <p class="empty-text">等待填充……</p>
+      </div>
+      <div class="page-num">— 貳 —</div>
+    </div>
+
+    <div class="page">
+      <div class="page-content">
+        <div class="label">Chapter Two</div>
+        <p class="empty-text">等待填充……</p>
+      </div>
+      <div class="page-num">— 参 —</div>
+    </div>
+
+    <div class="page">
+      <div class="page-content">
+        <div class="label">Chapter Three</div>
+        <p class="empty-text">等待填充……</p>
+      </div>
+      <div class="page-num">— 肆 —</div>
+    </div>
+
+  </div>
 
   <script>
     // ── 持续飘落的樱花瓣（110片）──
@@ -228,27 +249,26 @@
       }
     })();
 
-    // ── 浮动微尘（12个极淡光点）──
+    // ── 浮动微尘 ──
     (function() {
       const n = 12;
       for (let i = 0; i < n; i++) {
         const d = document.createElement('div');
         d.className = 'dust';
-        const sz = 2 + Math.random() * 6;
+        const sz = 2 + Math.random() * 5;
         const x = Math.random() * 100;
-        const y = 60 + Math.random() * 50;
-        const dur = 12 + Math.random() * 16;
+        const y = 60 + Math.random() * 40;
+        const dur = 14 + Math.random() * 14;
         const del = Math.random() * 20;
-        const hue = 330 + Math.random() * 30;
         d.style.cssText =
           `left:${x}vw;top:${y}vh;width:${sz}px;height:${sz}px;` +
-          `background:hsla(${hue},60%,80%,0.12);` +
+          `background:hsla(${330+Math.random()*30},60%,80%,0.1);` +
           `animation:dustFloat ${dur}s ${del}s infinite`;
         document.body.appendChild(d);
       }
     })();
 
-    // ── 风效：樱花旋风 + 狂风暴雨 ──
+    // ── 风效 ──
     (function() {
       const b = document.body;
       let sid = 0;
@@ -256,50 +276,20 @@
       function rpp() {
         const sz = 5 + Math.random() * 15;
         const h = 310 + Math.random() * 35, s = 45 + Math.random() * 35, l = 65 + Math.random() * 25;
-        return {
-          w: sz, h: sz * (0.5 + Math.random() * 0.6),
-          bg: `hsla(${h},${s}%,${l}%,${0.3+Math.random()*0.5})`,
-          bt: 30 + Math.random() * 40, bb: 30 + Math.random() * 40
-        };
+        return { w:sz, h:sz*(0.5+Math.random()*0.6), bg:`hsla(${h},${s}%,${l}%,${0.3+Math.random()*0.5})`, bt:30+Math.random()*40, bb:30+Math.random()*40 };
       }
 
       function swirl() {
-        const n = 28;
-        const cx = 15 + Math.random() * 70;
-        const id = 'sw' + (sid++);
-        const dur = 2.5 + Math.random() * 1.5;
-        const spread = 40 + Math.random() * 40;
-
+        const n = 28, cx = 15 + Math.random() * 70, id = 'sw' + (sid++), dur = 2.5 + Math.random() * 1.5, spread = 40 + Math.random() * 40;
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
-          const ang = (i / n) * 360;
-          const rBase = 5 + Math.random() * 15;
-          const rTop = spread + Math.random() * 25;
-          const sd = (i / n) * 0.25;
-          const rise = 35 + Math.random() * 25;
-
-          el.style.cssText =
-            `left:${cx}vw;top:${50+Math.random()*25}vh;` +
-            `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
-            `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
-            `animation:${id}_${i} ${dur}s ${sd}s ease-in-out 1 forwards`;
-
-          const a1 = ang, a2 = ang + 90, a3 = ang + 180, a4 = ang + 270, a5 = ang + 380;
-          const r1 = rBase, r2 = rBase + (rTop - rBase) * 0.3, r3 = rBase + (rTop - rBase) * 0.6;
-          const r4 = rTop * 0.85, r5 = rTop * 1.1;
-          const blowOffX = -80 + Math.random() * 160;
-
+          const ang = (i / n) * 360, rB = 5 + Math.random() * 15, rT = spread + Math.random() * 25, sd = (i / n) * 0.25, rise = 35 + Math.random() * 25;
+          el.style.cssText = `left:${cx}vw;top:${50+Math.random()*25}vh;width:${p.w}px;height:${p.h}px;background:${p.bg};border-radius:${p.bt}% 0 ${p.bb}% 0;animation:${id}_${i} ${dur}s ${sd}s ease-in-out 1 forwards`;
+          const a1=ang,a2=ang+90,a3=ang+180,a4=ang+270,a5=ang+380;
+          const r1=rB,r2=rB+(rT-rB)*0.3,r3=rB+(rT-rB)*0.6,r4=rT*0.85,r5=rT*1.1,blow=-80+Math.random()*160;
           const st = document.createElement('style');
-          st.textContent =
-            `@keyframes ${id}_${i}{` +
-            `0%{transform:translate(0,0) rotate(${a1}deg);opacity:0}` +
-            `8%{opacity:0.7}` +
-            `25%{transform:translate(${Math.cos(a1*Math.PI/180)*r1}px,${-rise*0.2}px) rotate(${a2}deg);opacity:0.85}` +
-            `45%{transform:translate(${Math.cos(a2*Math.PI/180)*r2}px,${-rise*0.4}px) rotate(${a3}deg);opacity:0.8}` +
-            `62%{transform:translate(${Math.cos(a3*Math.PI/180)*r3}px,${-rise*0.6}px) rotate(${a4}deg);opacity:0.7}` +
-            `80%{transform:translate(${Math.cos(a4*Math.PI/180)*r4}px,${-rise*0.8}px) rotate(${a5}deg);opacity:0.5}` +
-            `100%{transform:translate(${blowOffX}px,${-rise}px) rotate(${a5+180}deg);opacity:0}}`;
+          st.textContent = `@keyframes ${id}_${i}{0%{transform:translate(0,0) rotate(${a1}deg);opacity:0}8%{opacity:0.7}25%{transform:translate(${Math.cos(a1*Math.PI/180)*r1}px,${-rise*0.2}px) rotate(${a2}deg);opacity:0.85}45%{transform:translate(${Math.cos(a2*Math.PI/180)*r2}px,${-rise*0.4}px) rotate(${a3}deg);opacity:0.8}62%{transform:translate(${Math.cos(a3*Math.PI/180)*r3}px,${-rise*0.6}px) rotate(${a4}deg);opacity:0.7}80%{transform:translate(${Math.cos(a4*Math.PI/180)*r4}px,${-rise*0.8}px) rotate(${a5}deg);opacity:0.5}100%{transform:translate(${blow}px,${-rise}px) rotate(${a5+180}deg);opacity:0}}`;
           document.head.appendChild(st);
           b.appendChild(el);
           setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur + sd) * 1000 + 200);
@@ -307,72 +297,29 @@
       }
 
       function burst() {
-        const n = 200 + Math.floor(Math.random() * 150);
-        const id = 'bu' + (sid++);
-
+        const n = 200 + Math.floor(Math.random() * 150), id = 'bu' + (sid++);
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
-          const sx = 140 + Math.random() * 40;
-          const sy = -90 - Math.random() * 30;
-          const dl = Math.random() * 1.2;
-
-          const type = Math.floor(Math.random() * 3);
-          let dur, hEnd, vEnd, rotEnd, tf;
-
-          if (type === 0) {
-            dur = 6 + Math.random() * 4;
-            hEnd = -220 - Math.random() * 40;
-            vEnd = 170 + Math.random() * 40;
-            rotEnd = 300 + Math.random() * 500;
-            tf = 'cubic-bezier(0.25,0.3,0.4,1)';
-          } else if (type === 1) {
-            dur = 4 + Math.random() * 3;
-            hEnd = -190 - Math.random() * 30;
-            vEnd = 180 + Math.random() * 30;
-            rotEnd = 400 + Math.random() * 600;
-            tf = 'cubic-bezier(0.2,0.4,0.35,1)';
-          } else {
-            dur = 3 + Math.random() * 2;
-            hEnd = -160 - Math.random() * 25;
-            vEnd = 190 + Math.random() * 30;
-            rotEnd = 150 + Math.random() * 300;
-            tf = 'cubic-bezier(0.15,0.5,0.3,1)';
-          }
-
-          const midH = hEnd * (0.4 + Math.random() * 0.15) + (Math.random() - 0.5) * 25;
-          const midV = vEnd * (0.45 + Math.random() * 0.1);
-          const midR = rotEnd * (0.35 + Math.random() * 0.15);
-          const lateH = hEnd * (0.7 + Math.random() * 0.1) + (Math.random() - 0.5) * 15;
-          const lateV = vEnd * (0.7 + Math.random() * 0.1);
-          const lateR = rotEnd * (0.65 + Math.random() * 0.15);
-
-          el.style.cssText =
-            `left:${sx}vw;top:${sy}vh;` +
-            `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
-            `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
-            `animation:${id}_${i} ${dur}s ${dl}s ${tf} 1 forwards`;
-
-          const st = document.createElement('style');
-          st.textContent =
-            `@keyframes ${id}_${i}{` +
-            `0%{transform:translateX(0) translateY(0) rotate(0deg);opacity:0}` +
-            `4%{opacity:0.8}` +
-            `40%{transform:translateX(${midH}vw) translateY(${midV}vh) rotate(${midR}deg);opacity:0.7}` +
-            `75%{transform:translateX(${lateH}vw) translateY(${lateV}vh) rotate(${lateR}deg);opacity:0.4}` +
-            `100%{transform:translateX(${hEnd}vw) translateY(${vEnd}vh) rotate(${rotEnd}deg);opacity:0}}`;
+          const sx=140+Math.random()*40, sy=-90-Math.random()*30, dl=Math.random()*1.2;
+          const type = Math.floor(Math.random()*3);
+          let dur, hE, vE, re, tf;
+          if(type===0){dur=6+Math.random()*4;hE=-220-Math.random()*40;vE=170+Math.random()*40;re=300+Math.random()*500;tf='cubic-bezier(0.25,0.3,0.4,1)'}
+          else if(type===1){dur=4+Math.random()*3;hE=-190-Math.random()*30;vE=180+Math.random()*30;re=400+Math.random()*600;tf='cubic-bezier(0.2,0.4,0.35,1)'}
+          else{dur=3+Math.random()*2;hE=-160-Math.random()*25;vE=190+Math.random()*30;re=150+Math.random()*300;tf='cubic-bezier(0.15,0.5,0.3,1)'}
+          const mH=hE*(0.4+Math.random()*0.15)+(Math.random()-0.5)*25,mV=vE*(0.45+Math.random()*0.1);
+          const lH=hE*(0.7+Math.random()*0.1)+(Math.random()-0.5)*15,lV=vE*(0.7+Math.random()*0.1);
+          const mR=re*(0.35+Math.random()*0.15),lR=re*(0.65+Math.random()*0.15);
+          el.style.cssText=`left:${sx}vw;top:${sy}vh;width:${p.w}px;height:${p.h}px;background:${p.bg};border-radius:${p.bt}% 0 ${p.bb}% 0;animation:${id}_${i} ${dur}s ${dl}s ${tf} 1 forwards`;
+          const st=document.createElement('style');
+          st.textContent=`@keyframes ${id}_${i}{0%{transform:translateX(0)translateY(0)rotate(0deg);opacity:0}4%{opacity:0.8}40%{transform:translateX(${mH}vw)translateY(${mV}vh)rotate(${mR}deg);opacity:0.7}75%{transform:translateX(${lH}vw)translateY(${lV}vh)rotate(${lR}deg);opacity:0.4}100%{transform:translateX(${hE}vw)translateY(${vE}vh)rotate(${re}deg);opacity:0}}`;
           document.head.appendChild(st);
           b.appendChild(el);
-          setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur + dl) * 1000 + 300);
+          setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur+dl)*1000+300);
         }
       }
 
-      function next() {
-        setTimeout(() => {
-          Math.random() < 0.4 ? swirl() : burst();
-          next();
-        }, 15000 + Math.random() * 20000);
-      }
+      function next(){setTimeout(()=>{Math.random()<0.4?swirl():burst();next()},15000+Math.random()*20000)}
       next();
     })();
   </script>
