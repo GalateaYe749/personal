@@ -1296,27 +1296,13 @@ function unlock() {
 
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
-  (async()=>{let b=new TextEncoder().encode(_s+input);for(let i=0;i<100;i++)b=await crypto.subtle.digest('SHA-256',b);const h=Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');if(h===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}})()
-
-    // 同域用 POST + CSRF，跨域用 GET 跳转
-    if (!API_BASE) {
-      return _getCsrf().then(csrf => {
-        const headers = { 'Content-Type': 'application/json' };
-        if (csrf) headers['X-CSRF-Token'] = csrf;
-        return fetch('/api/login', { method: 'POST', headers, body: JSON.stringify({ password: input }) });
-      }).then(r => {
-        if (r.ok) {
-          _fails = 0;
-          _locked = true;
-          location.href = 'private/eason/';
-          return;
-        } else if (r.status === 429) {
-          throw new Error('rate');
-        }
-        throw new Error('fail');
-      });
-    }
-  }).catch(e => {
+  (async()=>{
+    let b=new TextEncoder().encode(_s+input);
+    for(let i=0;i<100;i++)b=await crypto.subtle.digest('SHA-256',b);
+    const h=Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+    if(h===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}
+    throw new Error('fail');
+  })().catch(e => {
     _fails++;
     const isRate = e.message === 'rate';
     err.textContent = isRate ? '// TOO FAST' : '// INVALID KEY';
