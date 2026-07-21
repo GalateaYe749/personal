@@ -274,12 +274,12 @@
         }
       }
 
-      // ── 定时触发：每隔15-35s──
+      // ── 定时触发：每隔6-12s（轮流出旋风/狂风）──
       function next() {
         setTimeout(() => {
-          Math.random() < 0.4 ? swirl() : burst();
+          Math.random() < 0.35 ? swirl() : burst();
           next();
-        }, 15000 + Math.random() * 20000);
+        }, 6000 + Math.random() * 6000);
       }
       next();
     })();
