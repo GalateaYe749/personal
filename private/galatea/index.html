@@ -328,6 +328,47 @@
       function next(){setTimeout(()=>{Math.random()<0.4?swirl():burst();next()},15000+Math.random()*20000)}
       next();
     })();
+
+    // ── 第一页动画：每次翻回来重新播放 ──
+    (function() {
+      const page1 = document.querySelector('.page-1');
+      if (!page1) return;
+
+      const targets = {
+        title: page1.querySelector('.en-title'),
+        divider: page1.querySelector('.divider'),
+        sub: page1.querySelector('.cn-sub'),
+        back: page1.querySelector('.back')
+      };
+
+      // 保存原始 animation 值
+      const origAnim = {};
+      for (const [k, el] of Object.entries(targets)) {
+        if (el) origAnim[k] = el.style.animation || getComputedStyle(el).animation;
+      }
+
+      function restartAnims() {
+        for (const el of Object.values(targets)) {
+          if (!el) continue;
+          el.style.animation = 'none';
+        }
+        // 强制 reflow
+        void page1.offsetHeight;
+        // 还原动画（使用原来 CSS class 中的 animation，重置 style）
+        if (targets.title) targets.title.style.animation = '';
+        if (targets.divider) targets.divider.style.animation = '';
+        if (targets.sub) targets.sub.style.animation = '';
+        if (targets.back) targets.back.style.animation = '';
+      }
+
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) restartAnims();
+        });
+      }, { threshold: 0.3 });
+
+      obs.observe(page1);
+    })();
   </script>
 
 </body>
