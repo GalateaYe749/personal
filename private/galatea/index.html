@@ -123,18 +123,16 @@
           `background:hsla(${h},${s}%,${l}%,${op});border-radius:${bt}% 0 ${bb}% 0;` +
           `animation:pf${i} ${dur}s ${del}s infinite`;
 
-        // 真实樱花瓣下落：6段关键帧，非匀速，带停顿感
+        // 真实樱花瓣下落：4段关键帧，连贯不卡顿
         const drift = -50 + Math.random() * 100;
         const pts = [];
-        for (let j = 1; j <= 5; j++) {
-          const pct = j * 20;
-          const yPos = (j / 5) * 100;
-          // 非直线漂移，每段随机偏折
-          const dx = drift * (j / 5) + (Math.random() - 0.5) * (15 + j * 3);
-          const rot = (60 + Math.random() * 120) * j + (Math.random() - 0.5) * 30;
-          // 缩放模拟翻转（花瓣翻转时变窄）
-          const sx = j % 2 === 0 ? 0.6 + Math.random() * 0.4 : 0.8 + Math.random() * 0.3;
-          pts.push(`${pct}%{transform:translateY(${yPos}vh) translateX(${dx}px) rotate(${rot}deg) scaleX(${sx});opacity:${op*(0.7+Math.random()*0.3)};animation-timing-function:${['ease-in-out','ease-out','cubic-bezier(0.25,0.1,0.25,1)'][Math.floor(Math.random()*3)]}}`);
+        for (let j = 1; j <= 4; j++) {
+          const pct = j * 25;
+          const yPos = (j / 4) * 100;
+          const dx = drift * (j / 4) + (Math.random() - 0.5) * (12 + j * 2);
+          const rot = (80 + Math.random() * 100) * j + (Math.random() - 0.5) * 20;
+          const sx = j % 2 === 0 ? 0.5 + Math.random() * 0.3 : 0.8 + Math.random() * 0.3;
+          pts.push(`${pct}%{transform:translateY(${yPos}vh) translateX(${dx}px) rotate(${rot}deg) scaleX(${sx});opacity:${op*(0.7+Math.random()*0.3)};animation-timing-function:${['linear','cubic-bezier(0.25,0.46,0.45,0.94)','cubic-bezier(0.2,0.3,0.3,1)'][Math.floor(Math.random()*3)]}}`);
         }
 
         const st = document.createElement('style');
