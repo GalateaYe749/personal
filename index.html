@@ -1349,9 +1349,9 @@ function unlock() {
     const cx=e.clientX,cy=e.clientY;
     const c=p[Math.floor(Math.random()*p.length)];
     const r=document.createElement('div');
-    r.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;width:0;height:0;border-radius:50%;1.5px solid '+c+';pointer-events:none;z-index:99;transform:translate(-50%,-50%);animation:r'+(id)+' 1s ease-out forwards';
+    r.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;width:0;height:0;border-radius:50%;border:2px solid '+c+';pointer-events:none;z-index:99;transform:translate(-50%,-50%);animation:r'+(id)+' 1s ease-out forwards';
     const rs=document.createElement('style');
-    rs.textContent='@keyframes r'+(id)+'{0%{width:0;height:0;opacity:0.8;box-shadow:0 0 12px '+c+'}100%{width:70px;height:70px;opacity:0}}';
+    rs.textContent='@keyframes r'+(id)+'{0%{width:0;height:0;opacity:0.9;box-shadow:0 0 20px '+c+'}100%{width:130px;height:130px;opacity:0}}';
     document.head.appendChild(rs);
     document.body.appendChild(r);
     setTimeout(()=>{if(r.parentNode)r.parentNode.removeChild(r)},1200);
@@ -1363,14 +1363,14 @@ function unlock() {
       const seg=4+Math.floor(Math.random()*3);
       const b=document.createElement('div');
       const bi='z'+(id++)+i;
-      let pts='0%{transform:translate(0,0);opacity:1}';
+      let pts='0%{transform:translate(0,0);opacity:0.9}';
       for(let s=1;s<=seg;s++){
         const pct=(s/seg)*100;
         const bx=dx*(s/seg)+(Math.random()-0.5)*10;
         const by=dy*(s/seg)+(Math.random()-0.5)*10;
         pts+=pct+'%{transform:translate('+bx+'px,'+by+'px);opacity:'+(0.9*(1-s/seg*0.85))+'}';
       }
-      b.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;width:3px;height:3px;background:'+c+';border-radius:50%;pointer-events:none;z-index:98;animation:'+bi+' 0.9s ease-out forwards;box-shadow:0 0 16px '+c;
+      b.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;width:2px;height:2px;background:'+c+';border-radius:50%;pointer-events:none;z-index:98;animation:'+bi+' 0.7s ease-out forwards;box-shadow:0 0 6px '+c;
       const bs=document.createElement('style');
       bs.textContent='@keyframes '+bi+'{'+pts+'}';
       document.head.appendChild(bs);
