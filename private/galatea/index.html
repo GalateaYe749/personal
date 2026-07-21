@@ -20,13 +20,14 @@
       overflow: hidden;
     }
 
-    /* 背景图固定 */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: -2;
+    /* 背景图固定 + 滚动视差容器 */
+    .bg-parallax {
+      position: fixed; inset: -60px 0; z-index: -2;
       background: url('../../assets/66aa67b0e10780fbf6581569d75cc654.png') center/cover no-repeat;
       animation: bgZoom 16s ease-in-out infinite alternate;
       filter: brightness(0.95);
+      will-change: transform;
+      transition: transform 0.3s ease-out;
     }
     .white-layer {
       position: fixed; inset: 0; z-index: -1;
@@ -34,8 +35,29 @@
       pointer-events: none;
     }
     @keyframes bgZoom {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.06); }
+      0% { transform: scale(1.05); }
+      100% { transform: scale(1.12); }
+    }
+
+    /* ── 环境光扫过 ── */
+    .light-ray {
+      position: fixed; inset: 0; z-index: 3;
+      background: linear-gradient(
+        135deg,
+        transparent 30%,
+        rgba(255,230,240,0.06) 45%,
+        rgba(255,220,230,0.08) 50%,
+        rgba(255,230,240,0.06) 55%,
+        transparent 70%
+      );
+      background-size: 200% 200%;
+      animation: lightSweep 12s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes lightSweep {
+      0% { background-position: 0% 100%; opacity: 0.4; }
+      50% { background-position: 100% 0%; opacity: 1; }
+      100% { background-position: 0% 100%; opacity: 0.4; }
     }
 
     /* ── 翻页容器 ── */
@@ -122,10 +144,11 @@
       border-radius: 20px;
       background: rgba(255,255,255,0.08);
       box-shadow:
-        0 0 30px rgba(232,122,146,0.04),
-        inset 0 0 30px rgba(232,122,146,0.02);
+        0 0 20px rgba(232,122,146,0.02),
+        inset 0 0 20px rgba(232,122,146,0.01);
       backdrop-filter: blur(4px);
       text-align: center;
+      animation: frameGlow 5s ease-in-out infinite alternate;
     }
     /* 外发光轮廓 */
     .page-1 .frame::before {
@@ -164,6 +187,22 @@
       font-family: "STKaiti", serif;
       font-size: 15px; color: rgba(107,101,105,0.4);
       letter-spacing: 4px; font-style: italic;
+    }
+
+    @keyframes frameGlow {
+      0% { box-shadow: 0 0 20px rgba(232,122,146,0.02), inset 0 0 20px rgba(232,122,146,0.01); }
+      100% { box-shadow: 0 0 40px rgba(232,122,146,0.08), inset 0 0 40px rgba(232,122,146,0.04); }
+    }
+
+    /* ── 后续页入场动画 ── */
+    .page:not(.page-1) .page-content {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .page:not(.page-1).visible .page-content {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* ── 动画 ── */
@@ -212,7 +251,9 @@
 </head>
 <body>
 
+  <div class="bg-parallax" id="bgParallax"></div>
   <div class="white-layer"></div>
+  <div class="light-ray"></div>
 
   <div class="pages">
 
@@ -365,6 +406,34 @@
 
       function next(){setTimeout(()=>{Math.random()<0.4?swirl():burst();next()},15000+Math.random()*20000)}
       next();
+    })();
+
+    // ── 滚动视差 + 翻页淡入 ──
+    (function() {
+      const pages = document.querySelector('.pages');
+      const bg = document.getElementById('bgParallax');
+
+      if (pages && bg) {
+        pages.addEventListener('scroll', function() {
+          const scrollTop = this.scrollTop;
+          const maxScroll = this.scrollHeight - this.clientHeight;
+          const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+          bg.style.transform = 'translateY(' + (-progress * 30) + 'px) scale(1.05)';
+        });
+      }
+
+      // 后续页淡入
+      const contentPages = document.querySelectorAll('.page:not(.page-1)');
+      if (contentPages.length) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        }, { threshold: 0.3 });
+        contentPages.forEach(p => obs.observe(p));
+      }
     })();
 
     // ── 第一页动画：每次翻回来重新播放 ──
