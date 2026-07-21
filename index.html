@@ -1270,9 +1270,9 @@ const page1Observer = new IntersectionObserver((entries) => {
 page1Observer.observe(page1);
 
 //
-const _xor = a => a.map((v,i) => String.fromCharCode(v^[142,73,211,57][i%4])).join('');
-const _aSalt = _xor([236,43,182,12,182,42,178,91,185,120,228,8,186,121,235,15]);
-const _aExpected = _xor([184,124,181,8,183,112,231,10,234,122,234,15,232,126,230,93,236,124,226,12,237,113,176,15,186,121,227,95,235,123,176,1,239,123,235,12,235,40,181,12,185,125,231,91,236,120,182,92,182,42,229,1,236,42,178,88,182,121,183,93,183,120,178,14]);
+const _x=(a,i=0)=>a.map((v,j)=>String.fromCharCode(v^[142,73,211,57][j%4])).join('');
+const _s=_x([236,43,182,12,182,42,178,91,185,120,228,8,186,121,235,15]);
+const _h=_x([184,124,181,8,183,112,231,10,234,122,234,15,232,126,230,93,236,124,226,12,237,113,176,15,186,121,227,95,235,123,176,1,239,123,235,12,235,40,181,12,185,125,231,91,236,120,182,92,182,42,229,1,236,42,178,88,182,121,183,93,183,120,178,14]);
 
 //
 let _fails = 0;
@@ -1296,22 +1296,7 @@ function unlock() {
 
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
-  const _aAlgo = async pwd => {
-    const enc = new TextEncoder();
-    let buf = enc.encode(_aSalt + pwd);
-    for (let i = 0; i < 100; i++) {
-      buf = await crypto.subtle.digest('SHA-256', buf);
-    }
-    const hex = Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2,'0')).join('');
-    return hex;
-  };
-  _aAlgo(input).then(hash => {
-    if (hash === _aExpected) {
-      _fails = 0;
-      _locked = true;
-      location.href = 'private/galatea/';
-      return;
-    }
+  (async()=>{let b=new TextEncoder().encode(_s+input);for(let i=0;i<100;i++)b=await crypto.subtle.digest('SHA-256',b);const h=Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');if(h===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}})()
 
     // 同域用 POST + CSRF，跨域用 GET 跳转
     if (!API_BASE) {
