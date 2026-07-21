@@ -1,10 +1,11 @@
 import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
+import fs from 'node:fs';
 import { createHash, randomUUID, pbkdf2Sync, randomBytes } from 'node:crypto';
+
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import fs from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -275,6 +276,44 @@ app.post('/api/logout', (req, res) => {
 app.get('/api/auth', (req, res) => {
   if (req.session?.auth) return res.json({ authed: true, zone: req.session.auth });
   res.json({ authed: false });
+});
+
+// ═══════════════════════════════════════════
+//  Notes 存储
+// ═══════════════════════════════════════════
+
+
+const NOTES_DIR = resolve(__dirname, 'notes');
+if (!fs.existsSync(NOTES_DIR)) fs.mkdirSync(NOTES_DIR, { recursive: true });
+
+app.post('/api/notes', (req, res) => {
+  if (!req.session?.auth) return res.status(401).json({ error: 'unauthorized' });
+  const { content } = req.body || {};
+  if (typeof content !== 'string') return res.status(400).json({ error: 'invalid' });
+  if (content.length > 100000) return res.status(400).json({ error: 'too large' });
+  const file = resolve(NOTES_DIR, req.session.auth + '.txt');
+  if (!file.startsWith(NOTES_DIR)) return res.status(403).json({ error: 'invalid' });
+  try {
+    fs.writeFileSync(file, content, 'utf-8');
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: 'write failed' });
+  }
+});
+
+app.get('/api/notes', (req, res) => {
+  if (!req.session?.auth) return res.status(401).json({ error: 'unauthorized' });
+  const file = resolve(NOTES_DIR, req.session.auth + '.txt');
+  if (!file.startsWith(NOTES_DIR)) return res.status(403).json({ error: 'invalid' });
+  try {
+    if (fs.existsSync(file)) {
+      const content = fs.readFileSync(file, 'utf-8');
+      return res.json({ content });
+    }
+    res.json({ content: '' });
+  } catch (e) {
+    res.status(500).json({ error: 'read failed' });
+  }
 });
 
 // ═══════════════════════════════════════════
