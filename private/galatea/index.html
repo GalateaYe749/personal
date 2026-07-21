@@ -29,24 +29,39 @@
       position: fixed; inset: 0; z-index: -3;
       background: url('../../assets/66aa67b0e10780fbf6581569d75cc654.png') center/cover no-repeat;
       animation: bgZoom 16s ease-in-out infinite alternate;
-      filter: brightness(1.1) contrast(0.95);
+      filter: brightness(1.2) contrast(0.92);
     }
 
-    /* ── 白色朦胧薄膜 ── */
+    /* ── 白雾朦胧薄膜 ── */
     .mist {
       position: fixed; inset: 0; z-index: -2;
       background:
-        linear-gradient(135deg,
-          rgba(255,255,255,0.18) 0%,
-          rgba(255,255,255,0.06) 40%,
-          rgba(255,255,255,0.10) 70%,
-          rgba(255,255,255,0.20) 100%);
-      animation: mistBreath 6s ease-in-out infinite alternate;
+        radial-gradient(ellipse at center,
+          rgba(255,255,255,0.04) 25%,
+          rgba(255,255,255,0.18) 55%,
+          rgba(255,255,255,0.32) 80%,
+          rgba(255,255,255,0.40) 100%);
+      animation: mistBreath 5s ease-in-out infinite alternate;
       pointer-events: none;
     }
     @keyframes mistBreath {
-      0% { opacity: 0.6; }
+      0% { opacity: 0.7; }
       100% { opacity: 1; }
+    }
+    /* ── 额外雾气飘动层 ── */
+    .fog {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse at 30% 50%,
+          rgba(255,255,255,0.08) 0%,
+          transparent 60%);
+      animation: fogDrift 10s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes fogDrift {
+      0%   { transform: translateX(-5%) scale(1); opacity: 0.5; }
+      50%  { transform: translateX(0) scale(1.05); opacity: 0.8; }
+      100% { transform: translateX(5%) scale(1); opacity: 0.5; }
     }
 
     @keyframes bgZoom {
@@ -69,42 +84,63 @@
     .container {
       max-width: 600px; text-align: center;
       position: relative; z-index: 20;
+      padding: 40px 32px;
+    }
+    /* 文字背景柔光层 */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110%; height: 110%;
+      background: radial-gradient(ellipse at center,
+        rgba(10,5,15,0.25) 0%,
+        rgba(10,5,15,0.08) 50%,
+        transparent 100%);
+      z-index: -1;
+      pointer-events: none;
     }
     h1 {
-      font-size: 36px; font-weight: 900; letter-spacing: 14px;
-      background: linear-gradient(135deg, var(--sakura), #fff0f3);
+      font-size: 40px; font-weight: 900; letter-spacing: 16px;
+      background: linear-gradient(135deg, #ffc8d6, #fff5f7);
       background-clip: text; -webkit-background-clip: text; color: transparent;
       margin-bottom: 12px;
-      text-shadow: 0 0 40px rgba(255,183,197,0.2);
+      text-shadow: 0 0 60px rgba(255,183,197,0.3), 0 2px 12px rgba(0,0,0,0.3);
     }
     .sub {
-      color: rgba(255,255,255,0.45); font-size: 13px; letter-spacing: 6px;
+      color: rgba(255,255,255,0.6); font-size: 13px; letter-spacing: 8px;
       margin-bottom: 24px;
       font-family: "Noto Sans SC", "STKaiti", serif;
+      text-shadow: 0 0 20px rgba(255,255,255,0.1);
     }
     .empty-hint {
-      font-size: 13px; color: rgba(255,255,255,0.25); letter-spacing: 3px;
+      font-size: 14px; color: rgba(255,255,255,0.45); letter-spacing: 4px;
       margin-bottom: 40px; font-style: italic;
+      text-shadow: 0 0 16px rgba(255,255,255,0.1);
     }
     .back {
       display: inline-block;
-      padding: 8px 28px;
-      border: 1px solid rgba(255,183,197,0.25);
-      color: rgba(255,255,255,0.5); text-decoration: none;
-      font-size: 12px; letter-spacing: 4px; border-radius: 20px;
+      padding: 10px 32px;
+      border: 1px solid rgba(255,183,197,0.3);
+      color: rgba(255,255,255,0.65); text-decoration: none;
+      font-size: 13px; letter-spacing: 5px; border-radius: 24px;
+      backdrop-filter: blur(4px);
       transition: all 0.3s;
     }
     .back:hover {
       border-color: var(--sakura);
       color: var(--sakura);
-      box-shadow: 0 0 20px rgba(255,183,197,0.15);
+      background: rgba(255,183,197,0.08);
+      box-shadow: 0 0 24px rgba(255,183,197,0.2);
     }
   </style>
 </head>
 <body>
 
-  <!-- 白色朦胧薄膜 -->
+  <!-- 白雾朦胧薄膜 -->
   <div class="mist"></div>
+  <!-- 雾气飘动层 -->
+  <div class="fog"></div>
 
   <!-- 内容 -->
   <div class="container">
