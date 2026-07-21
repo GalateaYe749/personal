@@ -82,12 +82,18 @@
       50% { width: 140px; opacity: 0.6; }
     }
     .page-1 .cn-sub {
-      font-family: "STKaiti", "Noto Sans SC", serif;
+      font-family: "STKaiti", "KaiTi", "Noto Serif SC", serif;
       font-size: 18px; letter-spacing: 8px;
       color: var(--ink-light);
       font-weight: 300;
+      text-shadow: 0 0 20px rgba(232,122,146,0.05);
       opacity: 0;
       animation: fadeInUp 1.5s 1.5s forwards;
+    }
+    .page-1 .cn-sub i {
+      font-style: italic;
+      display: inline-block;
+      transform: skewX(-10deg);
     }
     .page-1 .back {
       display: inline-block;
@@ -178,7 +184,7 @@
     <div class="page page-1">
       <div class="en-title">Garden of Avalon</div>
       <div class="divider"></div>
-      <div class="cn-sub">永世隔绝的理想乡</div>
+      <div class="cn-sub"><i>永世隔绝的理想乡</i></div>
       <a href="../../" class="back">← 返回</a>
       <div class="page-num">— 壹 —</div>
     </div>
