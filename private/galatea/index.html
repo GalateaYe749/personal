@@ -7,73 +7,168 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #0d0716;
-      --pink: #ff3388;
-      --cyan: #00ddff;
-      --purple: #9955dd;
-      --white: #f0f0ff;
+      --sakura: #ffb7c5;
+      --sakura-light: #ffd1dc;
+      --white-soft: #fef8fa;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
-      background: var(--bg);
-      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "STKaiti", serif;
+      background: #1a0a12;
+      color: var(--white-soft);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
+      overflow: hidden;
     }
+
+    /* ── 背景图 ── */
     body::before {
       content: '';
+      position: fixed; inset: 0; z-index: -3;
+      background: url('../../assets/66aa67b0e10780fbf6581569d75cc654.png') center/cover no-repeat;
+      animation: bgZoom 16s ease-in-out infinite alternate;
+      filter: brightness(1.1) contrast(0.95);
+    }
+
+    /* ── 白色朦胧薄膜 ── */
+    .mist {
       position: fixed; inset: 0; z-index: -2;
       background:
-        linear-gradient(135deg, rgba(13,7,22,0.30), rgba(13,7,22,0.40)),
-        url('../../assets/66aa67b0e10780fbf6581569d75cc654.png') center/cover no-repeat;
-      animation: bgZoom 14s ease-in-out infinite alternate;
-    }
-    body::after {
-      content: '';
-      position: fixed; inset: 0; z-index: -1;
-      background: linear-gradient(135deg, rgba(13,7,22,0.45), rgba(13,7,22,0.15));
-      animation: bgVignette 8s ease-in-out infinite alternate;
+        linear-gradient(135deg,
+          rgba(255,255,255,0.18) 0%,
+          rgba(255,255,255,0.06) 40%,
+          rgba(255,255,255,0.10) 70%,
+          rgba(255,255,255,0.20) 100%);
+      animation: mistBreath 6s ease-in-out infinite alternate;
       pointer-events: none;
     }
+    @keyframes mistBreath {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
     @keyframes bgZoom {
       0% { transform: scale(1); }
-      100% { transform: scale(1.08); }
+      100% { transform: scale(1.06); }
     }
-    @keyframes bgVignette {
-      0% { opacity: 0.7; }
-      100% { opacity: 0.2; }
+
+    /* ── 樱花瓣 ── */
+    .petal {
+      position: fixed;
+      pointer-events: none;
+      z-index: 10;
+      border-radius: 50% 0 50% 0;
+      opacity: 0;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
     }
-    .container { max-width: 600px; text-align: center; }
+
+    /* ── 内容 ── */
+    .container {
+      max-width: 600px; text-align: center;
+      position: relative; z-index: 20;
+    }
     h1 {
-      font-size: 36px; font-weight: 900; letter-spacing: 12px;
-      background: linear-gradient(135deg, var(--pink), var(--cyan));
+      font-size: 36px; font-weight: 900; letter-spacing: 14px;
+      background: linear-gradient(135deg, var(--sakura), #fff0f3);
       background-clip: text; -webkit-background-clip: text; color: transparent;
       margin-bottom: 12px;
+      text-shadow: 0 0 40px rgba(255,183,197,0.2);
     }
-    p { color: rgba(240,240,255,0.5); font-size: 14px; letter-spacing: 4px; margin-bottom: 32px; }
+    .sub {
+      color: rgba(255,255,255,0.45); font-size: 13px; letter-spacing: 6px;
+      margin-bottom: 24px;
+      font-family: "Noto Sans SC", "STKaiti", serif;
+    }
+    .empty-hint {
+      font-size: 13px; color: rgba(255,255,255,0.25); letter-spacing: 3px;
+      margin-bottom: 40px; font-style: italic;
+    }
     .back {
       display: inline-block;
-      padding: 8px 24px;
-      border: 1px solid rgba(255,51,136,0.2);
-      color: var(--dim-cyan); text-decoration: none;
-      font-size: 12px; letter-spacing: 3px; border-radius: 4px;
-      transition: all 0.2s;
+      padding: 8px 28px;
+      border: 1px solid rgba(255,183,197,0.25);
+      color: rgba(255,255,255,0.5); text-decoration: none;
+      font-size: 12px; letter-spacing: 4px; border-radius: 20px;
+      transition: all 0.3s;
     }
-    .back:hover { border-color: var(--cyan); color: var(--cyan); }
+    .back:hover {
+      border-color: var(--sakura);
+      color: var(--sakura);
+      box-shadow: 0 0 20px rgba(255,183,197,0.15);
+    }
   </style>
 </head>
 <body>
+
+  <!-- 白色朦胧薄膜 -->
+  <div class="mist"></div>
+
+  <!-- 内容 -->
   <div class="container">
     <h1>GALATEA</h1>
-    <p>✦ 私藏空间 ✦</p>
-    <p style="font-size:13px;color:rgba(240,240,255,0.3);letter-spacing:2px;margin-bottom:40px">
-      这里还没有内容，等待填充……
-    </p>
-    <a href="../../" class="back" id="backLink">← BACK</a>
+    <p class="sub">✦ 私藏空间 ✦</p>
+    <p class="empty-hint">这里还没有内容，等待填充……</p>
+    <a href="../../" class="back" id="backLink">← 返回</a>
   </div>
-  </div>
+
+  <script>
+    // ── 生成樱花瓣 ──
+    (function createPetals() {
+      const petalCount = 35;
+      const body = document.body;
+
+      for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+
+        const size = 8 + Math.random() * 12;           // 8-20px
+        const startX = Math.random() * 100;              // 水平起始 0-100vw
+        const duration = 10 + Math.random() * 10;        // 下落 10-20s
+        const delay = Math.random() * 25;                // 延迟 0-25s
+        const hue = 320 + Math.random() * 30;            // 粉红-粉白
+        const sat = 60 + Math.random() * 30;             // 饱和度
+        const light = 75 + Math.random() * 15;           // 亮度
+        const petalOpacity = 0.35 + Math.random() * 0.4; // 0.35-0.75
+
+        // 花瓣形状：不规则的圆角组合模拟花瓣
+        const btr1 = 40 + Math.random() * 30;
+        const btr2 = 0;
+        const bbr1 = 40 + Math.random() * 30;
+        const bbr2 = 0;
+
+        petal.style.cssText = `
+          left: ${startX}vw;
+          top: -30px;
+          width: ${size}px;
+          height: ${size * (0.7 + Math.random() * 0.5)}px;
+          background: hsla(${hue}, ${sat}%, ${light}%, ${petalOpacity});
+          border-radius: ${btr1}% ${btr2} ${bbr1}% ${bbr2};
+          animation: petalAnim${i} ${duration}s ${delay}s infinite;
+        `;
+
+        // 为每个花瓣创建独立的 keyframes（包含下落+旋转+漂移）
+        const keyframeName = `petalAnim${i}`;
+        const rotateEnd = 180 + Math.random() * 540;
+        const driftX = -30 + Math.random() * 60;
+        const midDrift = driftX * 0.5 + (Math.random() - 0.5) * 20;
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes ${keyframeName} {
+            0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+            5%   { opacity: ${petalOpacity}; }
+            50%  { transform: translateY(50vh) translateX(${midDrift}px) rotate(${rotateEnd * 0.5}deg); opacity: ${petalOpacity}; }
+            90%  { opacity: ${petalOpacity}; }
+            100% { transform: translateY(105vh) translateX(${driftX}px) rotate(${rotateEnd}deg); opacity: 0; }
+          }`;
+        document.head.appendChild(style);
+
+        body.appendChild(petal);
+      }
+    })();
+  </script>
+
 </body>
 </html>
