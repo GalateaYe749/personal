@@ -50,10 +50,21 @@ function verifyPassword(password, stored) {
   return diff === 0;
 }
 
-const PASSWORDS = {
-  'Avalon': hashPassword('Avalon'),
-  'EasonQian': hashPassword('EasonQian'),
-};
+const PW_FILE = resolve(__dirname, 'passwords.json');
+function loadPasswords() {
+  try {
+    if (fs.existsSync(PW_FILE)) {
+      return JSON.parse(fs.readFileSync(PW_FILE, 'utf-8'));
+    }
+  } catch {}
+  const pws = {
+    'Avalon': hashPassword('Avalon'),
+    'EasonQian': hashPassword('EasonQian'),
+  };
+  fs.writeFileSync(PW_FILE, JSON.stringify(pws, null, 2));
+  return pws;
+}
+const PASSWORDS = loadPasswords();
 
 //
 
@@ -184,6 +195,19 @@ app.use(helmet({
 // limit
 app.use(express.json({ limit: '1kb' }));
 app.use(express.urlencoded({ extended: true, limit: '1kb' }));
+
+// CORS
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (origin.includes('github.io') || origin.includes('120.55.242.84') || origin.includes('localhost'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token');
+  }
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  next();
+});
 
 // session
 app.use(session({

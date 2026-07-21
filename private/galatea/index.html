@@ -535,17 +535,18 @@
       if (!editor) return;
 
       // 判断是否在服务端环境下（同域才能用 API）
+      const API_BASE = location.hostname === "120.55.242.84" ? "" : "http://120.55.242.84:3456";
       const useServer = location.hostname === '120.55.242.84';
       const LS_KEY = 'avalon_notes';
       let _csrf = null;
 
       function getCsrf() {
-        return fetch('/api/csrf').then(r => r.json()).then(d => { _csrf = d.csrf; return d.csrf; }).catch(() => null);
+        return fetch(API_BASE + '/api/csrf').then(r => r.json()).then(d => { _csrf = d.csrf; return d.csrf; }).catch(() => null);
       }
 
       function load() {
         if (useServer) {
-          fetch('/api/notes').then(r => r.json()).then(d => {
+          fetch(API_BASE + '/api/notes').then(r => r.json()).then(d => {
             if (d.content) editor.value = d.content;
             return getCsrf();
           }).catch(() => getCsrf());
@@ -560,7 +561,7 @@
 
         if (useServer) {
           if (!_csrf) { getCsrf().then(save); return; }
-          fetch('/api/notes', {
+          fetch(API_BASE + '/api/notes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrf },
             body: JSON.stringify({ content: editor.value })

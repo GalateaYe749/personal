@@ -1100,10 +1100,11 @@ const _aHash = (() => [189,124,183,14,239,43,226,95,236,122,181,11,235,126,181,9
 let _fails = 0;
 let _locked = false;
 
+const API_BASE = location.hostname === '120.55.242.84' ? '' : 'http://120.55.242.84:3456';
 let _csrfToken = null;
 function _getCsrf() {
   if (_csrfToken) return Promise.resolve(_csrfToken);
-  return fetch('/api/csrf').then(r => r.json()).then(d => { _csrfToken = d.csrf; return d.csrf; }).catch(() => null);
+  return fetch(API_BASE + '/api/csrf').then(r => r.json()).then(d => { _csrfToken = d.csrf; return d.csrf; }).catch(() => null);
 }
 
 function unlock() {
@@ -1127,7 +1128,7 @@ function unlock() {
     return _getCsrf().then(csrf => {
       const headers = { 'Content-Type': 'application/json' };
       if (csrf) headers['X-CSRF-Token'] = csrf;
-      return fetch('/api/login', { method: 'POST', headers, body: JSON.stringify({ password: input }) });
+      return fetch(API_BASE + '/api/login', { method: 'POST', headers, body: JSON.stringify({ password: input }) });
     }).then(r => {
       if (r.ok) {
         _fails = 0;
