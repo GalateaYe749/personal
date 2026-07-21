@@ -1092,26 +1092,70 @@ window.addEventListener('resize', () => {
 // ===== 密码门解锁（服务端验证） =====
 // ===== 密码门解锁 =====
 // ===== 密码门解锁 =====
+const _sha256 = async s => {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('');
+};
+const _aHash = '35d7ab1fb3f2e7ff4b4f0b5b11c399c7696741c41af8ec0aca3c33d5a7fa3328';
+let _fails = 0;
+let _locked = false;
+
 function unlock() {
+  if (_locked) return;
   const input = document.getElementById('k').value;
   const err = document.getElementById('err');
+  const btn = document.querySelector('.key-box button');
 
-  const _xk = [142,73,211,57];
-  const _xor = a => a.map((v,i) => String.fromCharCode(v ^ _xk[i % 4])).join('');
+  setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
-  if (input === _xor([207,63,178,85,225,39])) {
-    location.href = _xor([254,59,186,79,239,61,182,22,233,40,191,88,250,44,178,22]);
-    return;
-  }
+  _sha256(input).then(hash => {
+    if (hash === _aHash) {
+      _fails = 0;
+      location.href = 'private/galatea/';
+      return;
+    }
 
-  const _k = _xor([203,40,160,86,224,24,186,88,224]);
-  if (input === _k) {
-    location.href = _xor([230,61,167,73,180,102,252,8,188,121,253,12,187,103,225,13,188,103,235,13,161,37,188,94,231,39,236,82,235,48,238]) + _k + '&from=gh';
-    return;
-  }
+    return fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: input })
+    }).then(r => {
+      if (r.ok) {
+        _fails = 0;
+        location.href = 'private/eason/';
+        return;
+      }
+      throw new Error('fail');
+    });
+  }).catch(() => {
+    _fails++;
+    err.textContent = '// INVALID KEY';
+    err.style.display = 'block';
 
-  err.style.display = 'block';
-  setTimeout(() => err.style.display = 'none', 2000);
+    if (_fails >= 10) {
+      _locked = true;
+      err.textContent = '// LOCKED 5 MIN';
+      btn.disabled = true;
+      btn.style.opacity = '0.3';
+      setTimeout(() => {
+        _locked = false;
+        _fails = 0;
+        err.style.display = 'none';
+        btn.disabled = false;
+        btn.style.opacity = '';
+      }, 300000);
+    } else if (_fails >= 5) {
+      err.textContent = '// TOO MANY ATTEMPTS (WAIT 30S)';
+      _locked = true;
+      setTimeout(() => { _locked = false; err.style.display = 'none'; }, 30000);
+    } else if (_fails >= 3) {
+      err.textContent = '// SLOW DOWN (WAIT 5S)';
+      _locked = true;
+      setTimeout(() => { _locked = false; err.style.display = 'none'; }, 5000);
+    } else {
+      setTimeout(() => err.style.display = 'none', 2000);
+    }
+  });
 }
 
 // ===== 翻页过渡动画 =====
