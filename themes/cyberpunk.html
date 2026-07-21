@@ -1092,9 +1092,8 @@ window.addEventListener('resize', () => {
 //
 //
 //
-const _x=(a,i=0)=>a.map((v,j)=>String.fromCharCode(v^[142,73,211,57][j%4])).join('');
-const _s=_x([236,43,182,12,182,42,178,91,185,120,228,8,186,121,235,15]);
-const _h=_x([184,124,181,8,183,112,231,10,234,122,234,15,232,126,230,93,236,124,226,12,237,113,176,15,186,121,227,95,235,123,176,1,239,123,235,12,235,40,181,12,185,125,231,91,236,120,182,92,182,42,229,1,236,42,178,88,182,121,183,93,183,120,178,14]);
+const _x=a=>a.map((v,j)=>String.fromCharCode(v^[142,73,211,57][j%4])).join('');
+const _h=_x([189, 124, 183, 14, 239, 43, 226, 95, 236, 122, 181, 11, 235, 126, 181, 95, 186, 43, 231, 95, 190, 43, 230, 91, 191, 120, 176, 10, 183, 112, 176, 14, 184, 112, 229, 14, 186, 120, 176, 13, 191, 40, 181, 1, 235, 42, 227, 88, 237, 40, 224, 90, 189, 122, 183, 12, 239, 126, 181, 88, 189, 122, 225, 1]);
 let _fails = 0;
 let _locked = false;
 
@@ -1116,9 +1115,7 @@ function unlock() {
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
   (async()=>{
-    let b=new TextEncoder().encode(_s+input);
-    for(let i=0;i<100;i++)b=await crypto.subtle.digest('SHA-256',b);
-    const h=Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+    const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input)))).map(x=>x.toString(16).padStart(2,'0')).join('');
     if(h===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}
     throw new Error('fail');
   })().catch(e => {
