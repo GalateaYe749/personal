@@ -108,41 +108,57 @@
   <script>
     // ── 生成樱花瓣 ──
     (function createPetals() {
-      const petalCount = 35;
+      const petalCount = 55;
       const body = document.body;
       for (let i = 0; i < petalCount; i++) {
         const petal = document.createElement('div');
         petal.className = 'petal';
-        const size = 8 + Math.random() * 12;
-        const startX = Math.random() * 100;
-        const duration = 10 + Math.random() * 10;
-        const delay = Math.random() * 25;
-        const hue = 330 + Math.random() * 20;
+        const size = 6 + Math.random() * 14;            // 6-20px
+        const startX = Math.random() * 110 - 5;           // -5~105vw
+        const duration = 12 + Math.random() * 10;         // 12-22s
+        const delay = Math.random() * 30;                 // 0-30s
+        const hue = 325 + Math.random() * 25;
         const sat = 50 + Math.random() * 30;
-        const light = 75 + Math.random() * 15;
-        const petalOpacity = 0.4 + Math.random() * 0.4;
-        const btr1 = 40 + Math.random() * 30;
-        const bbr1 = 40 + Math.random() * 30;
+        const light = 72 + Math.random() * 18;
+        const petalOpacity = 0.35 + Math.random() * 0.45; // 0.35-0.8
+        const btr1 = 35 + Math.random() * 35;
+        const bbr1 = 35 + Math.random() * 35;
+        const tall = Math.random() > 0.5;
+
         petal.style.cssText = `
           left: ${startX}vw;
-          top: -30px;
+          top: -40px;
           width: ${size}px;
-          height: ${size * (0.7 + Math.random() * 0.5)}px;
+          height: ${tall ? size * (0.9 + Math.random() * 0.6) : size * (0.6 + Math.random() * 0.4)}px;
           background: hsla(${hue}, ${sat}%, ${light}%, ${petalOpacity});
           border-radius: ${btr1}% 0 ${bbr1}% 0;
           animation: petalAnim${i} ${duration}s ${delay}s infinite;
         `;
-        const rotateEnd = 180 + Math.random() * 540;
-        const driftX = -30 + Math.random() * 60;
-        const midDrift = driftX * 0.5 + (Math.random() - 0.5) * 20;
+
+        // 多点路径：S 形摇摆下落，更接近真实花瓣
+        const totalDrift = -40 + Math.random() * 80;
+        const p25 = totalDrift * 0.3 + (Math.random() - 0.5) * 25;
+        const p50 = totalDrift * 0.6 + (Math.random() - 0.5) * 20;
+        const p75 = totalDrift * 0.85 + (Math.random() - 0.5) * 15;
+        const rot1 = 60 + Math.random() * 120;
+        const rot2 = rot1 + 40 + Math.random() * 100;
+        const rot3 = rot2 + 30 + Math.random() * 80;
+        const rot4 = rot3 + 60 + Math.random() * 180;
+
+        // 随机 timing function，有些飘忽有些稳定
+        const tfs = ['ease-in-out', 'ease-out', 'linear'];
+        const tf = tfs[Math.floor(Math.random() * tfs.length)];
+
         const style = document.createElement('style');
         style.textContent = `
           @keyframes petalAnim${i} {
-            0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+            0%   { transform: translateY(0)    translateX(0)    rotate(0deg);   opacity: 0; }
             5%   { opacity: ${petalOpacity}; }
-            50%  { transform: translateY(50vh) translateX(${midDrift}px) rotate(${rotateEnd * 0.5}deg); opacity: ${petalOpacity}; }
-            90%  { opacity: ${petalOpacity}; }
-            100% { transform: translateY(105vh) translateX(${driftX}px) rotate(${rotateEnd}deg); opacity: 0; }
+            25%  { transform: translateY(25vh) translateX(${p25}px) rotate(${rot1}deg);   opacity: ${petalOpacity}; animation-timing-function: ${tf}; }
+            50%  { transform: translateY(50vh) translateX(${p50}px) rotate(${rot2}deg);   opacity: ${petalOpacity}; animation-timing-function: ${tf}; }
+            75%  { transform: translateY(78vh) translateX(${p75}px) rotate(${rot3}deg);   opacity: ${petalOpacity}; animation-timing-function: ${tf}; }
+            95%  { opacity: ${petalOpacity * 0.6}; }
+            100% { transform: translateY(108vh) translateX(${totalDrift}px) rotate(${rot4}deg); opacity: 0; }
           }`;
         document.head.appendChild(style);
         body.appendChild(petal);
