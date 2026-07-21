@@ -1141,9 +1141,6 @@ function unlock() {
         }
         throw new Error('fail');
       });
-    } else {
-      location.href = API_BASE + '/login?key=' + encodeURIComponent(input) + '&from=gh';
-      _locked = true;
     }
   }).catch(e => {
     _fails++;

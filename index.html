@@ -1324,10 +1324,6 @@ function unlock() {
         }
         throw new Error('fail');
       });
-    } else {
-      // GitHub Pages → 跳转到服务端 GET 登录
-      location.href = API_BASE + '/login?key=' + encodeURIComponent(input) + '&from=gh';
-      _locked = true;
     }
   }).catch(e => {
     _fails++;

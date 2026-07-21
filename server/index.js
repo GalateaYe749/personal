@@ -59,8 +59,7 @@ function loadPasswords() {
   } catch {}
   const pws = {
     'Avalon': hashPassword('Avalon'),
-    'EasonQian': hashPassword('EasonQian'),
-  };
+    };
   fs.writeFileSync(PW_FILE, JSON.stringify(pws, null, 2));
   return pws;
 }
@@ -236,6 +235,20 @@ app.get('/api/csrf', (req, res) => {
 });
 
 
+app.get('/api/debug', (req, res) => {
+  // Debug: show password verification status (only accessible locally)
+  if (req.ip !== '127.0.0.1' && req.ip !== '::1' && !req.ip.startsWith('172.')) {
+    return res.status(403).json({ error: 'local only' });
+  }
+  const results = {};
+  for (const [user, stored] of Object.entries(PASSWORDS)) {
+    const [salt, hash] = stored.split(':');
+    const derived = crypto.pbkdf2Sync(user, salt, 600000, 64, 'sha512').toString('hex');
+    results[user] = { salt: salt.substring(0,8)+'...', hashMatch: derived === hash, pwCount: Object.keys(PASSWORDS).length };
+  }
+  res.json(results);
+});
+
 app.post('/api/login', rateLimit, (req, res) => {
   const { password } = req.body || {};
   if (!password || password.length > 100) {
@@ -248,7 +261,7 @@ app.post('/api/login', rateLimit, (req, res) => {
   //
   for (const [user, stored] of Object.entries(PASSWORDS)) {
     if (verifyPassword(password, stored)) {
-      zone = user === 'Avalon' ? 'galatea' : 'eason';
+      zone = 'galatea';
       matchedUser = user;
       break;
     }
@@ -276,7 +289,7 @@ app.get('/login', rateLimit, (req, res) => {
   let zone = null;
   for (const [user, stored] of Object.entries(PASSWORDS)) {
     if (verifyPassword(key, stored)) {
-      zone = user === 'Avalon' ? 'galatea' : 'eason';
+      zone = 'galatea';
       logAuth(req.ip, user, 'LOGIN_OK_GET');
       break;
     }
