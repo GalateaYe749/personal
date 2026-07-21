@@ -114,6 +114,41 @@
       transform: translateY(-1px);
     }
 
+    /* ── 唯美边框 ── */
+    .page-1 .frame {
+      position: relative;
+      padding: 48px 60px 40px;
+      border: 1px solid rgba(232,122,146,0.15);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      box-shadow:
+        0 0 30px rgba(232,122,146,0.04),
+        inset 0 0 30px rgba(232,122,146,0.02);
+      backdrop-filter: blur(4px);
+    }
+    /* 外发光轮廓 */
+    .page-1 .frame::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border: 1px solid rgba(232,122,146,0.08);
+      border-radius: 23px;
+      pointer-events: none;
+    }
+    /* 四角装饰 */
+    .page-1 .frame::after {
+      content: '✦';
+      position: absolute;
+      top: -9px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: rgba(232,122,146,0.25);
+      letter-spacing: 6px;
+      background: #f5f0f2;
+      padding: 0 10px;
+      pointer-events: none;
+    }
+
     /* ── 后续页 ── */
     .page-content {
       text-align: center;
@@ -182,10 +217,12 @@
 
     <!-- 第一页：标题 -->
     <div class="page page-1">
-      <div class="en-title">Garden of Avalon</div>
-      <div class="divider"></div>
-      <div class="cn-sub"><i>永世隔绝的理想乡</i></div>
-      <a href="../../" class="back">← 返回</a>
+      <div class="frame">
+        <div class="en-title">Garden of Avalon</div>
+        <div class="divider"></div>
+        <div class="cn-sub"><i>永世隔绝的理想乡</i></div>
+        <a href="../../" class="back">← 返回</a>
+      </div>
       <div class="page-num">— 壹 —</div>
     </div>
 
