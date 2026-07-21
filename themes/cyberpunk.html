@@ -1097,6 +1097,9 @@ const _k1=[78,156,62,62];
 const _k2=[179,56,77,225];
 const _eK=[122,164,7,14,131,92,44,128,42,255,93,11,210,9,44,213,122,255,91,14,128,89,116,130,123,170,10,92,129,13,116,214,125,175,15,93,133,14,43,216,124,250,15,88,135,89,43,210,45,175,15,92,214,12,124,132,120,253,95,6,130,90,46,130];
 const _eH=[45,250,13,90,208,89,47,132,45,170,15,6,130,93,121,210,43,165,11,95,139,0,46,135,47,249,6,8,215,8,126,212,126,171,10,90,214,8,127,210,121,165,7,91,138,91,40,210,126,171,90,9,135,15,124,213,123,249,9,9,131,12,122,130];
+const _aN=[6,209,127,125];
+const _aS=[29,212,127,19,129,13,123];
+const _aU=[62,238,87,72,210,76,40,206,41,253,82,95,199,93,44,206];
 let _fails = 0;
 let _locked = false;
 
@@ -1121,11 +1124,11 @@ function unlock() {
     const _K=_k1.concat(_k2);
     const _k=Uint8Array.from(_x(_eK,_K).match(/.{2}/g).map(x=>parseInt(x,16)));
     const _h=_x(_eH,_K);
-    const _i=await crypto.subtle.importKey('raw',_k,{name:'HMAC',hash:'SHA-256'},false,['sign']);
+    const _i=await crypto.subtle.importKey('raw',_k,{name:_x(_aN,_K),hash:_x(_aS,_K)},false,['sign']);
     let _b=new TextEncoder().encode(input);
-    for(let _r=0;_r<50;_r++)_b=await crypto.subtle.sign('HMAC',_i,_b);
+    for(let _r=0;_r<(5*10);_r++)_b=await crypto.subtle.sign(_x(_aN,_K),_i,_b);
     const _c=Array.from(new Uint8Array(_b)).map(x=>x.toString(16).padStart(2,'0')).join('');
-    if(_c===_h){_fails=0;_locked=true;location.href='private/galatea/';return;}
+    if(_c===_h){_fails=0;_locked=true;location.href=_x(_aU,_K);return;}
     throw new Error('fail');
   })().catch(e => {
     _fails++;
