@@ -205,47 +205,45 @@
         }
       }
 
-      // ── 特效2：一阵狂风（几百瓣花瓣横穿全屏）──
+      // ── 特效2：一阵狂风（几百瓣花瓣对角线斜穿）──
       function burst() {
         const n = 200 + Math.floor(Math.random() * 150);  // 200-349片
         const id = 'bu' + (sid++);
-        const windDir = Math.random() > 0.5 ? 1 : -1;
-        // 风从一侧吹向另一侧
+        const diag = Math.random() > 0.5;  // true=↗↘, false=↖↗
 
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
 
-          // 风来的方向起始，横穿到另一侧
-          const fromSide = windDir > 0 ? -15 : 100;  // 从屏幕外开始
-          const sx = fromSide + Math.random() * 20 * -windDir;
-          const sy = -10 + Math.random() * 40;  // 顶部小散布
-          const dl = Math.random() * 0.7;
+          // 对角线起始——从对角方向吹过来
+          const sx = diag ? (-15 + Math.random() * 15) : (85 + Math.random() * 30);
+          const sy = -15 + Math.random() * 10;
+          const dl = Math.random() * 0.6;
 
           // 三种轨迹类型
           const type = Math.floor(Math.random() * 3);
           let dur, hEnd, vEnd, re, timing;
 
           if (type === 0) {
-            // 轻花瓣：被风吹得高飘得远，慢慢横穿
+            // 轻花瓣：被风吹得高飘，慢慢斜穿到对角
             dur = 2.5 + Math.random() * 1.5;
-            hEnd = windDir * (130 + Math.random() * 30);  // 穿到另一头
-            vEnd = 20 + Math.random() * 30;  // 飘得高
-            re = windDir * (200 + Math.random() * 400);
+            hEnd = diag ? (120 + Math.random() * 40) : (-120 - Math.random() * 40);
+            vEnd = 60 + Math.random() * 40;
+            re = 200 + Math.random() * 400;
             timing = 'cubic-bezier(0.2,0.4,0.4,1)';
           } else if (type === 1) {
             // 中等花瓣：正常斜穿
             dur = 1.5 + Math.random() * 1;
-            hEnd = windDir * (120 + Math.random() * 30);
-            vEnd = 40 + Math.random() * 30;
-            re = windDir * (300 + Math.random() * 500);
+            hEnd = diag ? (110 + Math.random() * 30) : (-110 - Math.random() * 30);
+            vEnd = 70 + Math.random() * 30;
+            re = 300 + Math.random() * 500;
             timing = 'cubic-bezier(0.15,0.5,0.35,1)';
           } else {
             // 重花瓣：快速掠过，下坠明显
-            dur = 1 + Math.random() * 0.8;
-            hEnd = windDir * (100 + Math.random() * 20);
-            vEnd = 60 + Math.random() * 30;
-            re = windDir * (100 + Math.random() * 200);
+            dur = 0.8 + Math.random() * 0.7;
+            hEnd = diag ? (90 + Math.random() * 20) : (-90 - Math.random() * 20);
+            vEnd = 90 + Math.random() * 20;
+            re = 100 + Math.random() * 200;
             timing = 'cubic-bezier(0.1,0.7,0.3,1)';
           }
 
