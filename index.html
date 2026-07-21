@@ -1274,17 +1274,20 @@ function unlock() {
   const input = document.getElementById('k').value;
   const err = document.getElementById('err');
 
-  // 客户端跳转（密码/URL已从源码隐藏）
-  if (input === String.fromCharCode(65,118,97,108,111,110)) {
-    location.href = String.fromCharCode(112,114,105,118,97,116,101,47,103,97,108,97,116,101,97,47);
+  // 解密函数（XOR）
+  const _xk = [142,73,211,57];
+  const _xor = a => a.map((v,i) => String.fromCharCode(v ^ _xk[i % 4])).join('');
+
+  // 客户端跳转
+  if (input === _xor([207,63,178,85,225,39])) {
+    location.href = _xor([254,59,186,79,239,61,182,22,233,40,191,88,250,44,178,22]);
     return;
   }
 
-  // 服务器验证（密钥/URL已从源码隐藏）
-  const _k = String.fromCharCode(69,97,115,111,110,81,105,97,110);
+  // 服务器验证
+  const _k = _xor([203,40,160,86,224,24,186,88,224]);
   if (input === _k) {
-    const _u = String.fromCharCode(104,116,116,112,58,47,47,49,50,48,46,53,53,46,50,52,50,46,56,52,47,108,111,103,105,110,63,107,101,121,61);
-    location.href = _u + _k + '&from=gh';
+    location.href = _xor([230,61,167,73,180,102,252,8,188,121,253,12,187,103,225,13,188,103,235,13,161,37,188,94,231,39,236,82,235,48,238]) + _k + '&from=gh';
     return;
   }
 
