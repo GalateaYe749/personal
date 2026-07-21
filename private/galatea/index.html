@@ -205,44 +205,43 @@
         }
       }
 
-      // ── 特效2：一阵狂风（几百瓣花瓣对角线斜穿）──
+      // ── 特效2：一阵狂风（几百瓣花瓣从右上→左下对角斜穿）──
       function burst() {
         const n = 200 + Math.floor(Math.random() * 150);  // 200-349片
         const id = 'bu' + (sid++);
-        const diag = Math.random() > 0.5;  // true=↗↘, false=↖↗
 
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
 
-          // 对角线起始——从对角方向吹过来
-          const sx = diag ? (-15 + Math.random() * 15) : (85 + Math.random() * 30);
-          const sy = -15 + Math.random() * 10;
+          // 统一从右上角外起始，斜穿到左下角外
+          const sx = 95 + Math.random() * 35;    // 屏幕右侧外开始
+          const sy = -20 - Math.random() * 20;   // 屏幕顶部上方
           const dl = Math.random() * 0.6;
 
           // 三种轨迹类型
           const type = Math.floor(Math.random() * 3);
-          let dur, hEnd, vEnd, re, timing;
+          let dur, hLen, vLen, re, timing;
 
           if (type === 0) {
-            // 轻花瓣：被风吹得高飘，慢慢斜穿到对角
+            // 轻花瓣：飘得高，慢慢对角飘
             dur = 2.5 + Math.random() * 1.5;
-            hEnd = diag ? (120 + Math.random() * 40) : (-120 - Math.random() * 40);
-            vEnd = 60 + Math.random() * 40;
+            hLen = -150 - Math.random() * 40;   // 向左横穿到左外
+            vLen = 90 + Math.random() * 40;     // 向下到画面外
             re = 200 + Math.random() * 400;
             timing = 'cubic-bezier(0.2,0.4,0.4,1)';
           } else if (type === 1) {
-            // 中等花瓣：正常斜穿
+            // 中等花瓣：正常对角速度
             dur = 1.5 + Math.random() * 1;
-            hEnd = diag ? (110 + Math.random() * 30) : (-110 - Math.random() * 30);
-            vEnd = 70 + Math.random() * 30;
+            hLen = -130 - Math.random() * 30;
+            vLen = 110 + Math.random() * 30;
             re = 300 + Math.random() * 500;
             timing = 'cubic-bezier(0.15,0.5,0.35,1)';
           } else {
-            // 重花瓣：快速掠过，下坠明显
+            // 重花瓣：快速掠过
             dur = 0.8 + Math.random() * 0.7;
-            hEnd = diag ? (90 + Math.random() * 20) : (-90 - Math.random() * 20);
-            vEnd = 90 + Math.random() * 20;
+            hLen = -110 - Math.random() * 20;
+            vLen = 130 + Math.random() * 20;
             re = 100 + Math.random() * 200;
             timing = 'cubic-bezier(0.1,0.7,0.3,1)';
           }
@@ -258,7 +257,7 @@
             `@keyframes ${id}_${i}{` +
             `0%{transform:translateX(0) translateY(0) rotate(0deg);opacity:0}` +
             `3%{opacity:0.85}` +
-            `100%{transform:translateX(${hEnd}vw) translateY(${vEnd}vh) rotate(${re}deg);opacity:0}}`;
+            `100%{transform:translateX(${hLen}vw) translateY(${vLen}vh) rotate(${re}deg);opacity:0}}`;
           document.head.appendChild(st);
           b.appendChild(el);
           setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur + dl) * 1000 + 300);
