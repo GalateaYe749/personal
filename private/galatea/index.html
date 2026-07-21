@@ -529,6 +529,33 @@
       obs.observe(page1);
     })();
 
+    // ── 单击花瓣特效 ──
+    (function() {
+      let cid = 0;
+      document.addEventListener('click', e => {
+        const cx = e.clientX, cy = e.clientY;
+        const n = 6 + Math.floor(Math.random() * 5);
+        for (let i = 0; i < n; i++) {
+          const el = document.createElement('div');
+          el.className = 'petal';
+          const sz = 4 + Math.random() * 10;
+          const ang = (i / n) * 360 + (Math.random() - 0.5) * 30;
+          const dist = 20 + Math.random() * 50;
+          const dx = Math.cos(ang * Math.PI / 180) * dist;
+          const dy = Math.sin(ang * Math.PI / 180) * dist - 10;
+          const dur = 0.6 + Math.random() * 0.6;
+          const h = 325 + Math.random() * 25, s = 60 + Math.random() * 25, l = 72 + Math.random() * 18;
+          const id = 'clk' + (cid++);
+          el.style.cssText = `left:${cx}px;top:${cy}px;width:${sz}px;height:${sz*(0.5+Math.random()*0.5)}px;background:hsla(${h},${s}%,${l}%,0.8);border-radius:${35+Math.random()*30}% 0 ${35+Math.random()*30}% 0;animation:${id} ${dur}s ease-out 1 forwards;pointer-events:none;z-index:99`;
+          const st = document.createElement('style');
+          st.textContent = `@keyframes ${id}{0%{transform:translate(0,0) rotate(0deg);opacity:0.9}100%{transform:translate(${dx}px,${dy}px) rotate(${180+Math.random()*360}deg);opacity:0}}`;
+          document.head.appendChild(st);
+          document.body.appendChild(el);
+          setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, (dur + 0.1) * 1000);
+        }
+      });
+    })();
+
     // ── 文本编辑器：双模式保存（服务端 / localStorage 回退）──
     (function() {
       const editor = document.getElementById('avalonEditor');
