@@ -357,21 +357,56 @@
       filter: drop-shadow(0 0 12px rgba(255,190,110,0.7)) drop-shadow(0 0 24px rgba(255,190,110,0.4));
     }
 
-    /* ===== 待施工文字 ===== */
-    .coming-soon {
+    /* ===== 信息列表 ===== */
+    .info-list {
+      width: 100%;
       margin-top: 20px;
+      text-align: left;
+    }
+    .info-section {
+      margin-bottom: 24px;
+    }
+    .info-section .sec-title {
+      font-size: 14px;
+      letter-spacing: 6px;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      font-family: "Consolas", "Monaco", monospace;
+      opacity: 0.7;
+    }
+    .info-item {
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      border-left: 1px solid rgba(0,221,255,0.08);
+      transition: all 0.2s;
+    }
+    .info-item:hover {
+      border-left-color: var(--cyan);
+      background: rgba(0,221,255,0.02);
+    }
+    .info-item a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+    .info-item a:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 8px rgba(0,221,255,0.2);
+    }
+    .info-item .summary {
+      font-size: 12px;
+      color: rgba(240,240,255,0.3);
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+    .info-empty {
       font-size: 16px;
       letter-spacing: 8px;
-      color: rgba(240,240,255,0.3);
+      color: rgba(240,240,255,0.2);
       font-family: "Consolas", "Monaco", monospace;
-      text-shadow: 0 0 8px rgba(240,240,255,0.05);
-    }
-    .coming-soon span {
-      animation: dotPulse 2s ease-in-out infinite;
-    }
-    @keyframes dotPulse {
-      0%,100% { opacity: 0.3; }
-      50% { opacity: 0.8; }
+      text-align: center;
+      margin-top: 24px;
     }
 
     /* ===== 返回链接 ===== */
@@ -413,7 +448,7 @@
 <div class="container">
   <div class="neon-sign ns-purple neon-border-purple">
     <div class="neon-sign-title flicker-d2" data-text="信息整理">信息整理</div>
-    <div class="coming-soon"><span>✦</span> 待施工 <span>✦</span></div>
+    <div class="info-list" id="infoList"><div class="info-empty">✦ 加载中 ✦</div></div>
   </div>
   <div class="back-link"><a href="../">← 返回主页</a></div>
 </div>
@@ -594,6 +629,13 @@ document.addEventListener('mousemove', (e) => {
   glow.style.left = e.clientX + 'px';
   glow.style.top = e.clientY + 'px';
 });
+</script>
+<script>
+fetch('../data/info-org.json').then(r=>r.json()).then(d=>{
+  const e=document.getElementById('infoList');
+  if(!d.sections||!d.sections.length){e.innerHTML='<div class="info-empty">✦ 暂无内容 ✦</div>';return;}
+  e.innerHTML=d.sections.map(s=>'<div class="info-section"><div class="sec-title">'+s.icon+' '+s.title+'</div>'+(s.items||[]).map(i=>'<div class="info-item">'+(i.url?'<a href="'+i.url+'" target="_blank">'+i.title+'</a>':'<span>'+i.title+'</span>')+(i.summary?'<div class="summary">'+i.summary+'</div>':'')+'</div>').join('')+'</div>').join('');
+}).catch(()=>{document.getElementById('infoList').innerHTML='<div class="info-empty">✦ 加载失败 ✦</div>';});
 </script>
 </body>
 </html>
