@@ -49,7 +49,6 @@
       position: fixed;
       pointer-events: none;
       z-index: 10;
-      border-radius: 50% 0 50% 0;
       opacity: 0;
     }
 
@@ -102,85 +101,164 @@
   </div>
 
   <script>
-    // ── 持续飘落的樱花瓣（55片）──
+    // ── 持续飘落的樱花瓣（55片，真实下落轨迹）──
     (function() {
       const n = 55, b = document.body;
       for (let i = 0; i < n; i++) {
         const el = document.createElement('div');
         el.className = 'petal';
-        const sz = 6 + Math.random() * 14;
+        const sz = 5 + Math.random() * 15;
         const x = Math.random() * 110 - 5;
-        const dur = 12 + Math.random() * 10;
-        const del = Math.random() * 30;
-        const h = 325 + Math.random() * 25, s = 50 + Math.random() * 30, l = 72 + Math.random() * 18;
-        const op = 0.35 + Math.random() * 0.45;
-        const bt = 35 + Math.random() * 35, bb = 35 + Math.random() * 35;
-        const tall = Math.random() > 0.5;
-        el.style.cssText = `left:${x}vw;top:-40px;width:${sz}px;height:${tall?sz*(0.9+Math.random()*0.6):sz*(0.6+Math.random()*0.4)}px;background:hsla(${h},${s}%,${l}%,${op});border-radius:${bt}% 0 ${bb}% 0;animation:pa${i} ${dur}s ${del}s infinite`;
+        const y = Math.random() * -60;  // 不同起始高度
+        const dur = 14 + Math.random() * 12;  // 14-26s 更分散
+        const del = Math.random() * 35;
+        const h = 320 + Math.random() * 30, s = 45 + Math.random() * 35, l = 68 + Math.random() * 22;
+        const op = 0.3 + Math.random() * 0.5;
+        // 花瓣形状：不规则五边形感
+        const bt = 30 + Math.random() * 40;
+        const bb = 30 + Math.random() * 40;
 
-        const td = -40 + Math.random() * 80;
-        const p25 = td*0.3+(Math.random()-0.5)*25, p50 = td*0.6+(Math.random()-0.5)*20, p75 = td*0.85+(Math.random()-0.5)*15;
-        const r1 = 60+Math.random()*120, r2 = r1+40+Math.random()*100, r3 = r2+30+Math.random()*80, r4 = r3+60+Math.random()*180;
-        const tf = ['ease-in-out','ease-out','linear'][Math.floor(Math.random()*3)];
+        el.style.cssText =
+          `left:${x}vw;top:${y}px;width:${sz}px;height:${sz*(0.5+Math.random()*0.6)}px;` +
+          `background:hsla(${h},${s}%,${l}%,${op});border-radius:${bt}% 0 ${bb}% 0;` +
+          `animation:pf${i} ${dur}s ${del}s infinite`;
+
+        // 真实樱花瓣下落：6段关键帧，非匀速，带停顿感
+        const drift = -50 + Math.random() * 100;
+        const pts = [];
+        for (let j = 1; j <= 5; j++) {
+          const pct = j * 20;
+          const yPos = (j / 5) * 100;
+          // 非直线漂移，每段随机偏折
+          const dx = drift * (j / 5) + (Math.random() - 0.5) * (15 + j * 3);
+          const rot = (60 + Math.random() * 120) * j + (Math.random() - 0.5) * 30;
+          // 缩放模拟翻转（花瓣翻转时变窄）
+          const sx = j % 2 === 0 ? 0.6 + Math.random() * 0.4 : 0.8 + Math.random() * 0.3;
+          pts.push(`${pct}%{transform:translateY(${yPos}vh) translateX(${dx}px) rotate(${rot}deg) scaleX(${sx});opacity:${op*(0.7+Math.random()*0.3)};animation-timing-function:${['ease-in-out','ease-out','cubic-bezier(0.25,0.1,0.25,1)'][Math.floor(Math.random()*3)]}}`);
+        }
+
         const st = document.createElement('style');
-        st.textContent = `@keyframes pa${i}{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}5%{opacity:${op}}25%{transform:translateY(25vh) translateX(${p25}px) rotate(${r1}deg);opacity:${op};animation-timing-function:${tf}}50%{transform:translateY(50vh) translateX(${p50}px) rotate(${r2}deg);opacity:${op};animation-timing-function:${tf}}75%{transform:translateY(78vh) translateX(${p75}px) rotate(${r3}deg);opacity:${op};animation-timing-function:${tf}}95%{opacity:${op*0.6}}100%{transform:translateY(108vh) translateX(${td}px) rotate(${r4}deg);opacity:0}}`;
+        st.textContent =
+          `@keyframes pf${i}{` +
+          `0%{transform:translateY(0) translateX(0) rotate(0deg) scaleX(1);opacity:0}` +
+          `3%{opacity:${op}}` +
+          pts.join('') +
+          `97%{opacity:${op*0.4}}` +
+          `100%{transform:translateY(110vh) translateX(${drift}px) rotate(${360+Math.random()*540}deg) scaleX(0.5);opacity:0}}`;
         document.head.appendChild(st);
         b.appendChild(el);
       }
     })();
 
-    // ── 时不时触发特效（樱花漩涡 / 花瓣暴雨）──
+    // ── 风效：真实樱花旋风 + 花瓣暴雨 ──
     (function() {
       const b = document.body;
       let sid = 0;
 
       function rpp() {
-        const sz = 6 + Math.random() * 14;
-        return {w:sz, h:sz*(0.6+Math.random()*0.5), bg:`hsla(${320+Math.random()*30},${50+Math.random()*30}%,${70+Math.random()*20}%,${0.35+Math.random()*0.5})`, bt:35+Math.random()*35, bb:35+Math.random()*35};
+        const sz = 5 + Math.random() * 15;
+        const h = 310 + Math.random() * 35, s = 45 + Math.random() * 35, l = 65 + Math.random() * 25;
+        return {
+          w: sz, h: sz * (0.5 + Math.random() * 0.6),
+          bg: `hsla(${h},${s}%,${l}%,${0.3+Math.random()*0.5})`,
+          bt: 30 + Math.random() * 40, bb: 30 + Math.random() * 40
+        };
       }
 
-      // 特效1: 樱花漩涡
+      // ── 特效1：风卷樱花（被风卷起的漩涡）──
       function swirl() {
-        const n = 20, cx = 15 + Math.random() * 70, id = 's' + (sid++), d = 3.5 + Math.random() * 1.5;
+        const n = 28;
+        const cx = 15 + Math.random() * 70;   // 风眼中心
+        const id = 'sw' + (sid++);
+        const dur = 4 + Math.random() * 1.5;   // 4-5.5s
+        const spread = 40 + Math.random() * 40; // 扩散范围 (px)
+
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
-          const ang = (i / n) * 360, rad = 10 + Math.random() * 25, sd = (i / n) * 0.3, rise = 30 + Math.random() * 20;
-          el.style.cssText = `left:${cx}vw;top:${40+Math.random()*20}vh;width:${p.w}px;height:${p.h}px;background:${p.bg};border-radius:${p.bt}% 0 ${p.bb}% 0;animation:${id}_${i} ${d}s ${sd}s ease-in-out 1 forwards`;
+          const ang = (i / n) * 360;
+          // 每片花瓣螺旋半径随高度变化：底部收拢，顶部散开（真实龙卷风形态）
+          const rBase = 5 + Math.random() * 15;
+          const rTop = spread + Math.random() * 25;
+          const sd = (i / n) * 0.25;  // 依次启动
+          const rise = 35 + Math.random() * 25;  // 上升高度
+
+          el.style.cssText =
+            `left:${cx}vw;top:${50+Math.random()*25}vh;` +
+            `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
+            `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
+            `animation:${id}_${i} ${dur}s ${sd}s ease-in-out 1 forwards`;
+
+          // 螺旋路径：底部小圈→中部扩大→顶部散开被风吹走
+          const a1 = ang, a2 = ang + 90, a3 = ang + 180, a4 = ang + 270, a5 = ang + 380;
+          const r1 = rBase, r2 = rBase + (rTop - rBase) * 0.3, r3 = rBase + (rTop - rBase) * 0.6;
+          const r4 = rTop * 0.85, r5 = rTop * 1.1;
+
+          // 顶部额外水平吹飞偏移
+          const blowOffX = -80 + Math.random() * 160;
 
           const st = document.createElement('style');
-          const a1 = ang, a2 = ang + 120, a3 = ang + 240, a4 = ang + 360;
-          const rIn = rad * 0.6;
-          st.textContent = `@keyframes ${id}_${i}{0%{transform:translate(0,0) rotate(${a1}deg);opacity:0}10%{opacity:0.7}30%{transform:translate(${Math.cos(a1*Math.PI/180)*rad}px,${-rise*0.3}px) rotate(${a2}deg);opacity:0.8}55%{transform:translate(${Math.cos(a2*Math.PI/180)*rIn}px,${-rise*0.6}px) rotate(${a3}deg);opacity:0.7}80%{transform:translate(${Math.cos(a3*Math.PI/180)*(rad*0.4)}px,${-rise*0.85}px) rotate(${a4}deg);opacity:0.5}100%{transform:translate(0,${-rise}px) rotate(${a4+180}deg);opacity:0}}`;
+          st.textContent =
+            `@keyframes ${id}_${i}{` +
+            `0%{transform:translate(0,0) rotate(${a1}deg);opacity:0}` +
+            `8%{opacity:0.7}` +
+            `25%{transform:translate(${Math.cos(a1*Math.PI/180)*r1}px,${-rise*0.2}px) rotate(${a2}deg);opacity:0.85}` +
+            `45%{transform:translate(${Math.cos(a2*Math.PI/180)*r2}px,${-rise*0.4}px) rotate(${a3}deg);opacity:0.8}` +
+            `62%{transform:translate(${Math.cos(a3*Math.PI/180)*r3}px,${-rise*0.6}px) rotate(${a4}deg);opacity:0.7}` +
+            `80%{transform:translate(${Math.cos(a4*Math.PI/180)*r4}px,${-rise*0.8}px) rotate(${a5}deg);opacity:0.5}` +
+            `100%{transform:translate(${blowOffX}px,${-rise}px) rotate(${a5+180}deg);opacity:0}}`;
           document.head.appendChild(st);
           b.appendChild(el);
-          setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, (d + sd) * 1000 + 100);
+          setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur + sd) * 1000 + 200);
         }
       }
 
-      // 特效2: 樱花暴雨
+      // ── 特效2：一阵狂风（花瓣被风吹散）──
       function burst() {
-        const n = 30 + Math.floor(Math.random() * 15), id = 'b' + (sid++), d = 4 + Math.random() * 2;
+        const n = 35 + Math.floor(Math.random() * 20);  // 35-54片
+        const id = 'bu' + (sid++);
+        const dur = 3.5 + Math.random() * 2.5;  // 3.5-6s
+        const windDir = Math.random() > 0.5 ? 1 : -1;  // 风向
+
         for (let i = 0; i < n; i++) {
           const p = rpp(), el = document.createElement('div');
           el.className = 'petal';
-          const sx = Math.random() * 100, dr = -50 + Math.random() * 100, dl = Math.random() * 1.5, re = 180 + Math.random() * 540;
-          el.style.cssText = `left:${sx}vw;top:-30px;width:${p.w}px;height:${p.h}px;background:${p.bg};border-radius:${p.bt}% 0 ${p.bb}% 0;animation:${id}_${i} ${d}s ${dl}s ease-out 1 forwards`;
+          const sx = windDir > 0 ? Math.random() * 30 : 70 + Math.random() * 30;  // 风来的方向
+          const drift = windDir * (40 + Math.random() * 80);  // 被风吹走的方向
+          const dl = Math.random() * 0.8;
+          const fast = Math.random() > 0.6;
+          const speed = fast ? 1 : 0.6 + Math.random() * 0.4;
 
-          const md = dr*0.5+(Math.random()-0.5)*20;
+          el.style.cssText =
+            `left:${sx}vw;top:${-20-Math.random()*60}px;` +
+            `width:${p.w}px;height:${p.h}px;background:${p.bg};` +
+            `border-radius:${p.bt}% 0 ${p.bb}% 0;` +
+            `animation:${id}_${i} ${dur*speed}s ${dl}s cubic-bezier(0.15,0.5,0.35,1) 1 forwards`;
+
+          // 被风吹的轨迹：急剧侧向偏移 + 旋转
+          const re = 200 + Math.random() * 600 * windDir;
+          const md = drift * 0.4 + (Math.random() - 0.5) * 25;
           const st = document.createElement('style');
-          st.textContent = `@keyframes ${id}_${i}{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}5%{opacity:0.8}50%{transform:translateY(55vh) translateX(${md}px) rotate(${re*0.5}deg);opacity:0.7}90%{opacity:0.4}100%{transform:translateY(108vh) translateX(${dr}px) rotate(${re}deg);opacity:0}}`;
+          st.textContent =
+            `@keyframes ${id}_${i}{` +
+            `0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}` +
+            `5%{opacity:0.75}` +
+            `35%{transform:translateY(35vh) translateX(${md}px) rotate(${re*0.3}deg);opacity:0.65;animation-timing-function:cubic-bezier(0.2,0.3,0.4,1)}` +
+            `65%{transform:translateY(65vh) translateX(${drift*0.7}px) rotate(${re*0.6}deg);opacity:0.5;animation-timing-function:cubic-bezier(0.3,0.2,0.45,1)}` +
+            `90%{opacity:0.25}` +
+            `100%{transform:translateY(110vh) translateX(${drift}px) rotate(${re}deg);opacity:0}}`;
           document.head.appendChild(st);
           b.appendChild(el);
-          setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, (d + dl) * 1000 + 100);
+          setTimeout(() => { if (el.parentNode) el.removeChild(el); }, (dur * speed + dl) * 1000 + 200);
         }
       }
 
+      // ── 定时触发：每隔15-35s──
       function next() {
         setTimeout(() => {
-          Math.random() < 0.45 ? swirl() : burst();
+          Math.random() < 0.4 ? swirl() : burst();
           next();
-        }, 12000 + Math.random() * 20000);
+        }, 15000 + Math.random() * 20000);
       }
       next();
     })();
