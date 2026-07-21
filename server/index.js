@@ -12,29 +12,27 @@ const app = express();
 const PORT = 3456;
 
 // ═══════════════════════════════════════════
-//  安全配置常量
+//  config
 // ═══════════════════════════════════════════
 
 const CONFIG = {
-  // PBKDF2 参数（迭代次数越高越安全，但也越慢）
-  PBKDF2_ITERATIONS: 600000,     // OWASP 2023 推荐 ≥ 600000
-  PBKDF2_KEYLEN: 64,              // 输出 64 字节
+  
+  PBKDF2_ITERATIONS: 600000,
+  PBKDF2_KEYLEN: 64,
   PBKDF2_DIGEST: 'sha512',
   // 速率限制
-  RATE_WINDOW_MS: 60000,           // 1 分钟窗口
-  RATE_MAX_PER_WINDOW: 5,          // 每分钟最多 5 次
-  RATE_BAN_THRESHOLD: 15,          // 15 次失败封 IP
-  RATE_BAN_DURATION_MS: 3600000,   // 封 1 小时
+  RATE_WINDOW_MS: 60000,
+  RATE_MAX_PER_WINDOW: 5,
+  RATE_BAN_THRESHOLD: 15,
+  RATE_BAN_DURATION_MS: 3600000,
   // Session
-  SESSION_MAX_AGE_MS: 8 * 60 * 60 * 1000,  // 8 小时
+  SESSION_MAX_AGE_MS: 8 * 60 * 60 * 1000,
 };
 
-
 // ═══════════════════════════════════════════
-//  PBKDF2 密码存储
+//
 // ═══════════════════════════════════════════
 
-// 每个密码存储格式：salt:hash
 function hashPassword(password) {
   const salt = randomBytes(32).toString('hex');
   const hash = pbkdf2Sync(password, salt, CONFIG.PBKDF2_ITERATIONS, CONFIG.PBKDF2_KEYLEN, CONFIG.PBKDF2_DIGEST).toString('hex');
@@ -44,28 +42,22 @@ function hashPassword(password) {
 function verifyPassword(password, stored) {
   const [salt, originalHash] = stored.split(':');
   const hash = pbkdf2Sync(password, salt, CONFIG.PBKDF2_ITERATIONS, CONFIG.PBKDF2_KEYLEN, CONFIG.PBKDF2_DIGEST).toString('hex');
-  // 恒定时间比较防止时序攻击
+
   if (hash.length !== originalHash.length) return false;
   let diff = 0;
   for (let i = 0; i < hash.length; i++) diff |= hash.charCodeAt(i) ^ originalHash.charCodeAt(i);
   return diff === 0;
 }
 
-// 密码存储（生产环境建议存入数据库或加密文件）
 const PASSWORDS = {
   'Avalon': hashPassword('Avalon'),
   'EasonQian': hashPassword('EasonQian'),
 };
 
-// 验证 PBKDF2 工作正常
-console.log('✦ PBKDF2 初始化完成（迭代数:', CONFIG.PBKDF2_ITERATIONS, '）');
-for (const [user, stored] of Object.entries(PASSWORDS)) {
-  console.log(`  ${user}: 验证 ${verifyPassword(user, stored) ? '✅' : '❌'}`);
-}
-
+//
 
 // ═══════════════════════════════════════════
-//  服务端防暴力破解（持久化）
+//
 // ═══════════════════════════════════════════
 
 const LOG_FILE = resolve(__dirname, 'auth.log');
@@ -75,14 +67,12 @@ function logAuth(ip, user, action, detail = '') {
   fs.appendFile(LOG_FILE, line, () => {});
 }
 
-// 简化的内存速率限制 + IP 封禁
 const _rateStore = new Map();
 const _banStore = new Map();
 
 function rateLimit(req, res, next) {
   const ip = req.ip || req.connection.remoteAddress || 'unknown';
 
-  // 检查是否被封禁
   if (_banStore.has(ip)) {
     const banUntil = _banStore.get(ip);
     if (Date.now() < banUntil) {
@@ -92,7 +82,7 @@ function rateLimit(req, res, next) {
         retryAfter: Math.ceil((banUntil - Date.now()) / 1000)
       });
     }
-    _banStore.delete(ip); // 封禁到期
+    _banStore.delete(ip);
   }
 
   // 统计窗口内的尝试
@@ -136,9 +126,8 @@ setInterval(() => {
   }
 }, 300000); // 每 5 分钟
 
-
 // ═══════════════════════════════════════════
-//  CSRF 保护
+//
 // ═══════════════════════════════════════════
 
 const CSRF_TOKENS = new Map();
@@ -162,7 +151,6 @@ function verifyCsrf(req, res, next) {
   next();
 }
 
-// 清理过期 CSRF token
 setInterval(() => {
   const now = Date.now();
   for (const [token, ts] of CSRF_TOKENS) {
@@ -170,12 +158,11 @@ setInterval(() => {
   }
 }, 600000);
 
-
 // ═══════════════════════════════════════════
 //  中间件
 // ═══════════════════════════════════════════
 
-// Helmet 安全头
+//
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -193,11 +180,11 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// 请求大小限制（防止大 payload 攻击）
+// limit
 app.use(express.json({ limit: '1kb' }));
 app.use(express.urlencoded({ extended: true, limit: '1kb' }));
 
-// Session（安全配置）
+// session
 app.use(session({
   secret: 'avalon-garden-' + randomBytes(64).toString('hex'),
   resave: false,
@@ -214,17 +201,16 @@ app.use(session({
 // CSRF 中间件
 app.use(verifyCsrf);
 
-
 // ═══════════════════════════════════════════
 //  API 路由
 // ═══════════════════════════════════════════
 
-// GET CSRF token
+//
 app.get('/api/csrf', (req, res) => {
   res.json({ csrf: generateCsrf(req) });
 });
 
-// POST 登录（PBKDF2 验证 + 速率限制）
+// 1
 app.post('/api/login', rateLimit, (req, res) => {
   const { password } = req.body || {};
   if (!password || password.length > 100) {
@@ -234,7 +220,7 @@ app.post('/api/login', rateLimit, (req, res) => {
   let zone = null;
   let matchedUser = null;
 
-  // 恒定时间比较所有密码，防止用户名枚举
+  //
   for (const [user, stored] of Object.entries(PASSWORDS)) {
     if (verifyPassword(password, stored)) {
       zone = user === 'Avalon' ? 'galatea' : 'eason';
@@ -257,7 +243,7 @@ app.post('/api/login', rateLimit, (req, res) => {
   }, delay);
 });
 
-// GET 登录（兼容旧 URL，推荐用 POST）
+// 2
 app.get('/login', rateLimit, (req, res) => {
   const { key } = req.query;
   if (!key || key.length > 100) return res.redirect('/?err=1');
@@ -279,18 +265,17 @@ app.get('/login', rateLimit, (req, res) => {
   res.redirect('/?err=1');
 });
 
-// 退出
+//
 app.post('/api/logout', (req, res) => {
   req.session.destroy();
   res.json({ ok: true });
 });
 
-// 认证状态
+//
 app.get('/api/auth', (req, res) => {
   if (req.session?.auth) return res.json({ authed: true, zone: req.session.auth });
   res.json({ authed: false });
 });
-
 
 // ═══════════════════════════════════════════
 //  受保护私密内容
@@ -304,7 +289,7 @@ app.get('/private/:zone/:file(*)', (req, res) => {
     return res.status(403).json({ error: 'wrong zone' });
   }
 
-  // 路径遍历防护
+  //
   const file = (req.params.file || 'index.html').replace(/\.\./g, '');
   const absPath = resolve(ROOT, 'private', req.params.zone, file);
   const allowedBase = resolve(ROOT, 'private');
@@ -312,7 +297,7 @@ app.get('/private/:zone/:file(*)', (req, res) => {
     return res.status(403).json({ error: 'invalid path' });
   }
 
-  // 只允许特定扩展名
+  //
   const ext = file.split('.').pop().toLowerCase();
   if (!['html', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'json', 'txt', 'md', 'woff', 'woff2', 'ttf'].includes(ext)) {
     return res.status(403).json({ error: 'invalid file type' });
@@ -326,7 +311,6 @@ app.get('/private/:zone/:file(*)', (req, res) => {
   });
 });
 
-
 // ═══════════════════════════════════════════
 //  静态文件
 // ═══════════════════════════════════════════
@@ -336,7 +320,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// 防止目录遍历
+//
 app.use(express.static(ROOT, {
   index: 'index.html',
   dotfiles: 'deny',
@@ -346,7 +330,6 @@ app.use(express.static(ROOT, {
 app.use((req, res) => {
   res.status(404).send('Not found');
 });
-
 
 // ═══════════════════════════════════════════
 //  启动

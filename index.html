@@ -1269,7 +1269,7 @@ const page1Observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 page1Observer.observe(page1);
 
-// ===== SHA-256 + 防暴力破解 =====
+//
 const _sha256 = async s => {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('');
@@ -1277,11 +1277,11 @@ const _sha256 = async s => {
 // 预计算的哈希值
 const _aHash = '35d7ab1fb3f2e7ff4b4f0b5b11c399c7696741c41af8ec0aca3c33d5a7fa3328';
 
-// 暴力破解防护
+//
 let _fails = 0;
 let _locked = false;
 
-// CSRF token 缓存
+//
 let _csrfToken = null;
 function _getCsrf() {
   if (_csrfToken) return Promise.resolve(_csrfToken);
@@ -1296,10 +1296,9 @@ function unlock() {
 
   if (!input) { err.textContent = ''; err.style.display = 'none'; return; }
 
-  // 自我衰减：30分钟无失败重置计数
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
 
-  // ═══ Avalon：SHA-256 比对（密码不出现） ═══
+  // ═══ 1 ═══
   _sha256(input).then(hash => {
     if (hash === _aHash) {
       _fails = 0;
@@ -1308,7 +1307,7 @@ function unlock() {
       return;
     }
 
-    // ═══ 服务端验证（POST + CSRF） ═══
+    // ═══ 2 ═══
     return _getCsrf().then(csrf => {
       const headers = { 'Content-Type': 'application/json' };
       if (csrf) headers['X-CSRF-Token'] = csrf;
