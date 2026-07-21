@@ -1125,21 +1125,26 @@ function unlock() {
       return;
     }
 
-    return _getCsrf().then(csrf => {
-      const headers = { 'Content-Type': 'application/json' };
-      if (csrf) headers['X-CSRF-Token'] = csrf;
-      return fetch(API_BASE + '/api/login', { method: 'POST', headers, body: JSON.stringify({ password: input }) });
-    }).then(r => {
-      if (r.ok) {
-        _fails = 0;
-        _locked = true;
-        location.href = 'private/eason/';
-        return;
-      } else if (r.status === 429) {
-        throw new Error('rate');
-      }
-      throw new Error('fail');
-    });
+    if (!API_BASE) {
+      return _getCsrf().then(csrf => {
+        const headers = { 'Content-Type': 'application/json' };
+        if (csrf) headers['X-CSRF-Token'] = csrf;
+        return fetch('/api/login', { method: 'POST', headers, body: JSON.stringify({ password: input }) });
+      }).then(r => {
+        if (r.ok) {
+          _fails = 0;
+          _locked = true;
+          location.href = 'private/eason/';
+          return;
+        } else if (r.status === 429) {
+          throw new Error('rate');
+        }
+        throw new Error('fail');
+      });
+    } else {
+      location.href = API_BASE + '/login?key=' + encodeURIComponent(input) + '&from=gh';
+      _locked = true;
+    }
   }).catch(e => {
     _fails++;
     const isRate = e.message === 'rate';
