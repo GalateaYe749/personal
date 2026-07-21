@@ -1281,11 +1281,20 @@ const _aHash = '35d7ab1fb3f2e7ff4b4f0b5b11c399c7696741c41af8ec0aca3c33d5a7fa3328
 let _fails = 0;
 let _locked = false;
 
+// CSRF token 缓存
+let _csrfToken = null;
+function _getCsrf() {
+  if (_csrfToken) return Promise.resolve(_csrfToken);
+  return fetch('/api/csrf').then(r => r.json()).then(d => { _csrfToken = d.csrf; return d.csrf; }).catch(() => null);
+}
+
 function unlock() {
   if (_locked) return;
   const input = document.getElementById('k').value;
   const err = document.getElementById('err');
   const btn = document.querySelector('.key-box button');
+
+  if (!input) { err.textContent = ''; err.style.display = 'none'; return; }
 
   // 自我衰减：30分钟无失败重置计数
   setTimeout(() => { _fails = Math.max(0, _fails - 1); }, 1800000);
@@ -1294,48 +1303,49 @@ function unlock() {
   _sha256(input).then(hash => {
     if (hash === _aHash) {
       _fails = 0;
+      _locked = true;
       location.href = 'private/galatea/';
       return;
     }
 
-    // ═══ 服务端验证（POST，密码不出现在URL） ═══
-    return fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: input })
+    // ═══ 服务端验证（POST + CSRF） ═══
+    return _getCsrf().then(csrf => {
+      const headers = { 'Content-Type': 'application/json' };
+      if (csrf) headers['X-CSRF-Token'] = csrf;
+      return fetch('/api/login', { method: 'POST', headers, body: JSON.stringify({ password: input }) });
     }).then(r => {
       if (r.ok) {
         _fails = 0;
+        _locked = true;
         location.href = 'private/eason/';
         return;
+      } else if (r.status === 429) {
+        throw new Error('rate');
       }
       throw new Error('fail');
     });
-  }).catch(() => {
-    // 失败处理
+  }).catch(e => {
     _fails++;
-    err.textContent = '// INVALID KEY';
+    const isRate = e.message === 'rate';
+    err.textContent = isRate ? '// TOO FAST' : '// INVALID KEY';
     err.style.display = 'block';
 
-    if (_fails >= 10) {
+    if (isRate) {
+      _locked = true;
+      setTimeout(() => { _locked = false; err.style.display = 'none'; }, 10000);
+    } else if (_fails >= 10) {
       _locked = true;
       err.textContent = '// LOCKED 5 MIN';
       btn.disabled = true;
       btn.style.opacity = '0.3';
-      setTimeout(() => {
-        _locked = false;
-        _fails = 0;
-        err.style.display = 'none';
-        btn.disabled = false;
-        btn.style.opacity = '';
-      }, 300000);
+      setTimeout(() => { _locked = false; _fails = 0; err.style.display = 'none'; btn.disabled = false; btn.style.opacity = ''; }, 300000);
     } else if (_fails >= 5) {
-      err.textContent = '// TOO MANY ATTEMPTS (WAIT 30S)';
       _locked = true;
+      err.textContent = '// TOO MANY ATTEMPTS (WAIT 30S)';
       setTimeout(() => { _locked = false; err.style.display = 'none'; }, 30000);
     } else if (_fails >= 3) {
-      err.textContent = '// SLOW DOWN (WAIT 5S)';
       _locked = true;
+      err.textContent = '// SLOW DOWN (WAIT 5S)';
       setTimeout(() => { _locked = false; err.style.display = 'none'; }, 5000);
     } else {
       setTimeout(() => err.style.display = 'none', 2000);

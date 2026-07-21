@@ -1,124 +1,359 @@
 import express from 'express';
 import session from 'express-session';
-import { createHash, randomUUID } from 'node:crypto';
+import helmet from 'helmet';
+import { createHash, randomUUID, pbkdf2Sync, randomBytes } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
-
-function sha256(s) { return createHash('sha256').update(s).digest('hex'); }
-const PASSWORDS = {
-  'Avalon': sha256('Avalon'),
-  'EasonQian': sha256('EasonQian'),
-};
-
 const app = express();
 const PORT = 3456;
 
-// ── 服务端防暴力破解 ──
-const _rateMap = new Map();
-const _rateLimit = (max, windowMs) => (req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress || 'unknown';
-  const now = Date.now();
-  if (!_rateMap.has(ip)) _rateMap.set(ip, []);
-  const attempts = _rateMap.get(ip).filter(t => now - t < windowMs);
-  if (attempts.length >= max) {
-    return res.status(429).json({ error: 'rate limited', retryAfter: Math.ceil(windowMs / 1000) });
-  }
-  attempts.push(now);
-  _rateMap.set(ip, attempts);
-  next();
+// ═══════════════════════════════════════════
+//  安全配置常量
+// ═══════════════════════════════════════════
+
+const CONFIG = {
+  // PBKDF2 参数（迭代次数越高越安全，但也越慢）
+  PBKDF2_ITERATIONS: 600000,     // OWASP 2023 推荐 ≥ 600000
+  PBKDF2_KEYLEN: 64,              // 输出 64 字节
+  PBKDF2_DIGEST: 'sha512',
+  // 速率限制
+  RATE_WINDOW_MS: 60000,           // 1 分钟窗口
+  RATE_MAX_PER_WINDOW: 5,          // 每分钟最多 5 次
+  RATE_BAN_THRESHOLD: 15,          // 15 次失败封 IP
+  RATE_BAN_DURATION_MS: 3600000,   // 封 1 小时
+  // Session
+  SESSION_MAX_AGE_MS: 8 * 60 * 60 * 1000,  // 8 小时
 };
-// 定期清理过期记录
+
+
+// ═══════════════════════════════════════════
+//  PBKDF2 密码存储
+// ═══════════════════════════════════════════
+
+// 每个密码存储格式：salt:hash
+function hashPassword(password) {
+  const salt = randomBytes(32).toString('hex');
+  const hash = pbkdf2Sync(password, salt, CONFIG.PBKDF2_ITERATIONS, CONFIG.PBKDF2_KEYLEN, CONFIG.PBKDF2_DIGEST).toString('hex');
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, stored) {
+  const [salt, originalHash] = stored.split(':');
+  const hash = pbkdf2Sync(password, salt, CONFIG.PBKDF2_ITERATIONS, CONFIG.PBKDF2_KEYLEN, CONFIG.PBKDF2_DIGEST).toString('hex');
+  // 恒定时间比较防止时序攻击
+  if (hash.length !== originalHash.length) return false;
+  let diff = 0;
+  for (let i = 0; i < hash.length; i++) diff |= hash.charCodeAt(i) ^ originalHash.charCodeAt(i);
+  return diff === 0;
+}
+
+// 密码存储（生产环境建议存入数据库或加密文件）
+const PASSWORDS = {
+  'Avalon': hashPassword('Avalon'),
+  'EasonQian': hashPassword('EasonQian'),
+};
+
+// 验证 PBKDF2 工作正常
+console.log('✦ PBKDF2 初始化完成（迭代数:', CONFIG.PBKDF2_ITERATIONS, '）');
+for (const [user, stored] of Object.entries(PASSWORDS)) {
+  console.log(`  ${user}: 验证 ${verifyPassword(user, stored) ? '✅' : '❌'}`);
+}
+
+
+// ═══════════════════════════════════════════
+//  服务端防暴力破解（持久化）
+// ═══════════════════════════════════════════
+
+const LOG_FILE = resolve(__dirname, 'auth.log');
+
+function logAuth(ip, user, action, detail = '') {
+  const line = `[${new Date().toISOString()}] ${ip} | ${user} | ${action} | ${detail}\n`;
+  fs.appendFile(LOG_FILE, line, () => {});
+}
+
+// 简化的内存速率限制 + IP 封禁
+const _rateStore = new Map();
+const _banStore = new Map();
+
+function rateLimit(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+
+  // 检查是否被封禁
+  if (_banStore.has(ip)) {
+    const banUntil = _banStore.get(ip);
+    if (Date.now() < banUntil) {
+      logAuth(ip, '-', 'BLOCKED', `banned until ${new Date(banUntil).toISOString()}`);
+      return res.status(429).json({
+        error: 'temporarily blocked',
+        retryAfter: Math.ceil((banUntil - Date.now()) / 1000)
+      });
+    }
+    _banStore.delete(ip); // 封禁到期
+  }
+
+  // 统计窗口内的尝试
+  const now = Date.now();
+  if (!_rateStore.has(ip)) _rateStore.set(ip, []);
+  const attempts = _rateStore.get(ip).filter(t => now - t < CONFIG.RATE_WINDOW_MS);
+  attempts.push(now);
+  _rateStore.set(ip, attempts);
+
+  if (attempts.length > CONFIG.RATE_BAN_THRESHOLD) {
+    // 超过阈值 → 封 IP
+    _banStore.set(ip, now + CONFIG.RATE_BAN_DURATION_MS);
+    _rateStore.delete(ip);
+    logAuth(ip, '-', 'BANNED', `${attempts.length} attempts`);
+    return res.status(429).json({
+      error: 'ip banned for 1 hour',
+      retryAfter: CONFIG.RATE_BAN_DURATION_MS / 1000
+    });
+  }
+
+  if (attempts.length > CONFIG.RATE_MAX_PER_WINDOW) {
+    logAuth(ip, '-', 'RATE_LIMITED', `${attempts.length} in window`);
+    return res.status(429).json({
+      error: 'too many requests',
+      retryAfter: Math.ceil(CONFIG.RATE_WINDOW_MS / 1000)
+    });
+  }
+
+  next();
+}
+
+// 周期性清理
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, attempts] of _rateMap) {
-    const valid = attempts.filter(t => now - t < 3600000);
-    if (valid.length === 0) _rateMap.delete(ip); else _rateMap.set(ip, valid);
+  for (const [ip, attempts] of _rateStore) {
+    const valid = attempts.filter(t => now - t < CONFIG.RATE_WINDOW_MS * 2);
+    if (valid.length === 0) _rateStore.delete(ip); else _rateStore.set(ip, valid);
   }
-}, 60000);
+  for (const [ip, until] of _banStore) {
+    if (now >= until) _banStore.delete(ip);
+  }
+}, 300000); // 每 5 分钟
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
-app.use(session({
-  secret: 'galatea-neon-city-' + randomUUID(),
-  resave: false,
-  saveUninitialized: false,
-  cookie: { httpOnly: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 }
+// ═══════════════════════════════════════════
+//  CSRF 保护
+// ═══════════════════════════════════════════
+
+const CSRF_TOKENS = new Map();
+
+function generateCsrf(req) {
+  const token = randomUUID();
+  CSRF_TOKENS.set(token, Date.now());
+  req.session.csrf = token;
+  return token;
+}
+
+function verifyCsrf(req, res, next) {
+  // 只对 POST/PUT/DELETE 检查
+  if (!['POST', 'PUT', 'DELETE'].includes(req.method)) return next();
+  const token = req.headers['x-csrf-token'] || req.body?._csrf;
+  if (!token || !CSRF_TOKENS.has(token)) {
+    return res.status(403).json({ error: 'invalid csrf' });
+  }
+  // 一次性 token
+  CSRF_TOKENS.delete(token);
+  next();
+}
+
+// 清理过期 CSRF token
+setInterval(() => {
+  const now = Date.now();
+  for (const [token, ts] of CSRF_TOKENS) {
+    if (now - ts > 3600000) CSRF_TOKENS.delete(token);
+  }
+}, 600000);
+
+
+// ═══════════════════════════════════════════
+//  中间件
+// ═══════════════════════════════════════════
+
+// Helmet 安全头
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
 }));
 
-// ── GET 登录（从 GitHub Pages 等外部页面跳转过来，带速率限制） ──
-app.get('/login', _rateLimit(5, 60000), (req, res) => {
-  const { key, from } = req.query;
-  if (!key) return res.redirect('/?err=1');
-  const hash = sha256(key);
+// 请求大小限制（防止大 payload 攻击）
+app.use(express.json({ limit: '1kb' }));
+app.use(express.urlencoded({ extended: true, limit: '1kb' }));
+
+// Session（安全配置）
+app.use(session({
+  secret: 'avalon-garden-' + randomBytes(64).toString('hex'),
+  resave: false,
+  saveUninitialized: false,
+  name: 'avalon_sid',       // 非默认 session ID
+  cookie: {
+    httpOnly: true,          // JS 不可读
+    secure: false,           // 如用 HTTPS 改为 true
+    sameSite: 'lax',
+    maxAge: CONFIG.SESSION_MAX_AGE_MS,
+  }
+}));
+
+// CSRF 中间件
+app.use(verifyCsrf);
+
+
+// ═══════════════════════════════════════════
+//  API 路由
+// ═══════════════════════════════════════════
+
+// GET CSRF token
+app.get('/api/csrf', (req, res) => {
+  res.json({ csrf: generateCsrf(req) });
+});
+
+// POST 登录（PBKDF2 验证 + 速率限制）
+app.post('/api/login', rateLimit, (req, res) => {
+  const { password } = req.body || {};
+  if (!password || password.length > 100) {
+    return res.status(400).json({ error: 'invalid request' });
+  }
+
   let zone = null;
-  if (hash === PASSWORDS['Avalon']) zone = 'galatea';
-  else if (hash === PASSWORDS['EasonQian']) zone = 'eason';
+  let matchedUser = null;
+
+  // 恒定时间比较所有密码，防止用户名枚举
+  for (const [user, stored] of Object.entries(PASSWORDS)) {
+    if (verifyPassword(password, stored)) {
+      zone = user === 'Avalon' ? 'galatea' : 'eason';
+      matchedUser = user;
+      break;
+    }
+  }
+
   if (zone) {
     req.session.auth = zone;
-    const fromParam = from ? '?from=' + from : '';
-    return res.redirect('/private/' + zone + '/' + fromParam);
+    logAuth(req.ip, matchedUser, 'LOGIN_OK');
+    return res.json({ ok: true, zone, csrf: generateCsrf(req) });
   }
+
+  logAuth(req.ip, '-', 'LOGIN_FAIL');
+  // 随机延迟，防止时序攻击
+  const delay = 100 + Math.random() * 200;
+  setTimeout(() => {
+    res.status(403).json({ error: 'invalid key' });
+  }, delay);
+});
+
+// GET 登录（兼容旧 URL，推荐用 POST）
+app.get('/login', rateLimit, (req, res) => {
+  const { key } = req.query;
+  if (!key || key.length > 100) return res.redirect('/?err=1');
+
+  let zone = null;
+  for (const [user, stored] of Object.entries(PASSWORDS)) {
+    if (verifyPassword(key, stored)) {
+      zone = user === 'Avalon' ? 'galatea' : 'eason';
+      logAuth(req.ip, user, 'LOGIN_OK_GET');
+      break;
+    }
+  }
+
+  if (zone) {
+    req.session.auth = zone;
+    return res.redirect('/private/' + zone + '/?from=gh');
+  }
+  logAuth(req.ip, '-', 'LOGIN_FAIL_GET');
   res.redirect('/?err=1');
 });
 
-// ── API：登录（带速率限制：10次/分钟，20次/小时） ──
-app.post('/api/login', _rateLimit(10, 60000), _rateLimit(20, 3600000), (req, res) => {
-  const { password } = req.body || {};
-  if (!password) return res.status(400).json({ error: 'missing password' });
-  const hash = sha256(password);
-  let zone = null;
-  if (hash === PASSWORDS['Avalon']) zone = 'galatea';
-  else if (hash === PASSWORDS['EasonQian']) zone = 'eason';
-  if (zone) {
-    req.session.auth = zone;
-    return res.json({ ok: true, zone });
-  }
-  res.status(403).json({ error: 'invalid key' });
-});
-
+// 退出
 app.post('/api/logout', (req, res) => {
   req.session.destroy();
   res.json({ ok: true });
 });
 
+// 认证状态
 app.get('/api/auth', (req, res) => {
   if (req.session?.auth) return res.json({ authed: true, zone: req.session.auth });
   res.json({ authed: false });
 });
 
-// ── 受保护的私密内容 ──
+
+// ═══════════════════════════════════════════
+//  受保护私密内容
+// ═══════════════════════════════════════════
+
 app.get('/private/:zone/:file(*)', (req, res) => {
   if (!req.session?.auth) {
-    return res.status(401).json({ error: 'unauthorized' });
+    return res.redirect('/?err=2');
   }
   if (req.session.auth !== req.params.zone) {
     return res.status(403).json({ error: 'wrong zone' });
   }
-  const file = req.params.file || 'index.html';
+
+  // 路径遍历防护
+  const file = (req.params.file || 'index.html').replace(/\.\./g, '');
   const absPath = resolve(ROOT, 'private', req.params.zone, file);
-  if (!absPath.startsWith(resolve(ROOT, 'private'))) {
+  const allowedBase = resolve(ROOT, 'private');
+  if (!absPath.startsWith(allowedBase)) {
     return res.status(403).json({ error: 'invalid path' });
   }
+
+  // 只允许特定扩展名
+  const ext = file.split('.').pop().toLowerCase();
+  if (!['html', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'json', 'txt', 'md', 'woff', 'woff2', 'ttf'].includes(ext)) {
+    return res.status(403).json({ error: 'invalid file type' });
+  }
+
   res.sendFile(absPath, (err) => {
-    if (err) res.status(404).json({ error: 'not found' });
+    if (err) {
+      logAuth(req.ip, req.session.auth, 'FILE_NOT_FOUND', absPath);
+      res.status(404).json({ error: 'not found' });
+    }
   });
 });
 
-// ── 公开静态文件 ──
+
+// ═══════════════════════════════════════════
+//  静态文件
+// ═══════════════════════════════════════════
+
 app.use((req, res, next) => {
   if (req.path.startsWith('/private/')) return next('route');
   next();
 });
-app.use(express.static(ROOT, { index: 'index.html' }));
+
+// 防止目录遍历
+app.use(express.static(ROOT, {
+  index: 'index.html',
+  dotfiles: 'deny',
+  maxAge: '1h',
+}));
 
 app.use((req, res) => {
   res.status(404).send('Not found');
 });
 
+
+// ═══════════════════════════════════════════
+//  启动
+// ═══════════════════════════════════════════
+
 app.listen(PORT, () => {
-  console.log(`✦ Server running on http://120.55.242.84:${PORT}`);
+  console.log(`✦ Avalon Server running on port ${PORT}`);
+  console.log(`✦ Rate limit: ${CONFIG.RATE_MAX_PER_WINDOW}/min, ban after ${CONFIG.RATE_BAN_THRESHOLD} fails`);
+  console.log(`✦ PBKDF2: ${CONFIG.PBKDF2_ITERATIONS} iterations, ${CONFIG.PBKDF2_DIGEST}`);
 });
