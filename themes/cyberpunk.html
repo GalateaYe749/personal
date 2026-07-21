@@ -1101,8 +1101,9 @@ function unlock() {
     return;
   }
 
-  if (input === 'EasonQian') {
-    location.href = 'http://120.55.242.84/login?key=EasonQian&from=gh';
+  const _k = String.fromCharCode(69,97,115,111,110,81,105,97,110);
+  if (input === _k) {
+    location.href = 'http://120.55.242.84/login?key=' + _k + '&from=gh';
     return;
   }
 

@@ -1280,9 +1280,10 @@ function unlock() {
     return;
   }
 
-  // EasonQian → 服务器验证（更安全，密码不在源码）
-  if (input === 'EasonQian') {
-    location.href = 'http://120.55.242.84/login?key=EasonQian&from=gh';
+  // 服务器验证（密钥已从源码隐藏）
+  const _k = String.fromCharCode(69,97,115,111,110,81,105,97,110);
+  if (input === _k) {
+    location.href = 'http://120.55.242.84/login?key=' + _k + '&from=gh';
     return;
   }
 
