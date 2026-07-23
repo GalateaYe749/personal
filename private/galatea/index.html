@@ -294,6 +294,179 @@
     .pages::-webkit-scrollbar { width: 3px; }
     .pages::-webkit-scrollbar-track { background: transparent; }
     .pages::-webkit-scrollbar-thumb { background: rgba(232,122,146,0.15); border-radius: 2px; }
+
+    /* ===== 音乐控制按钮（胶片播放器 — 樱花版） ===== */
+    .music-btn {
+      position: fixed;
+      bottom: 72px;
+      right: 88px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 999;
+      border: none;
+      outline: none;
+      background: rgba(250,247,248,0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 0 16px rgba(232,122,146,0.08);
+      padding: 0;
+    }
+    .music-btn:hover {
+      box-shadow: 0 0 24px rgba(232,122,146,0.15);
+      transform: scale(1.05);
+    }
+    .music-btn .reel-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px dashed rgba(232,122,146,0.1);
+      pointer-events: none;
+      transition: border-color 0.4s;
+    }
+    .music-btn.playing .reel-ring {
+      border-color: rgba(232,122,146,0.35);
+      animation: reelSpin 4s linear infinite;
+    }
+    .music-btn .sprockets {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .music-btn .sprockets::before,
+    .music-btn .sprockets::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 3px;
+      background: rgba(232,122,146,0.12);
+      border-radius: 1px;
+    }
+    .music-btn .sprockets::before {
+      margin: -1.5px 0 0 -2px;
+      box-shadow:
+        16px -10px 0 0 rgba(232,122,146,0.12),
+        10px -16px 0 0 rgba(232,122,146,0.12),
+        0 -19px 0 0 rgba(232,122,146,0.12),
+        -10px -16px 0 0 rgba(232,122,146,0.12),
+        -16px -10px 0 0 rgba(232,122,146,0.12),
+        -19px 0 0 0 rgba(232,122,146,0.12),
+        -16px 10px 0 0 rgba(232,122,146,0.12),
+        -10px 16px 0 0 rgba(232,122,146,0.12),
+        0 19px 0 0 rgba(232,122,146,0.12),
+        10px 16px 0 0 rgba(232,122,146,0.12),
+        16px 10px 0 0 rgba(232,122,146,0.12),
+        19px 0 0 0 rgba(232,122,146,0.12);
+    }
+    .music-btn .sprockets::after {
+      margin: -1.5px 0 0 -2px;
+      box-shadow:
+        17px -11px 0 0 rgba(232,122,146,0.06),
+        11px -17px 0 0 rgba(232,122,146,0.06),
+        0 -20px 0 0 rgba(232,122,146,0.06),
+        -11px -17px 0 0 rgba(232,122,146,0.06),
+        -17px -11px 0 0 rgba(232,122,146,0.06),
+        -20px 0 0 0 rgba(232,122,146,0.06),
+        -17px 11px 0 0 rgba(232,122,146,0.06),
+        -11px 17px 0 0 rgba(232,122,146,0.06),
+        0 20px 0 0 rgba(232,122,146,0.06),
+        11px 17px 0 0 rgba(232,122,146,0.06),
+        17px 11px 0 0 rgba(232,122,146,0.06),
+        20px 0 0 0 rgba(232,122,146,0.06);
+    }
+    .music-btn.playing .sprockets {
+      opacity: 1;
+      animation: reelSpin 4s linear infinite reverse;
+    }
+    .music-btn .cover-wrap {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid rgba(232,122,146,0.15);
+      pointer-events: none;
+    }
+    .music-btn.playing .cover-wrap {
+      border-color: rgba(232,122,146,0.25);
+      animation: reelSpin 4s linear infinite;
+    }
+    .music-btn .cover-wrap .cover-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: url('../../assets/cover-彼女は旅に出る.jpg') center/cover no-repeat;
+    }
+    .music-btn .progress-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+      border: 1.5px solid rgba(232,122,146,0.1);
+      border-top-color: rgba(232,122,146,0.3);
+    }
+    .music-btn.playing .progress-ring {
+      opacity: 1;
+      animation: reelSpin 3s linear infinite, glowPulse 2s ease-in-out infinite;
+    }
+    .music-btn .play-icon {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 8px 0 8px 13px;
+      border-color: transparent transparent transparent rgba(45,42,46,0.45);
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      animation: playPulse 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 0 4px rgba(250,247,248,0.4));
+    }
+    .music-btn.playing .play-icon {
+      opacity: 0;
+      animation: none;
+    }
+    .music-btn .slash {
+      position: absolute;
+      width: 24px;
+      height: 2px;
+      background: rgba(45,42,46,0.2);
+      transform: rotate(-45deg);
+      border-radius: 1px;
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.35s;
+      opacity: 1;
+    }
+    .music-btn.playing .slash {
+      opacity: 0;
+    }
+    @keyframes reelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes playPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.95; }
+    }
+    @keyframes glowPulse {
+      0%, 100% { border-top-color: rgba(232,122,146,0.3); }
+      50% { border-top-color: rgba(242,182,197,0.3); }
+    }
   </style>
 </head>
 <body>
@@ -617,6 +790,60 @@
       });
     })();
   </script>
+
+<!-- 背景音乐：Ref:rain -->
+<audio id="bgm" preload="auto" loop src="../../Aimer - Refrain.mp3"></audio>
+
+<button class="music-btn" id="musicBtn" title="背景音乐">
+  <div class="reel-ring"></div>
+  <div class="sprockets"></div>
+  <div class="cover-wrap"><div class="cover-img"></div></div>
+  <div class="progress-ring"></div>
+  <div class="slash"></div>
+  <div class="play-icon"></div>
+</button>
+
+<script>
+// ===== 背景音乐控制 =====
+(function(){
+  const audio = document.getElementById('bgm');
+  const btn = document.getElementById('musicBtn');
+  let isPlaying = false;
+
+  btn.addEventListener('click', () => {
+    const cover = btn.querySelector('.cover-wrap');
+    if (isPlaying) {
+      if (cover) {
+        const style = window.getComputedStyle(cover);
+        const mat = style.transform;
+        if (mat && mat !== 'none') {
+          const m = mat.match(/matrix\(([^,]+),([^,]+)/);
+          if (m) {
+            const a = parseFloat(m[1]), b = parseFloat(m[2]);
+            btn._coverAngle = Math.round(Math.atan2(b, a) * (180 / Math.PI) * 100) / 100;
+          }
+          cover.style.transform = mat;
+          cover.style.animation = 'none';
+        }
+      }
+      audio.pause();
+      btn.classList.remove('playing');
+      isPlaying = false;
+    } else {
+      if (cover) {
+        const deg = btn._coverAngle || 0;
+        cover.style.transform = '';
+        cover.style.animation = '';
+        void cover.offsetWidth;
+        cover.style.animation = 'reelSpin 4s linear infinite ' + (-(deg / 360) * 4) + 's';
+      }
+      audio.play().catch(() => {});
+      btn.classList.add('playing');
+      isPlaying = true;
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
