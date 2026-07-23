@@ -903,8 +903,8 @@
     /* ===== 音乐控制按钮（胶片播放器） ===== */
     .music-btn {
       position: fixed;
-      bottom: 36px;
-      right: 36px;
+      top: 36px;
+      left: 36px;
       width: 52px;
       height: 52px;
       border-radius: 50%;
@@ -1181,35 +1181,35 @@
 
   <div class="neon-signs">
 
-    <div class="sign-wrap" onclick="location.href='categories/study-log.html'" style="cursor:pointer"><div class="neon-sign ns-pink neon-border-pink" style="transform: rotate(-4.2deg) translateY(-18px) translateX(-12px);">
+    <div class="sign-wrap" onclick="loadSubpage('categories/study-log.html')" style="cursor:pointer"><div class="neon-sign ns-pink neon-border-pink" style="transform: rotate(-4.2deg) translateY(-18px) translateX(-12px);">
       <div class="neon-sign-title flicker-d1" data-text="学习日志">学习日志</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充</a>
       </div>
     </div></div>
 
-    <div class="sign-wrap" onclick="location.href='categories/tech-notes.html'" style="cursor:pointer"><div class="neon-sign ns-cyan neon-border-cyan" style="transform: rotate(3.5deg) translateY(8px) translateX(8px);">
+    <div class="sign-wrap" onclick="loadSubpage('categories/tech-notes.html')" style="cursor:pointer"><div class="neon-sign ns-cyan neon-border-cyan" style="transform: rotate(3.5deg) translateY(8px) translateX(8px);">
       <div class="neon-sign-title flicker" data-text="技术笔记">技术笔记</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充</a>
       </div>
     </div></div>
 
-    <div class="sign-wrap" onclick="location.href='categories/info-org.html'" style="cursor:pointer"><div class="neon-sign ns-purple neon-border-purple" style="transform: rotate(-2.8deg) translateY(5px) translateX(6px);">
+    <div class="sign-wrap" onclick="loadSubpage('categories/info-org.html')" style="cursor:pointer"><div class="neon-sign ns-purple neon-border-purple" style="transform: rotate(-2.8deg) translateY(5px) translateX(6px);">
       <div class="neon-sign-title flicker-d2" data-text="信息整理">信息整理</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充</a>
       </div>
     </div></div>
 
-    <div class="sign-wrap" onclick="location.href='categories/creation.html'" style="cursor:pointer"><div class="neon-sign ns-lpink neon-border-lpink" style="transform: rotate(4.1deg) translateY(-10px) translateX(-8px);">
+    <div class="sign-wrap" onclick="loadSubpage('categories/creation.html')" style="cursor:pointer"><div class="neon-sign ns-lpink neon-border-lpink" style="transform: rotate(4.1deg) translateY(-10px) translateX(-8px);">
       <div class="neon-sign-title flicker-d3" data-text="创新创作">创新创作</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充</a>
       </div>
     </div></div>
 
-    <div class="sign-wrap" onclick="location.href='categories/thoughts.html'" style="cursor:pointer"><div class="neon-sign ns-gold neon-border-gold">
+    <div class="sign-wrap" onclick="loadSubpage('categories/thoughts.html')" style="cursor:pointer"><div class="neon-sign ns-gold neon-border-gold">
       <div class="neon-sign-title flicker-delay" data-text="随想摘要">随想摘要</div>
       <div class="neon-sign-items">
         <a class="dim" href="#">等待填充</a>
@@ -1265,6 +1265,14 @@
   <div class="music-note">&#9835;</div>
   <div class="play-icon"></div>
 </button>
+
+<!-- 子页面加载容器（SPA模式，不中断音频） -->
+<div id="subpage-overlay" style="display:none;position:fixed;inset:0;z-index:800;overflow-y:auto;background:var(--bg);-webkit-overflow-scrolling:touch;">
+  <div id="subpage-close" style="position:fixed;top:20px;left:20px;z-index:810;cursor:pointer;color:var(--cyan);font-size:13px;letter-spacing:3px;opacity:0.5;transition:opacity 0.3s;font-family:var(--mono,monospace);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
+    &#8592; 返回
+  </div>
+  <div id="subpage-content" style="min-height:100vh;padding-top:50px;"></div>
+</div>
 
 <canvas id="particle-canvas"></canvas>
 <script>
@@ -1609,28 +1617,136 @@ function unlock() {
   });
 })();
 
-// ===== 背景音乐控制 =====
+// ===== 背景音乐控制（跨页面持久化） =====
 (function(){
   const audio = document.getElementById('bgm');
   const btn = document.getElementById('musicBtn');
-  let isPlaying = false;
+  const KEY = '__bgm_state';
+
+  // 尝试从 sessionStorage 恢复播放状态
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(KEY));
+    if (saved && saved.playing) {
+      audio.currentTime = saved.time || 0;
+      audio.play().catch(() => {});
+      btn.classList.add('playing');
+      window._bgmPlaying = true;
+    }
+  } catch(e) {}
+
+  // 保存状态到 sessionStorage
+  function saveState() {
+    try {
+      sessionStorage.setItem(KEY, JSON.stringify({
+        playing: window._bgmPlaying || false,
+        time: audio.currentTime
+      }));
+    } catch(e) {}
+  }
 
   btn.addEventListener('click', () => {
-    if (isPlaying) {
+    if (window._bgmPlaying) {
       audio.pause();
       btn.classList.remove('playing');
+      window._bgmPlaying = false;
     } else {
       audio.play().catch(() => {});
       btn.classList.add('playing');
+      window._bgmPlaying = true;
     }
-    isPlaying = !isPlaying;
+    saveState();
   });
 
-  window.addEventListener('beforeunload', () => {
-    audio.pause();
-    audio.currentTime = 0;
-  });
+  // 离开页面前保存状态（其他页面加载后恢复）
+  window.addEventListener('beforeunload', saveState);
+
+  // 定期保存进度
+  if (window._bgmPlaying) {
+    setInterval(saveState, 5000);
+  }
+  setInterval(() => {
+    if (window._bgmPlaying) saveState();
+  }, 5000);
 })();
+
+// ===== SPA 子页面加载（音乐不中断） =====
+let _loadedStyles = new Set();
+
+function loadSubpage(url) {
+  const overlay = document.getElementById('subpage-overlay');
+  const content = document.getElementById('subpage-content');
+  const closeBtn = document.getElementById('subpage-close');
+
+  // 显示加载指示
+  content.innerHTML = '<div style="text-align:center;padding:80px 20px;color:rgba(240,240,255,0.3);font-size:14px;letter-spacing:4px;">LOADING...</div>';
+  overlay.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // 暂停主页滚动粒子（减性能负担）
+  document.getElementById('particle-canvas').style.display = 'none';
+
+  fetch(url)
+    .then(r => r.text())
+    .then(html => {
+      // 提取样式
+      const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+      let match;
+      while ((match = styleRegex.exec(html)) !== null) {
+        const css = match[1].trim();
+        if (css && !_loadedStyles.has(css)) {
+          _loadedStyles.add(css);
+          const styleEl = document.createElement('style');
+          styleEl.textContent = css;
+          document.head.appendChild(styleEl);
+        }
+      }
+
+      // 提取 body 内容
+      const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+      const bodyHTML = bodyMatch ? bodyMatch[1] : html;
+
+      content.innerHTML = bodyHTML;
+
+      // 重新执行脚本（particles等需要）
+      content.querySelectorAll('script').forEach(oldScript => {
+        const newScript = document.createElement('script');
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+      });
+
+      // 修复相对路径的 src/href（../ 开头的）
+      content.querySelectorAll('[href^="../"], [src^="../"]').forEach(el => {
+        const attr = el.hasAttribute('href') ? 'href' : 'src';
+        const val = el.getAttribute(attr);
+        // categories/xxx.html 里 ../ 指向上一级，即项目根目录
+        const idx = url.lastIndexOf('/');
+        const base = idx >= 0 ? url.substring(0, idx + 1) : '';
+        el.setAttribute(attr, val.replace('../', base.replace('categories/', '')));
+      });
+    })
+    .catch(err => {
+      content.innerHTML = '<div style="text-align:center;padding:80px 20px;color:rgba(255,51,136,0.4);font-size:13px;letter-spacing:2px;">&#9888; 加载失败</div>';
+    });
+}
+
+// 关闭子页面（返回主页）
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('subpage-close');
+  const overlay = document.getElementById('subpage-overlay');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      document.body.style.overflow = '';
+      document.getElementById('particle-canvas').style.display = '';
+      // 清理注入的页面状态
+      const content = document.getElementById('subpage-content');
+      content.innerHTML = '';
+    });
+  }
+});
 
 // 翻页过渡动画
 const fadeObserver = new IntersectionObserver((entries) => {
