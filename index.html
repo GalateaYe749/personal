@@ -1086,6 +1086,87 @@
       50% { border-top-color: rgba(0,221,255,0.3); }
     }
 
+    /* ===== 子页面共用样式（不注入，直接写在主页） ===== */
+    .coming-soon {
+      margin-top: 20px;
+      font-size: 16px;
+      letter-spacing: 8px;
+      color: rgba(240,240,255,0.3);
+      font-family: "Consolas", "Monaco", monospace;
+      text-shadow: 0 0 8px rgba(240,240,255,0.05);
+    }
+    .coming-soon span {
+      animation: comPulse 2s ease-in-out infinite;
+    }
+    @keyframes comPulse {
+      0%,100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    .back-link {
+      margin-top: 48px;
+    }
+    .back-link a {
+      color: rgba(240,240,255,0.25);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 4px;
+      font-family: "Consolas", "Monaco", monospace;
+      transition: all 0.3s;
+    }
+    .back-link a:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(0,221,255,0.3);
+    }
+    /* info-org 列表样式 */
+    .info-list {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .info-section {
+      margin-bottom: 28px;
+    }
+    .info-section .sec-title {
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .info-item {
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,51,136,0.06);
+      border-radius: 4px;
+      transition: all 0.25s;
+    }
+    .info-item:hover {
+      border-color: rgba(0,221,255,0.15);
+      background: rgba(0,221,255,0.02);
+    }
+    .info-item a {
+      color: var(--cyan);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .info-item a:hover {
+      color: var(--light-pink);
+      text-shadow: 0 0 8px rgba(255,153,204,0.2);
+    }
+    .info-item .summary {
+      font-size: 12px;
+      color: var(--dim-purple);
+      margin-top: 4px;
+      line-height: 1.5;
+      opacity: 0.6;
+    }
+    .info-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(240,240,255,0.2);
+      font-size: 14px;
+      letter-spacing: 4px;
+      font-family: "Consolas", "Monaco", monospace;
+    }
+
     /* ===== 翻页提示箭头 ===== */
     .scroll-hint {
       position: fixed;
@@ -1668,8 +1749,6 @@ function unlock() {
 })();
 
 // ===== SPA 子页面加载（音乐不中断） =====
-let _loadedStyles = new Set();
-
 function loadSubpage(url) {
   const overlay = document.getElementById('subpage-overlay');
   const content = document.getElementById('subpage-content');
@@ -1683,17 +1762,6 @@ function loadSubpage(url) {
     .then(html => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-
-      // 注入样式（去重）
-      doc.querySelectorAll('style').forEach(style => {
-        const css = style.textContent.trim();
-        if (css && !_loadedStyles.has(css)) {
-          _loadedStyles.add(css);
-          const el = document.createElement('style');
-          el.textContent = css;
-          document.head.appendChild(el);
-        }
-      });
 
       // 只提取 .container 里的实际内容（跳过 bg/canvas/cursor/粒子等骨架）
       const container = doc.querySelector('.container');
