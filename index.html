@@ -1763,9 +1763,11 @@ function loadSubpage(url) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
 
-      // 提取 .container 完整结构（保留外容器，确保布局正确）
+      // 提取 .container 完整结构（删除子页面自带的返回链接，避免重复）
       const container = doc.querySelector('.container');
       if (container) {
+        const bk = container.querySelector('.back-link');
+        if (bk) bk.remove();
         content.innerHTML = container.outerHTML;
       } else {
         const body = doc.body;
