@@ -1802,23 +1802,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('subpage-overlay');
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {
+      // 关闭子页面，回到第二页目录
       overlay.style.display = 'none';
       document.body.style.overflow = '';
-      // 清空子页面内容
       const content = document.getElementById('subpage-content');
       content.innerHTML = '';
-      // 回到首页顶部 + 触发第一页入场动画
       const wrap = document.querySelector('.scroll-wrap');
-      if (wrap) wrap.scrollTo({ top: 0, behavior: 'smooth' });
-      // 重新触发第一页动画
-      const p1 = document.getElementById('page-1');
-      if (p1) {
-        p1.classList.remove('animate-in');
-        requestAnimationFrame(() => {
-          void p1.offsetWidth;
-          p1.classList.add('animate-in');
-        });
+      if (wrap) {
+        // page-2 是目录页，滚动到那里
+        const p2 = document.getElementById('page-2');
+        if (p2) {
+          const offset = p2.offsetTop;
+          wrap.scrollTo({ top: offset, behavior: 'smooth' });
+        }
       }
+      // 触发窗口 resize 让粒子/布局重算
+      window.dispatchEvent(new Event('resize'));
     });
   }
 });
