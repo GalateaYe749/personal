@@ -1319,8 +1319,8 @@
 </button>
 
 <!-- 子页面加载容器（SPA模式，不中断音频） -->
-<div id="subpage-overlay" style="display:none;position:fixed;inset:0;z-index:800;overflow-y:auto;background:var(--bg);-webkit-overflow-scrolling:touch;">
-  <div id="subpage-close" style="position:fixed;top:20px;left:20px;z-index:810;cursor:pointer;color:var(--cyan);font-size:13px;letter-spacing:3px;opacity:0.5;transition:opacity 0.3s;font-family:var(--mono,monospace);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
+<div id="subpage-overlay" style="display:none;position:fixed;inset:0;z-index:800;overflow-y:auto;background:transparent;-webkit-overflow-scrolling:touch;">
+  <div id="subpage-close" style="position:fixed;top:20px;left:20px;z-index:810;cursor:pointer;color:var(--cyan);font-size:13px;letter-spacing:3px;opacity:0.5;transition:opacity 0.3s;font-family:var(--mono,monospace);background:rgba(13,7,22,0.5);padding:4px 10px;border-radius:4px;backdrop-filter:blur(4px);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
     &#8592; 返回
   </div>
   <div id="subpage-content" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:60px 20px 40px;"></div>
@@ -1756,6 +1756,9 @@ function loadSubpage(url) {
   content.innerHTML = '<div style="text-align:center;padding:80px 20px;color:rgba(240,240,255,0.3);font-size:14px;letter-spacing:4px;">LOADING...</div>';
   overlay.style.display = 'block';
   document.body.style.overflow = 'hidden';
+  // 隐藏主页内容（背景图/粒子仍然可见）
+  const wrap = document.querySelector('.scroll-wrap');
+  if (wrap) wrap.style.display = 'none';
 
   fetch(url)
     .then(r => r.text())
@@ -1807,8 +1810,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
       const content = document.getElementById('subpage-content');
       content.innerHTML = '';
+      // 恢复主页内容
       const wrap = document.querySelector('.scroll-wrap');
       if (wrap) {
+        wrap.style.display = '';
         // page-2 是目录页，滚动到那里
         const p2 = document.getElementById('page-2');
         if (p2) {
