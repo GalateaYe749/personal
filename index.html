@@ -904,7 +904,7 @@
     .music-btn {
       position: fixed;
       bottom: 72px;
-      right: 72px;
+      right: 88px;
       width: 52px;
       height: 52px;
       border-radius: 50%;
@@ -995,35 +995,24 @@
       animation: reelSpin 4s linear infinite reverse;
     }
 
-    .music-btn .reel-body {
+    .music-btn .cover-wrap {
       position: absolute;
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: rgba(13,7,22,0.92);
+      overflow: hidden;
       border: 1px solid rgba(255,51,136,0.12);
       pointer-events: none;
     }
-    .music-btn.playing .reel-body {
+    .music-btn.playing .cover-wrap {
       border-color: rgba(255,51,136,0.25);
       animation: reelSpin 4s linear infinite;
     }
-
-    .music-btn .reel-hub {
-      width: 10px;
-      height: 10px;
+    .music-btn .cover-wrap .cover-img {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      background: rgba(255,51,136,0.08);
-      border: 1.5px solid rgba(255,51,136,0.15);
-      z-index: 2;
-      position: absolute;
-      pointer-events: none;
-      transition: all 0.3s;
-    }
-    .music-btn.playing .reel-hub {
-      background: rgba(255,51,136,0.3);
-      border-color: rgba(255,51,136,0.5);
-      box-shadow: 0 0 8px rgba(255,51,136,0.3);
+      background: url('assets/cover-彼女は旅に出る.jpg') center/cover no-repeat;
     }
 
     .music-btn .play-icon {
@@ -1032,15 +1021,15 @@
       height: 0;
       border-style: solid;
       border-width: 8px 0 8px 13px;
-      border-color: transparent transparent transparent rgba(240,240,255,0.55);
+      border-color: transparent transparent transparent rgba(240,240,255,0.6);
       left: 20px;
       top: 50%;
       transform: translateY(-50%);
-      z-index: 3;
+      z-index: 4;
       pointer-events: none;
       transition: opacity 0.3s;
       animation: playPulse 2.2s ease-in-out infinite;
-      filter: drop-shadow(0 0 4px rgba(255,51,136,0.15));
+      filter: drop-shadow(0 0 6px rgba(13,7,22,0.6)) drop-shadow(0 0 4px rgba(255,51,136,0.2));
     }
     .music-btn.playing .play-icon {
       opacity: 0;
@@ -1048,21 +1037,7 @@
     }
 
     /* 音符图标（播放时显示） */
-    .music-btn .music-note {
-      position: absolute;
-      font-size: 18px;
-      color: rgba(255,51,136,0.55);
-      z-index: 3;
-      pointer-events: none;
-      transition: opacity 0.35s;
-      opacity: 0;
-      line-height: 1;
-      filter: drop-shadow(0 0 6px rgba(255,51,136,0.15));
-      animation: noteFloat 2s ease-in-out infinite;
-    }
-    .music-btn.playing .music-note {
-      opacity: 1;
-    }
+
 
     /* 播放进度环（播放时渐显） */
     .music-btn .progress-ring {
@@ -1084,13 +1059,14 @@
       position: absolute;
       width: 24px;
       height: 2px;
-      background: rgba(240,240,255,0.2);
+      background: rgba(240,240,255,0.25);
       transform: rotate(-45deg);
       border-radius: 1px;
-      z-index: 3;
+      z-index: 4;
       pointer-events: none;
       transition: opacity 0.35s;
       opacity: 1;
+      filter: drop-shadow(0 0 3px rgba(13,7,22,0.5));
     }
     .music-btn.playing .slash {
       opacity: 0;
@@ -1104,10 +1080,7 @@
       0%, 100% { opacity: 0.5; }
       50% { opacity: 0.95; }
     }
-    @keyframes noteFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-2px); }
-    }
+
     @keyframes glowPulse {
       0%, 100% { border-top-color: rgba(255,51,136,0.3); }
       50% { border-top-color: rgba(0,221,255,0.3); }
@@ -1258,11 +1231,9 @@
 <button class="music-btn" id="musicBtn" title="背景音乐">
   <div class="reel-ring"></div>
   <div class="sprockets"></div>
-  <div class="reel-body"></div>
-  <div class="reel-hub"></div>
+  <div class="cover-wrap"><div class="cover-img"></div></div>
   <div class="progress-ring"></div>
   <div class="slash"></div>
-  <div class="music-note">&#9835;</div>
   <div class="play-icon"></div>
 </button>
 
