@@ -1673,59 +1673,56 @@ let _loadedStyles = new Set();
 function loadSubpage(url) {
   const overlay = document.getElementById('subpage-overlay');
   const content = document.getElementById('subpage-content');
-  const closeBtn = document.getElementById('subpage-close');
 
-  // 显示加载指示
   content.innerHTML = '<div style="text-align:center;padding:80px 20px;color:rgba(240,240,255,0.3);font-size:14px;letter-spacing:4px;">LOADING...</div>';
   overlay.style.display = 'block';
   document.body.style.overflow = 'hidden';
-  // 暂停主页滚动粒子（减性能负担）
-  document.getElementById('particle-canvas').style.display = 'none';
 
   fetch(url)
     .then(r => r.text())
     .then(html => {
-      // 提取样式
-      const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
-      let match;
-      while ((match = styleRegex.exec(html)) !== null) {
-        const css = match[1].trim();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // 注入样式（去重）
+      doc.querySelectorAll('style').forEach(style => {
+        const css = style.textContent.trim();
         if (css && !_loadedStyles.has(css)) {
           _loadedStyles.add(css);
-          const styleEl = document.createElement('style');
-          styleEl.textContent = css;
-          document.head.appendChild(styleEl);
+          const el = document.createElement('style');
+          el.textContent = css;
+          document.head.appendChild(el);
         }
+      });
+
+      // 只提取 .container 里的实际内容（跳过 bg/canvas/cursor/粒子等骨架）
+      const container = doc.querySelector('.container');
+      if (container) {
+        content.innerHTML = container.innerHTML;
+      } else {
+        // 备用：提取 body 里非骨架的内容
+        const body = doc.body;
+        const main = body.querySelector('[class]') || body;
+        content.innerHTML = main.innerHTML;
       }
 
-      // 提取 body 内容
-      const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-      const bodyHTML = bodyMatch ? bodyMatch[1] : html;
-
-      content.innerHTML = bodyHTML;
-
-      // 重新执行脚本（particles等需要）
-      content.querySelectorAll('script').forEach(oldScript => {
-        const newScript = document.createElement('script');
-        if (oldScript.src) {
-          newScript.src = oldScript.src;
-        } else {
-          newScript.textContent = oldScript.textContent;
-        }
-        oldScript.parentNode.replaceChild(newScript, oldScript);
+      // 修复相对路径（../ → 根目录）
+      const pathFix = (val) => val.replace(/^\.\//, '').replace(/^\.\.\//, '');
+      content.querySelectorAll('[href^="../"], [href^="./"], [src^="../"], [src^="./"]').forEach(el => {
+        const attr = el.hasAttribute('href') ? 'href' : 'src';
+        el.setAttribute(attr, pathFix(el.getAttribute(attr)));
       });
 
-      // 修复相对路径的 src/href（../ 开头的）
-      content.querySelectorAll('[href^="../"], [src^="../"]').forEach(el => {
-        const attr = el.hasAttribute('href') ? 'href' : 'src';
-        const val = el.getAttribute(attr);
-        // categories/xxx.html 里 ../ 指向上一级，即项目根目录
-        const idx = url.lastIndexOf('/');
-        const base = idx >= 0 ? url.substring(0, idx + 1) : '';
-        el.setAttribute(attr, val.replace('../', base.replace('categories/', '')));
+      // 只执行非粒子动画的功能脚本（如 info-org 的数据加载）
+      doc.querySelectorAll('script:not([src])').forEach(s => {
+        const text = s.textContent.trim();
+        // 跳过粒子/光标/动画类脚本
+        if (/particle|animate|canvas\.|cursorGlow|mouse\.|shootingStar|nebulae|Particle/.test(text)) return;
+        if (text.length < 20) return;
+        try { new Function(text)(); } catch(e) { console.warn('subpage script error:', e); }
       });
     })
-    .catch(err => {
+    .catch(() => {
       content.innerHTML = '<div style="text-align:center;padding:80px 20px;color:rgba(255,51,136,0.4);font-size:13px;letter-spacing:2px;">&#9888; 加载失败</div>';
     });
 }
