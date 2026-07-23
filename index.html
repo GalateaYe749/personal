@@ -1323,7 +1323,7 @@
   <div id="subpage-close" style="position:fixed;top:20px;left:20px;z-index:810;cursor:pointer;color:var(--cyan);font-size:13px;letter-spacing:3px;opacity:0.5;transition:opacity 0.3s;font-family:var(--mono,monospace);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
     &#8592; 返回
   </div>
-  <div id="subpage-content" style="min-height:100vh;padding-top:50px;"></div>
+  <div id="subpage-content" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:60px 20px 40px;"></div>
 </div>
 
 <canvas id="particle-canvas"></canvas>
@@ -1804,10 +1804,21 @@ document.addEventListener('DOMContentLoaded', () => {
     closeBtn.addEventListener('click', () => {
       overlay.style.display = 'none';
       document.body.style.overflow = '';
-      document.getElementById('particle-canvas').style.display = '';
-      // 清理注入的页面状态
+      // 清空子页面内容
       const content = document.getElementById('subpage-content');
       content.innerHTML = '';
+      // 回到首页顶部 + 触发第一页入场动画
+      const wrap = document.querySelector('.scroll-wrap');
+      if (wrap) wrap.scrollTo({ top: 0, behavior: 'smooth' });
+      // 重新触发第一页动画
+      const p1 = document.getElementById('page-1');
+      if (p1) {
+        p1.classList.remove('animate-in');
+        requestAnimationFrame(() => {
+          void p1.offsetWidth;
+          p1.classList.add('animate-in');
+        });
+      }
     });
   }
 });
