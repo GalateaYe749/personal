@@ -1763,31 +1763,30 @@ function loadSubpage(url) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
 
-      // 只提取 .container 里的实际内容（跳过 bg/canvas/cursor/粒子等骨架）
+      // 提取 .container 完整结构（保留外容器，确保布局正确）
       const container = doc.querySelector('.container');
       if (container) {
-        content.innerHTML = container.innerHTML;
+        content.innerHTML = container.outerHTML;
       } else {
-        // 备用：提取 body 里非骨架的内容
         const body = doc.body;
         const main = body.querySelector('[class]') || body;
-        content.innerHTML = main.innerHTML;
+        content.innerHTML = main.outerHTML;
       }
 
-      // 修复相对路径（../ → 根目录）
-      const pathFix = (val) => val.replace(/^\.\//, '').replace(/^\.\.\//, '');
+      // 修复元素中的相对路径
       content.querySelectorAll('[href^="../"], [href^="./"], [src^="../"], [src^="./"]').forEach(el => {
         const attr = el.hasAttribute('href') ? 'href' : 'src';
-        el.setAttribute(attr, pathFix(el.getAttribute(attr)));
+        el.setAttribute(attr, el.getAttribute(attr).replace(/^(\.\/)?\.\.\//, ''));
       });
 
-      // 只执行非粒子动画的功能脚本（如 info-org 的数据加载）
+      // 执行子页面功能脚本（跳过粒子/画布等骨架脚本）
       doc.querySelectorAll('script:not([src])').forEach(s => {
         const text = s.textContent.trim();
-        // 跳过粒子/光标/动画类脚本
         if (/particle|animate|canvas\.|cursorGlow|mouse\.|shootingStar|nebulae|Particle/.test(text)) return;
         if (text.length < 20) return;
-        try { new Function(text)(); } catch(e) { console.warn('subpage script error:', e); }
+        // 修正脚本中的相对路径（../ → 空）
+        const fixed = text.replace(/(['"])\.\.\//g, '$1');
+        try { new Function(fixed)(); } catch(e) { console.warn('subpage script error:', e); }
       });
     })
     .catch(() => {
