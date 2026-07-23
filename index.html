@@ -1616,13 +1616,20 @@ function unlock() {
   }
 
   btn.addEventListener('click', () => {
+    const cover = btn.querySelector('.cover-wrap');
     if (window._bgmPlaying) {
-      // 暂停时：记录封面当前旋转角度，冻结在那里
-      const cover = btn.querySelector('.cover-wrap');
+      // 暂停：记录当前旋转角度，冻结
       if (cover) {
         const style = window.getComputedStyle(cover);
         const mat = style.transform;
         if (mat && mat !== 'none') {
+          // 从 matrix() 中提取旋转角度
+          const m = mat.match(/matrix\(([^,]+),([^,]+)/);
+          if (m) {
+            const a = parseFloat(m[1]), b = parseFloat(m[2]);
+            const deg = Math.round(Math.atan2(b, a) * (180 / Math.PI) * 100) / 100;
+            btn._coverAngle = deg;
+          }
           cover.style.transform = mat;
           cover.style.animation = 'none';
         }
@@ -1631,13 +1638,15 @@ function unlock() {
       btn.classList.remove('playing');
       window._bgmPlaying = false;
     } else {
-      // 播放时：清除内联 transform，恢复动画旋转
-      const cover = btn.querySelector('.cover-wrap');
+      // 恢复：从上次角度继续旋转
       if (cover) {
+        const deg = btn._coverAngle || 0;
+        // 用负延迟让动画从指定角度开始
+        const delaySec = -(deg / 360) * 4;  // 4s 一圈
         cover.style.transform = '';
         cover.style.animation = '';
-        // 触发回流让动画重新生效
         void cover.offsetWidth;
+        cover.style.animation = `reelSpin 4s linear infinite ${delaySec}s`;
       }
       audio.play().catch(() => {});
       btn.classList.add('playing');
