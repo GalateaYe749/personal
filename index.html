@@ -1687,6 +1687,7 @@ function unlock() {
     const saved = JSON.parse(localStorage.getItem(KEY));
     if (saved && saved.playing) {
       audio.currentTime = saved.time || 0;
+      audio.volume = saved.volume || 0.5;
       audio.play().catch(() => {});
       btn.classList.add('playing');
       window._bgmPlaying = true;
@@ -1698,7 +1699,8 @@ function unlock() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
         playing: window._bgmPlaying || false,
-        time: audio.currentTime
+        time: audio.currentTime,
+        volume: audio.volume
       }));
     } catch(e) {}
   }
