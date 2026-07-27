@@ -401,6 +401,11 @@ app.use(express.static(ROOT, {
   index: 'index.html',
   dotfiles: 'deny',
   maxAge: '1h',
+  setHeaders(res, path) {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  },
 }));
 
 app.use((req, res) => {
