@@ -267,6 +267,7 @@
       text-align: center; margin-top: 24px;
     }
 
+
     .back-link {
       position: fixed;
       top: 18px;
@@ -277,43 +278,28 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 14px 6px 10px;
+      padding: 7px 16px 7px 12px;
       font-size: 11px;
       letter-spacing: 3px;
       font-family: "Consolas", "Monaco", monospace;
-      color: rgba(240,240,255,0.15);
+      color: rgba(240,240,255,0.35);
       text-decoration: none;
-      background: transparent;
-      border: none;
-      border-radius: 2px;
+      background: rgba(13,7,22,0.55);
+      border: 1px solid rgba(0,221,255,0.06);
+      border-radius: 3px;
+      backdrop-filter: blur(4px);
       transform: skewX(-3deg);
-      transition: all 0.4s;
+      transition: all 0.3s;
       position: relative;
-    }
-    .back-link a::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border: 1px solid rgba(0,221,255,0.04);
-      border-radius: 2px;
-      pointer-events: none;
-      transition: all 0.4s;
-    }
-    .back-link a::after {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      pointer-events: none;
-      opacity: 0;
-      transition: all 0.4s;
     }
     .back-link a:hover {
       color: var(--cyan);
-      text-shadow: 0 0 6px rgba(0,221,255,0.15);
-      padding-left: 14px;
+      border-color: rgba(0,221,255,0.2);
+      background: rgba(13,7,22,0.7);
+      box-shadow: 0 0 10px rgba(0,221,255,0.06);
+      padding-left: 16px;
     }
+
     .back-link a:hover::before {
       border-color: rgba(0,221,255,0.12);
       box-shadow: 0 0 8px rgba(0,221,255,0.04);
