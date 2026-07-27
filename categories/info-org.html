@@ -472,7 +472,41 @@
       .neon-sign { padding: 32px 24px; }
       .corner, .cyber-border { display: none; }
     }
-  </style>
+  
+    .music-btn {
+      position: fixed; bottom: 40px; right: 40px; z-index: 200;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid rgba(0,221,255,0.06);
+      background: rgba(13,7,22,0.4);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+      opacity: 0.5;
+    }
+    .music-btn:hover { opacity: 1; border-color: rgba(0,221,255,0.15); }
+    .music-btn .play-icon {
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 7px 0 7px 12px;
+      border-color: transparent transparent transparent rgba(0,221,255,0.3);
+      margin-left: 3px;
+      transition: all 0.3s;
+    }
+    .music-btn.playing .play-icon {
+      border: none;
+      width: 12px; height: 14px;
+      margin-left: 0;
+      background: linear-gradient(180deg, var(--cyan) 0%, var(--cyan) 33%, transparent 33%, transparent 66%, var(--cyan) 66%, var(--cyan) 100%);
+      background-size: 100% 300%;
+      animation: playPulse 1s ease-in-out infinite;
+    }
+    @keyframes playPulse {
+      0%,100% { background-position: 0% 100%; }
+      50% { background-position: 0% 0%; }
+    }
+
+</style>
 </head>
 <body>
 
@@ -678,5 +712,60 @@ fetch('../data/info-org.json').then(r=>r.json()).then(d=>{
   e.innerHTML=d.sections.map(s=>'<div class="info-section"><div class="sec-title">'+s.icon+' '+s.title+'</div>'+(s.items||[]).map(i=>'<div class="info-item">'+(i.url?'<a href="'+i.url+'" target="_blank">'+i.title+'</a>':'<span>'+i.title+'</span>')+(i.summary?'<div class="summary">'+i.summary+'</div>':'')+'</div>').join('')+'</div>').join('');
 }).catch(()=>{document.getElementById('infoList').innerHTML='<div class="info-empty">✦ 加载失败 ✦</div>';});
 </script>
+<!-- 背景音乐（全局同步） -->
+<audio id="bgm" preload="auto" loop src="../鎖那 - 彼女は旅に出る.mp3"></audio>
+<button class="music-btn" id="musicBtn" title="背景音乐">
+  <div class="play-icon"></div>
+</button>
+
+<script>
+(function() {
+  const STORAGE_KEY = '__bgm_state';
+  const audio = document.getElementById('bgm');
+  const btn = document.getElementById('musicBtn');
+  if (!audio || !btn) return;
+
+  // 恢复播放状态
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.playing) {
+      audio.currentTime = saved.time || 0;
+      audio.volume = saved.volume || 0.5;
+      audio.play().catch(() => {});
+      btn.classList.add('playing');
+    }
+  } catch(e) {}
+
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(() => {});
+      btn.classList.add('playing');
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+    }
+  });
+
+  // 定期保存播放状态
+  setInterval(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      playing: !audio.paused,
+      time: audio.currentTime,
+      volume: audio.volume,
+      updated: Date.now()
+    }));
+  }, 3000);
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      playing: !audio.paused,
+      time: audio.currentTime,
+      volume: audio.volume,
+      updated: Date.now()
+    }));
+  });
+})();
+</script>
+
 </body>
 </html>
