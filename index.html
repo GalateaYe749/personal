@@ -1866,19 +1866,23 @@ signObserver.observe(page2);
 <script>
 // 处理 ?page=2 参数——返回主页时定位到第二页（目录页）
 (function() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('page') === '2') {
-    setTimeout(() => {
-      const p2 = document.getElementById('page-2');
-      if (p2) {
-        p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      // 等滚动完再清理 URL 参数
+  const scrollToPage2 = window.location.search.includes('page=2') || sessionStorage.getItem('scrollToPage2') === '1';
+  if (scrollToPage2) {
+    sessionStorage.removeItem('scrollToPage2');
+    // 多次尝试滚动，确保无论 DOM 加载快慢都能定位
+    [200, 500, 1000].forEach(delay => {
       setTimeout(() => {
-        const clean = window.location.pathname + window.location.hash;
-        window.history.replaceState({}, '', clean);
-      }, 600);
-    }, 300);
+        const p2 = document.getElementById('page-2');
+        if (p2) {
+          p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, delay);
+    });
+    // 清理 URL 参数
+    if (window.location.search.includes('page=2')) {
+      const clean = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', clean);
+    }
   }
 })();
 </script>
