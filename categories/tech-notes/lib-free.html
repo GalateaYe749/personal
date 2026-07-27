@@ -288,34 +288,68 @@
     }
 
     /* ===== 返回按钮（固定在左上角） ===== */
+
     .back-fixed {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 18px;
+      left: 18px;
       z-index: 100;
     }
     .back-fixed a {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      font-size: 12px;
+      gap: 8px;
+      padding: 6px 14px 6px 10px;
+      font-size: 11px;
       letter-spacing: 3px;
       font-family: "Consolas", "Monaco", monospace;
-      color: rgba(240,240,255,0.3);
+      color: rgba(240,240,255,0.15);
       text-decoration: none;
-      background: rgba(13,7,22,0.6);
-      border: 1px solid rgba(0,221,255,0.08);
+      background: transparent;
+      border: none;
+      border-radius: 2px;
+      transform: skewX(-3deg);
+      transition: all 0.4s;
+      position: relative;
+    }
+    .back-fixed a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(0,221,255,0.04);
+      border-radius: 2px;
+      pointer-events: none;
+      transition: all 0.4s;
+    }
+    .back-fixed a::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border: 1px solid transparent;
       border-radius: 4px;
-      backdrop-filter: blur(8px);
-      transition: all 0.3s;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.4s;
     }
     .back-fixed a:hover {
       color: var(--cyan);
-      border-color: rgba(0,221,255,0.25);
-      background: rgba(13,7,22,0.8);
-      box-shadow: 0 0 12px rgba(0,221,255,0.1);
+      text-shadow: 0 0 6px rgba(0,221,255,0.15);
+      padding-left: 14px;
     }
+    .back-fixed a:hover::before {
+      border-color: rgba(0,221,255,0.12);
+      box-shadow: 0 0 8px rgba(0,221,255,0.04);
+    }
+    .back-fixed a:hover::after {
+      opacity: 1;
+      background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
+      background-size: 200% 200%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+    }
+
 
     @media (max-width: 520px) {
       .post-header .post-title-neon { font-size: 24px; letter-spacing: 8px; }
