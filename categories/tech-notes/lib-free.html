@@ -287,24 +287,34 @@
       margin-top: 2px;
     }
 
-    /* ===== 返回链接 ===== */
-    .back-section {
-      margin-top: 48px;
-      padding: 24px 12px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-top: 1px solid rgba(255,255,255,0.02);
+    /* ===== 返回按钮（固定在左上角） ===== */
+    .back-fixed {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
     }
-    .back-section a {
-      color: rgba(240,240,255,0.25); text-decoration: none;
-      font-size: 13px; letter-spacing: 4px;
+    .back-fixed a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 12px;
+      letter-spacing: 3px;
       font-family: "Consolas", "Monaco", monospace;
+      color: rgba(240,240,255,0.3);
+      text-decoration: none;
+      background: rgba(13,7,22,0.6);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 4px;
+      backdrop-filter: blur(8px);
       transition: all 0.3s;
     }
-    .back-section a:hover { color: var(--cyan); text-shadow: 0 0 10px rgba(0,221,255,0.3); }
-    .back-section .post-nav {
-      font-size: 11px; color: rgba(240,240,255,0.1);
-      font-family: "Consolas", "Monaco", monospace;
-      letter-spacing: 2px;
+    .back-fixed a:hover {
+      color: var(--cyan);
+      border-color: rgba(0,221,255,0.25);
+      background: rgba(13,7,22,0.8);
+      box-shadow: 0 0 12px rgba(0,221,255,0.1);
     }
 
     @media (max-width: 520px) {
@@ -502,11 +512,8 @@ POST /api/Seat/confirm       ← 预约（AES-128-CBC 加密）
 
   </div>
 
-  <!-- 底部导航 -->
-  <div class="back-section">
-    <a href="../tech-notes.html">← 返回技术笔记</a>
-    <span class="post-nav">#001 · 下一篇暂无</span>
-  </div>
+  <!-- 固定返回按钮 -->
+  <div class="back-fixed"><a href="../tech-notes.html">← 返回技术笔记</a></div>
 
 </div>
 
