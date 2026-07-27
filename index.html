@@ -1868,16 +1868,16 @@ signObserver.observe(page2);
 (function() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('page') === '2') {
-    // 清理 URL 参数，防止刷新后重复定位
-    const clean = window.location.pathname + window.location.hash;
-    window.history.replaceState({}, '', clean);
-    // 等 DOM 加载完再滚动
     setTimeout(() => {
-      const wrap = document.querySelector('.scroll-wrap');
       const p2 = document.getElementById('page-2');
-      if (wrap && p2) {
-        wrap.scrollTo({ top: p2.offsetTop, behavior: 'smooth' });
+      if (p2) {
+        p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+      // 等滚动完再清理 URL 参数
+      setTimeout(() => {
+        const clean = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, '', clean);
+      }, 600);
     }, 300);
   }
 })();
