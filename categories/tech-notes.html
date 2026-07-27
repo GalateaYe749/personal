@@ -221,6 +221,30 @@
       margin-top: 4px;
       letter-spacing: 1px;
     }
+    .post-item .post-link-wrap {
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .post-item:hover .post-link-wrap {
+      opacity: 1;
+    }
+    .post-item .post-link {
+      display: inline-block;
+      padding: 4px 16px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      font-family: "Consolas", "Monaco", monospace;
+      color: var(--cyan);
+      text-decoration: none;
+      border: 1px solid rgba(0,221,255,0.15);
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .post-item .post-link:hover {
+      background: rgba(0,221,255,0.08);
+      box-shadow: 0 0 12px rgba(0,221,255,0.15);
+    }
     .post-item .post-tag {
       display: inline-block;
       margin-top: 8px;
@@ -431,11 +455,12 @@ const POSTS = [
     return;
   }
   list.innerHTML = POSTS.map(p => `
-    <div class="post-item" onclick="window.location.href='${p.url}'">
+    <div class="post-item">
       <div class="post-date">// ${p.date}</div>
       <div class="post-title">${p.title}</div>
       <div class="post-desc">${p.desc}</div>
       <div>${(p.tags||[]).map(t => `<span class="post-tag tag-cyan">#${t}</span>`).join('')}</div>
+      <div class="post-link-wrap"><a class="post-link" href="${p.url}">阅读文章 →</a></div>
     </div>
   `).join('');
 })();
