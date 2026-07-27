@@ -1,0 +1,9 @@
+{
+  "name": "zju-lib-free",
+  "version": "1.0.0",
+  "description": "浙江大学图书馆空闲座位自动监控+预约工具",
+  "type": "module",
+  "dependencies": {
+    "login-zju": "^1.0.8"
+  }
+}
