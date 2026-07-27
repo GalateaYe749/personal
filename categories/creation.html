@@ -375,21 +375,39 @@
     }
 
     /* ===== 返回链接 ===== */
+
     .back-link {
-      margin-top: 48px;
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 100;
     }
     .back-link a {
-      color: rgba(240,240,255,0.25);
-      text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px 7px 12px;
+      font-size: 11px;
+      letter-spacing: 3px;
       font-family: "Consolas", "Monaco", monospace;
+      color: rgba(240,240,255,0.35);
+      text-decoration: none;
+      background: rgba(13,7,22,0.55);
+      border: 1px solid rgba(0,221,255,0.06);
+      border-radius: 3px;
+      backdrop-filter: blur(4px);
+      transform: skewX(-3deg);
       transition: all 0.3s;
+      position: relative;
     }
     .back-link a:hover {
       color: var(--cyan);
-      text-shadow: 0 0 10px rgba(0,221,255,0.3);
+      border-color: rgba(0,221,255,0.2);
+      background: rgba(13,7,22,0.7);
+      box-shadow: 0 0 10px rgba(0,221,255,0.06);
+      padding-left: 16px;
     }
+
 
     @media (max-width: 520px) {
       .neon-sign-title { font-size: 28px; letter-spacing: 10px; }
