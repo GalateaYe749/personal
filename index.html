@@ -1725,6 +1725,7 @@ function unlock() {
       audio.pause();
       btn.classList.remove('playing');
       window._bgmPlaying = false;
+      saveState();
     } else {
       // 恢复：从上次角度继续旋转
       if (cover) {

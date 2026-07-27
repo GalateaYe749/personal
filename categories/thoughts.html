@@ -850,6 +850,7 @@ document.addEventListener('mousemove', (e) => {
       audio.volume = saved.volume || 0.5;
       audio.play().catch(() => {});
       btn.classList.add('playing');
+      saveNow();
     }
   } catch(e) {}
 
@@ -857,12 +858,22 @@ document.addEventListener('mousemove', (e) => {
     if (audio.paused) {
       audio.play().catch(() => {});
       btn.classList.add('playing');
+      saveNow();
     } else {
       audio.pause();
       btn.classList.remove('playing');
+      saveNow();
     }
   });
 
+  function saveNow() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      playing: !audio.paused,
+      time: audio.currentTime,
+      volume: audio.volume,
+      updated: Date.now()
+    }));
+  }
   // 定期保存播放状态
   setInterval(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
