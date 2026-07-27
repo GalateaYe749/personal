@@ -411,19 +411,24 @@
 
     /* ===== 返回链接 ===== */
     .back-link {
-      margin-top: 48px;
+      position: fixed; top: 20px; left: 20px; z-index: 100;
     }
     .back-link a {
-      color: rgba(240,240,255,0.25);
-      text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 4px;
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; font-size: 12px; letter-spacing: 3px;
       font-family: "Consolas", "Monaco", monospace;
+      color: rgba(240,240,255,0.3); text-decoration: none;
+      background: rgba(13,7,22,0.6);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 4px;
+      backdrop-filter: blur(8px);
       transition: all 0.3s;
     }
     .back-link a:hover {
       color: var(--cyan);
-      text-shadow: 0 0 10px rgba(0,221,255,0.3);
+      border-color: rgba(0,221,255,0.25);
+      background: rgba(13,7,22,0.8);
+      box-shadow: 0 0 12px rgba(0,221,255,0.1);
     }
 
     @media (max-width: 520px) {
