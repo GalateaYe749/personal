@@ -39,14 +39,18 @@ node --version   # 确认 ≥ 18
 
 ### 第二步：下载本项目
 
-```bash
-# 找个你喜欢的目录，比如 Documents 下
-cd ~/Documents
-git clone https://github.com/GalateaYe749/personal.git
-cd personal/lib-free
-```
+从 GitHub 下载 ZIP 压缩包：
 
-如果没有装 Git，也可以直接下载 ZIP 解压。
+👉 https://github.com/GalateaYe749/personal/archive/refs/heads/main.zip
+
+下载后解压，你会得到一个 `personal-main` 文件夹，里面有一个 `lib-free` 子文件夹。
+
+进入那个 `lib-free` 文件夹，后面的操作都在这里面做。
+
+```bash
+# 例如解压到 Documents 下
+cd ~/Documents/personal-main/lib-free
+```
 
 ### 第三步：安装依赖
 
