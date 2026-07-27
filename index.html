@@ -58,6 +58,7 @@
     }
 
     .scroll-wrap {
+      position: relative;
       height: 100vh;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
@@ -1869,20 +1870,19 @@ signObserver.observe(page2);
   const scrollToPage2 = window.location.search.includes('page=2') || sessionStorage.getItem('scrollToPage2') === '1';
   if (scrollToPage2) {
     sessionStorage.removeItem('scrollToPage2');
-    // 多次尝试滚动，确保无论 DOM 加载快慢都能定位
-    [200, 500, 1000].forEach(delay => {
-      setTimeout(() => {
-        const p2 = document.getElementById('page-2');
-        if (p2) {
-          p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, delay);
-    });
     // 清理 URL 参数
     if (window.location.search.includes('page=2')) {
       const clean = window.location.pathname + window.location.hash;
       window.history.replaceState({}, '', clean);
     }
+    // 等待 DOM 渲染完成后滚动
+    setTimeout(() => {
+      const wrap = document.querySelector('.scroll-wrap');
+      const p2 = document.getElementById('page-2');
+      if (wrap && p2) {
+        wrap.scrollTo({ top: p2.offsetTop, left: 0, behavior: 'smooth' });
+      }
+    }, 500);
   }
 })();
 </script>
