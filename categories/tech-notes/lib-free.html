@@ -95,6 +95,30 @@
       position: relative; z-index: 10; max-width: 720px; width: 92%;
       margin: 60px auto 80px; padding: 0 4px;
     }
+    /* ===== 入场动画 ===== */
+    @keyframes articleFadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes articleGlowIn {
+      from { opacity: 0; filter: drop-shadow(0 0 0px rgba(0,221,255,0)); }
+      to { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,221,255,0.08)); }
+    }
+    .post-wrap > * {
+      opacity: 0;
+      animation: articleFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .post-wrap > .post-header {
+      animation-delay: 0.1s;
+    }
+    .post-wrap > .post-body {
+      animation-delay: 0.3s;
+    }
+    .back-fixed a {
+      animation: articleGlowIn 1.2s ease-out 0.6s forwards;
+      opacity: 0;
+    }
+
 
     /* ===== 霓虹灯牌文章标题 ===== */
     .post-header {
