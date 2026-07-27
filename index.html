@@ -1684,7 +1684,7 @@ function unlock() {
 
   // 尝试从 sessionStorage 恢复播放状态
   try {
-    const saved = JSON.parse(sessionStorage.getItem(KEY));
+    const saved = JSON.parse(localStorage.getItem(KEY));
     if (saved && saved.playing) {
       audio.currentTime = saved.time || 0;
       audio.play().catch(() => {});
@@ -1696,7 +1696,7 @@ function unlock() {
   // 保存状态到 sessionStorage
   function saveState() {
     try {
-      sessionStorage.setItem(KEY, JSON.stringify({
+      localStorage.setItem(KEY, JSON.stringify({
         playing: window._bgmPlaying || false,
         time: audio.currentTime
       }));
