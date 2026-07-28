@@ -3,51 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galatea · 技术笔记</title>
-  <link rel="preload" href="../assets/STCAIYUN.woff2" as="font" type="font/woff2" crossorigin>
+  <title>Galatea · gadget</title>
+  <link rel="preload" href="../../assets/STCAIYUN.woff2" as="font" type="font/woff2" crossorigin>
   <style>
     @font-face {
       font-family: 'STCaiyun';
-      src: url('../assets/STCAIYUN.woff2') format('woff2'),
-           url('../assets/STCAIYUN.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-      font-display: block;
+      src: url('../../assets/STCAIYUN.woff2') format('woff2'),
+           url('../../assets/STCAIYUN.ttf') format('truetype');
+      font-weight: normal; font-style: normal; font-display: block;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #0d0716;
-      --pink: #ff3388;
-      --cyan: #00ddff;
-      --purple: #9955dd;
-      --light-pink: #ff99cc;
-      --white: #f0f0ff;
-      --dim-pink: rgba(255,51,136,0.4);
-      --dim-cyan: rgba(0,221,255,0.4);
-      --dim-purple: #ffbe6e;
+      --bg: #0d0716; --pink: #ff3388; --cyan: #00ddff; --purple: #9955dd;
+      --light-pink: #ff99cc; --white: #f0f0ff; --dim-purple: #ffbe6e;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background: var(--bg);
-      color: var(--white);
-      line-height: 1.7;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      background: var(--bg); color: var(--white); line-height: 1.9;
+      min-height: 100vh; overflow-x: hidden;
     }
     .cyber-border {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      border: 4px solid transparent;
-      border-radius: 8px;
+      border: 4px solid transparent; border-radius: 8px;
       background: linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--pink)) border-box;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask-composite: exclude;
-      animation: borderGlow 5s ease-in-out infinite;
-      opacity: 0.5;
+      animation: borderGlow 5s ease-in-out infinite; opacity: 0.5;
     }
     @keyframes borderGlow {
       0%,100% { filter: drop-shadow(0 0 6px rgba(255,51,136,0.1)); }
@@ -62,12 +45,11 @@
     .corner-bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
     .corner-br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
     .corner .dot {
-      position: absolute; width: 4px; height: 4px; background: var(--cyan); border-radius: 50%;
-      opacity: 0.8; animation: dotBlink 2s ease-in-out infinite;
+      position: absolute; width: 4px; height: 4px; background: var(--cyan);
+      border-radius: 50%; opacity: 0.8; animation: dotBlink 2s ease-in-out infinite;
     }
     @keyframes dotBlink {
-      0%,100% { opacity: 0.3; }
-      50% { opacity: 0.8; }
+      0%,100% { opacity: 0.3; } 50% { opacity: 0.8; }
     }
     .corner-tl .dot { bottom: 4px; right: 4px; animation-delay: 0s; }
     .corner-tr .dot { bottom: 4px; left: 4px; animation-delay: 0.5s; }
@@ -76,9 +58,8 @@
     #particle-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .bg {
       position: fixed; inset: 0; z-index: -2;
-      background: linear-gradient(135deg, rgba(13,7,22,0.55), rgba(13,7,22,0.6)), url('../assets/bg-cyberpunk.jpg') center/cover no-repeat;
-      filter: blur(3px);
-      animation: bgBrightness 6s ease-in-out infinite alternate;
+      background: linear-gradient(135deg, rgba(13,7,22,0.55), rgba(13,7,22,0.6)), url('../../assets/bg-cyberpunk.jpg') center/cover no-repeat;
+      filter: blur(3px); animation: bgBrightness 6s ease-in-out infinite alternate;
     }
     @keyframes bgBrightness {
       0% { filter: blur(3px) brightness(0.35); }
@@ -87,13 +68,9 @@
     .bg::after {
       content: ''; position: absolute; inset: 0;
       background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
-      animation: bgBreath 6s ease-in-out infinite alternate;
-      pointer-events: none;
+      animation: bgBreath 6s ease-in-out infinite alternate; pointer-events: none;
     }
-    @keyframes bgBreath {
-      0% { opacity: 0.92; }
-      100% { opacity: 0.05; }
-    }
+    @keyframes bgBreath { 0% { opacity: 0.92; } 100% { opacity: 0.05; } }
     .bg-grid {
       position: fixed; inset: 0; z-index: -1; pointer-events: none;
       background-image: linear-gradient(rgba(255,51,136,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,221,255,0.02) 1px, transparent 1px);
@@ -112,231 +89,243 @@
       position: fixed; inset: 0; z-index: 3; pointer-events: none;
       background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
     }
-    .container {
-      position: relative; z-index: 10; max-width: 640px; width: 90%; text-align: center;
-      padding: 40px 20px; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; min-height: 60vh;
-    }
-    .neon-sign-title {
-      font-family: 'STCaiyun'; font-size: 42px; font-weight: 900; letter-spacing: 18px;
-      margin-bottom: 30px; line-height: 1.2;
-      -webkit-text-stroke: 0.8px currentColor; paint-order: stroke;
-    }
-    .ns-cyan .neon-sign-title {
-      color: var(--cyan);
-      text-shadow: 0 0 2px rgba(0,221,255,0.9), 0 0 8px rgba(0,221,255,0.6), 0 0 18px rgba(0,221,255,0.3);
-    }
-    @keyframes textFlicker {
-      0%, 80% { opacity: 1; text-shadow: inherit; }
-      83% { opacity: 0.3; text-shadow: 0 0 6px currentColor; }
-      85% { opacity: 0.9; text-shadow: 0 0 4px currentColor; }
-      88% { opacity: 0.4; text-shadow: 0 0 8px currentColor; }
-      91% { opacity: 1; text-shadow: inherit; }
-    }
-    .neon-sign-title.flicker { animation: textFlicker 8s ease-in-out infinite; }
 
-    .neon-sign {
-      position: relative; padding: 48px 40px; width: 100%;
+    /* ===== 文章容器 ===== */
+    .post-wrap {
+      position: relative; z-index: 10; max-width: 720px; width: 92%;
+      margin: 60px auto 80px; padding: 0 4px;
+    }
+    /* ===== 入场动画 ===== */
+    @keyframes articleFadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes articleGlowIn {
+      from { opacity: 0; filter: drop-shadow(0 0 0px rgba(0,221,255,0)); }
+      to { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,221,255,0.08)); }
+    }
+    .post-wrap > * {
+      opacity: 0;
+      animation: articleFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .post-wrap > .post-header {
+      animation-delay: 0.2s;
+    }
+    .post-wrap > .post-body {
+      animation-delay: 0.5s;
+    }
+    .back-fixed a {
+      animation: articleGlowIn 1.8s ease-out 0.8s forwards;
+      opacity: 0;
+    }
+
+
+    /* ===== 霓虹灯牌文章标题 ===== */
+    .post-header {
+      position: relative;
+      padding: 52px 44px 32px;
       background: linear-gradient(145deg, rgba(20,12,30,0.7), rgba(13,7,22,0.5));
       backdrop-filter: blur(8px); border-radius: 4px;
+      margin-bottom: 36px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
-      transform: rotate(-1.5deg);
+      transform: rotate(-1.2deg);
     }
-    .neon-sign::before {
+    .post-header::before {
       content: ''; position: absolute; inset: 0; border-radius: 4px;
       border: 2.5px solid transparent;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask-composite: exclude; pointer-events: none;
-      animation: neonFlicker1 10s infinite;
+      animation: postPulse 3.5s ease-in-out infinite;
+      background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
+      background-size: 200% 200%;
     }
-    .neon-sign::after {
+    .post-header::after {
       content: ''; position: absolute; inset: -4px; border-radius: 8px;
-      border: 2px solid currentColor; pointer-events: none;
+      border: 2px solid var(--cyan); pointer-events: none;
       opacity: 0.5; animation: neonBreath 4s ease-in-out infinite;
-      filter: drop-shadow(0 0 8px currentColor);
+      filter: drop-shadow(0 0 8px var(--cyan));
     }
-    @keyframes neonFlicker1 {
-      0%, 70% { opacity: 1; } 72% { opacity: 0.4; } 74% { opacity: 1; }
-      76% { opacity: 0.5; } 79% { opacity: 1; } 92% { opacity: 1; }
-      94% { opacity: 0.3; } 96% { opacity: 0.9; } 98% { opacity: 0.5; }
+    @keyframes postPulse {
+      0%,100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(0,221,255,0.3)); }
+      40% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
+      43% { opacity: 0.6; }
+      45% { opacity: 1; }
+      50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
+      65% { opacity: 0.85; }
     }
     @keyframes neonBreath {
       0%,100% { opacity: 0.5; filter: drop-shadow(0 0 6px currentColor); }
       50% { opacity: 0.9; filter: drop-shadow(0 0 18px currentColor) drop-shadow(0 0 6px currentColor); }
     }
-    @keyframes neonPulseCyan {
-      0%,100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(0,221,255,0.3)); }
-      40% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
-      43% { opacity: 0.6; }
-      45% { opacity: 1; }
-      48% { opacity: 0.6; }
-      50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
-      65% { opacity: 0.85; }
-    }
-    .neon-border-cyan::before {
-      background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
-      background-size: 200% 200%;
-      animation: neonPulseCyan 3.5s ease-in-out infinite;
-      filter: drop-shadow(0 0 12px rgba(0,221,255,0.7)) drop-shadow(0 0 24px rgba(0,221,255,0.4));
-    }
 
-    /* ===== 文章列表 ===== */
-    .post-list { width: 100%; text-align: left; margin-top: 16px; }
-
-    .post-item {
-      padding: 18px 20px;
-      margin-bottom: 10px;
-      border-left: 2px solid rgba(0,221,255,0.06);
-      transition: all 0.3s;
-      cursor: pointer;
-      position: relative;
-    }
-    .post-item:hover {
-      border-left-color: var(--cyan);
-      background: rgba(0,221,255,0.02);
-      padding-left: 26px;
-    }
-    .post-item .post-date {
-      font-size: 10px;
+    .post-header .post-category {
+      font-size: 10px; letter-spacing: 6px;
       color: rgba(240,240,255,0.2);
       font-family: "Consolas", "Monaco", monospace;
-      letter-spacing: 2px;
-      margin-bottom: 4px;
+      margin-bottom: 10px;
     }
-    .post-item .post-title {
-      font-size: 16px;
-      color: var(--white);
-      letter-spacing: 2px;
-      transition: color 0.2s;
-    }
-    .post-item:hover .post-title {
+    .post-header .post-title-neon {
+      font-family: 'STCaiyun';
+      font-size: 36px; font-weight: 900;
+      letter-spacing: 12px; line-height: 1.3;
+      -webkit-text-stroke: 0.8px var(--cyan); paint-order: stroke;
       color: var(--cyan);
-      text-shadow: 0 0 8px rgba(0,221,255,0.15);
+      text-shadow: 0 0 2px rgba(0,221,255,0.9), 0 0 8px rgba(0,221,255,0.6), 0 0 18px rgba(0,221,255,0.3);
     }
-    .post-item .post-desc {
-      font-size: 12px;
+    .post-header .post-meta {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-top: 16px; align-items: center;
+    }
+    .post-header .post-meta .meta-item {
+      font-size: 11px; letter-spacing: 2px;
       color: rgba(240,240,255,0.25);
-      margin-top: 4px;
-      letter-spacing: 1px;
-    }
-    .post-item .post-link-wrap {
-      margin-top: 10px;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .post-item:hover .post-link-wrap {
-      opacity: 1;
-    }
-    .post-item .post-link {
-      display: inline-block;
-      padding: 4px 16px;
-      font-size: 11px;
-      letter-spacing: 3px;
       font-family: "Consolas", "Monaco", monospace;
+    }
+    .post-header .post-meta .meta-tag {
+      display: inline-block; padding: 2px 10px;
+      font-size: 10px; letter-spacing: 2px;
+      font-family: "Consolas", "Monaco", monospace;
+      border-radius: 2px;
+      background: rgba(0,221,255,0.08);
+      border: 1px solid rgba(0,221,255,0.15);
+      color: var(--cyan);
+    }
+
+    /* ===== 文章正文 ===== */
+    .post-body {
+      padding: 36px 32px;
+      background: linear-gradient(145deg, rgba(18,10,26,0.62), rgba(13,7,22,0.52));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 4px;
+      border: 1px solid rgba(0,221,255,0.04);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .post-body h2 {
+      font-size: 20px; font-weight: 600;
+      letter-spacing: 4px; margin: 40px 0 16px;
+      color: var(--cyan);
+      border-left: 3px solid var(--cyan);
+      padding-left: 14px;
+      line-height: 1.3;
+    }
+    .post-body h3 {
+      font-size: 16px; font-weight: 600;
+      letter-spacing: 2px; margin: 28px 0 12px;
+      color: var(--light-pink);
+    }
+    .post-body p {
+      font-size: 14px; color: rgba(240,240,255,0.85);
+      margin-bottom: 14px; letter-spacing: 1px;
+    }
+    .post-body strong {
+      color: var(--white); font-weight: 600;
+    }
+    .post-body code {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 13px;
+      background: rgba(0,0,0,0.3);
+      padding: 1px 6px;
+      border-radius: 2px;
+      border: 1px solid rgba(0,221,255,0.06);
+      color: #66eeff;
+    }
+    .post-body pre {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(0,221,255,0.06);
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      overflow-x: auto;
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(240,240,255,0.6);
+    }
+    .post-body a {
       color: var(--cyan);
       text-decoration: none;
-      border: 1px solid rgba(0,221,255,0.15);
-      border-radius: 2px;
+      border-bottom: 1px dashed rgba(0,221,255,0.15);
       transition: all 0.2s;
     }
-    .post-item .post-link:hover {
-      background: rgba(0,221,255,0.08);
-      box-shadow: 0 0 12px rgba(0,221,255,0.15);
+    .post-body a:hover {
+      color: var(--light-pink);
+      border-bottom-color: var(--light-pink);
+      text-shadow: 0 0 6px rgba(255,153,204,0.2);
     }
-    .post-item .post-tag {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 2px 10px;
-      font-size: 10px;
-      letter-spacing: 2px;
-      font-family: "Consolas", "Monaco", monospace;
-      border-radius: 2px;
+    .post-body ul, .post-body ol {
+      margin: 12px 0 16px 20px;
+      color: rgba(240,240,255,0.75);
+      font-size: 14px;
+      letter-spacing: 1px;
     }
-    .tag-cyan {
-      background: rgba(0,221,255,0.08);
-      border: 1px solid rgba(0,221,255,0.15);
-      color: var(--cyan);
-    }
-
-    .post-empty {
-      font-size: 16px; letter-spacing: 8px;
-      color: rgba(240,240,255,0.2);
-      font-family: "Consolas", "Monaco", monospace;
-      text-align: center; margin-top: 24px;
+    .post-body li { margin-bottom: 6px; }
+    .post-body hr {
+      margin: 32px 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,221,255,0.15), transparent);
     }
 
-    .g {
-      position: fixed; inset: 0; z-index: 9999;
-      display: none; align-items: center; justify-content: center;
-      background: rgba(13,7,22,0.75);
-      backdrop-filter: blur(6px);
-    }
-    .g-v { display: flex; }
-    .g-w {
-      background: rgba(13,7,22,0.85);
+    /* ===== 信息卡片 ===== */
+    .info-card {
+      background: rgba(0,221,255,0.03);
       border: 1px solid rgba(0,221,255,0.08);
       border-radius: 4px;
-      padding: 32px 36px 28px;
-      text-align: center;
-      max-width: 320px; width: 80%;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: rgba(240,240,255,0.55);
+      letter-spacing: 1px;
+      line-height: 1.6;
     }
-    .g-h {
-      font: 11px "Consolas",monospace;
-      letter-spacing: 6px;
-      color: rgba(0,221,255,0.25);
-      margin-bottom: 16px;
-    }
-    .g-i {
-      width: 100%;
-      background: rgba(240,240,255,0.02);
-      border: 1px solid rgba(0,221,255,0.08);
-      border-radius: 2px;
-      padding: 10px 14px;
-      font-size: 14px;
-      color: var(--white);
-      outline: none;
-      font-family: "Consolas", monospace;
-      letter-spacing: 4px;
-      transition: border-color 0.2s;
-      box-sizing: border-box;
-    }
-    .g-i:focus {
-      border-color: rgba(0,221,255,0.25);
-    }
-    .g-i::placeholder {
-      color: rgba(240,240,255,0.08);
-      letter-spacing: 2px;
-      font-size: 11px;
-    }
-    .g-b {
-      margin-top: 14px;
-      font: 10px "Consolas",monospace;
-      letter-spacing: 3px;
-      color: rgba(0,221,255,0.15);
-      cursor: pointer;
-      border: none; background: none;
-      padding: 6px 16px;
-      transition: color 0.2s;
-    }
-    .g-b:hover { color: rgba(0,221,255,0.4); }
-    .g-e {
-      font: 9px "Consolas",monospace;
-      letter-spacing: 2px;
-      color: rgba(255,51,136,0.2);
-      margin-top: 8px; height: 14px;
-    }
-    .g-e-g { color: rgba(255,51,136,0.5); }
+    .info-card strong { color: var(--cyan); }
 
-    .back-link {
+    /* ===== 步骤时间线 ===== */
+    .step-list {
+      list-style: none;
+      margin: 16px 0 !important;
+      padding: 0 !important;
+    }
+    .step-list li {
+      position: relative;
+      padding: 10px 0 10px 28px;
+      border-left: 1px solid rgba(0,221,255,0.1);
+      margin-bottom: 0;
+    }
+    .step-list li::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 16px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 6px rgba(0,221,255,0.3);
+    }
+    .step-list li .step-label {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+    .step-list li .step-desc {
+      font-size: 14px;
+      color: rgba(240,240,255,0.6);
+      margin-top: 2px;
+    }
+
+    
+
+    .back-fixed {
       position: fixed;
       top: 28px;
       left: 28px;
       z-index: 100;
     }
-    .back-link a {
+    .back-fixed a {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -353,7 +342,7 @@
       transition: all 0.3s;
       position: relative;
     }
-    .back-link a::before {
+    .back-fixed a::before {
       content: '';
       position: absolute;
       inset: -2px;
@@ -368,13 +357,13 @@
       opacity: 0.6;
       transition: opacity 0.3s;
     }
-    .back-link a:hover {
+    .back-fixed a:hover {
       color: var(--cyan);
       background: rgba(13,7,22,0.55);
       text-shadow: 0 0 6px rgba(0,221,255,0.2);
       border-color: rgba(0,221,255,0.1);
     }
-    .back-link a:hover::before {
+    .back-fixed a:hover::before {
       opacity: 1;
       background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
       background-size: 200% 200%;
@@ -387,9 +376,10 @@
 
 
     @media (max-width: 520px) {
-      .neon-sign-title { font-size: 28px; letter-spacing: 10px; }
-      .neon-sign { padding: 32px 24px; }
+      .post-header .post-title-neon { font-size: 24px; letter-spacing: 8px; }
+      .post-header { padding: 36px 24px 24px; }
       .corner, .cyber-border { display: none; }
+      .post-body pre { font-size: 12px; padding: 12px 14px; }
     }
   
     .music-btn {
@@ -503,7 +493,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: url('../assets/cover-彼女は旅に出る.jpg') center/cover no-repeat;
+      background: url('../../assets/cover-彼女は旅に出る.jpg') center/cover no-repeat;
     }
 
     .music-btn .play-icon {
@@ -589,14 +579,186 @@
 <div class="corner corner-bl"><div class="dot"></div></div>
 <div class="corner corner-br"><div class="dot"></div></div>
 
-<div class="container">
-  <div class="neon-sign ns-cyan neon-border-cyan">
-    <div class="neon-sign-title flicker" data-text="技术笔记">技术笔记</div>
-    <div class="post-list" id="postList"><div class="post-empty">✦ 加载中 ✦</div></div>
-  </div>
-  <div class="back-link"><a href="../?page=2" onclick="sessionStorage.setItem('scrollToPage2','1');return true">← 返回主页</a></div>
-</div>
+<div class="post-wrap">
 
+  <!-- 文章标题霓虹牌 -->
+  <div class="post-header">
+    <div class="post-category">// TECH-NOTES · 001</div>
+    <div class="post-title-neon">图书馆座位自动预约工具</div>
+    <div class="post-title-neon" style="font-size:20px;letter-spacing:8px;margin-top:6px;">lib-free</div>
+    <div class="post-meta">
+      <span class="meta-item">✦ 2026-07-27</span>
+      <span class="meta-item">✦ 5 min read</span>
+      <span class="meta-tag">#Node.js</span>
+      <span class="meta-tag">#ZJUAM</span>
+      <span class="meta-tag">#AES</span>
+    </div>
+  </div>
+
+  <!-- 正文 -->
+  <div class="post-body">
+
+    <p>
+      浙江大学紫金港主馆图书馆的座位预约系统有一个网页端，但它没有「发现空座自动提醒」的功能。
+      于是写了一个小工具，0.5 秒轮询一次，发现空位立刻自动预约，预约成功通过钉钉通知。
+    </p>
+
+    <hr />
+
+    <h2>概述</h2>
+
+    <div class="info-card">
+      <strong>GitHub 仓库：</strong> <a href="https://github.com/GalateaYe749/lib-free" target="_blank">github.com/GalateaYe749/lib-free</a><br/>
+      <strong>许可：</strong> MIT<br/>
+      <strong>技术栈：</strong> Node.js · login-zju · CryptoJS (AES-128-CBC)
+    </div>
+
+    <p><strong>lib-free</strong> 是一个纯 Node.js 的命令行工具，无需图形界面，在服务器、树莓派、或任何能跑 Node.js 的机器上都能用。整个代码只有一个文件 <code>index.mjs</code>，依赖只有 <code>login-zju</code> 一个库。</p>
+
+    <h2>功能</h2>
+
+    <ul>
+      <li><strong>自动登录</strong> — 通过浙大统一身份认证（ZJUAM）登录图书馆预约系统</li>
+      <li><strong>0.5 秒轮询</strong> — 每 500ms 查询一次指定区域的座位状态</li>
+      <li><strong>自动预约</strong> — 发现空闲座位立刻预约第一个，无需人工干预</li>
+      <li><strong>钉钉通知</strong> — 预约成功后通过钉钉机器人发送通知（可选）</li>
+      <li><strong>22:30 自动退出</strong> — 图书馆系统在此时间后关闭 API</li>
+      <li><strong>多区域支持</strong> — 可同时监控多个阅览室区域</li>
+    </ul>
+
+    <h2>技术原理</h2>
+
+    <p>这个工具的核心逻辑可以拆成四个步骤：</p>
+
+    <h3>1. 认证</h3>
+    <p>
+      使用 <code>login-zju</code> 库完成浙大统一身份认证（ZJUAM）登录，然后通过 CAS 协议获取图书馆系统 <code>booking.lib.zju.edu.cn</code> 的票据，交换得到 Bearer Token。这个 token 放在请求头的 <code>Authorization: bearer{token}</code>（注意 <strong>bearer 后面没有空格</strong>，有空格会触发 10001 错误）。
+    </p>
+
+    <h3>2. 获取时段 ID（Segment）</h3>
+    <p>
+      不同于之前很多人采用的硬编码 segment 方式，每次运行时会先调用 <code>/api/Seat/date</code> 接口获取今日可用的时段列表。每个时段有一个唯一的 <code>id</code>（例如 <code>1554019</code>），这个 id 就是后续查座位和预约时要用到的 segment。不同日期的 segment 不同，必须实时获取。
+    </p>
+
+    <h3>3. 轮询与预约</h3>
+    <p>
+      拿到 segment 后，每 500ms 调用 <code>/api/Seat/seat</code> 查询空闲座位（status = "1"）。一旦发现有空闲座位，立即对第一个座位发起预约请求。
+    </p>
+    <p>
+      预约请求需要 AES-128-CBC 加密。加密参数：
+    </p>
+    <ul>
+      <li><strong>密钥：</strong> <code>YYYYMMDD + reverse(YYYYMMDD)</code>，例如 <code>2026072772706202</code></li>
+      <li><strong>IV：</strong> 固定字符串 <code>ZZWBKJ_ZHIHUAWEI</code></li>
+      <li><strong>明文：</strong> <code>{"seat_id":"...","segment":"..."}</code>（仅需两个字段）</li>
+      <li><strong>密文放在：</strong> <code>POST /api/Seat/confirm { aesjson: 加密结果, authorization: "bearer{token}" }</code></li>
+    </ul>
+    <p>
+      Bearer Token 的获取方式比较特殊：monkey-patch <code>globalThis.fetch</code>，拦截 <code>BOOKINGLIB.fetch</code> 发出的 Authorization header。
+    </p>
+
+    <h3>4. 通知</h3>
+    <p>预约成功后通过钉钉自定义机器人发送通知。使用 HMAC-SHA256 签名方式，需要在钉钉群中创建一个自定义机器人，获取 Webhook 地址和加签密钥。</p>
+
+    <hr />
+
+    <h2>快速使用</h2>
+
+    <p>以下是从零开始运行这个工具的步骤：</p>
+
+    <ol class="step-list">
+      <li>
+        <div class="step-label">STEP 1 · 安装 Node.js</div>
+        <div class="step-desc">确保你的电脑上有 Node.js 18+，没有的话去 <a href="https://nodejs.org" target="_blank">nodejs.org</a> 下载。</div>
+      </li>
+      <li>
+        <div class="step-label">STEP 2 · 下载工具</div>
+        <div class="step-desc">
+          从 GitHub 下载 ZIP：<a href="https://github.com/GalateaYe749/lib-free/archive/refs/heads/main.zip" target="_blank">github.com/GalateaYe749/lib-free</a>，解压后进入 <code>lib-free-main</code> 文件夹。
+        </div>
+      </li>
+      <li>
+        <div class="step-label">STEP 3 · 安装依赖</div>
+        <div class="step-desc"><code>npm install</code>，只需安装 <code>login-zju</code> 一个库。</div>
+      </li>
+      <li>
+        <div class="step-label">STEP 4 · 配置个人信息</div>
+        <div class="step-desc">
+          复制 <code>.env.example</code> 为 <code>.env</code>，填入你的学号和浙大统一身份认证密码。<br/>
+          可选：配置钉钉 Webhook 和加签密钥，用于接收预约成功通知。
+        </div>
+      </li>
+      <li>
+        <div class="step-label">STEP 5 · 修改监控区域（可选）</div>
+        <div class="step-desc">
+          打开 <code>index.mjs</code>，修改 <code>AREAS</code> 数组来指定要监控的阅览室区域。<br/>
+          默认监控二楼南（58）和二楼北（59），可改为三楼东（60）/ 三楼南（61）等。
+        </div>
+      </li>
+      <li>
+        <div class="step-label">STEP 6 · 运行</div>
+        <div class="step-desc"><code>node index.mjs</code>，脚本会自动登录、轮询、预约。</div>
+      </li>
+    </ol>
+
+    <hr />
+
+    <h2>技术细节</h2>
+
+    <h3>API 调用链</h3>
+    <pre>
+POST /api/Seat/date          ← 获取今日时段（得到 segment id）
+  { build_id: "58" }
+
+POST /api/Seat/seat          ← 查座位（每 0.5 秒轮询）
+  { area, segment, day, startTime, endTime }
+
+POST /api/Seat/confirm       ← 预约（AES-128-CBC 加密）
+  { aesjson: encrypted, authorization: bearer{token} }
+  // 加密内容: {"seat_id":"6046","segment":"1554019"}
+    </pre>
+
+    <h3>区域 ID 对照</h3>
+    <pre>
+二层南 = 58 (32座)    二层北 = 59 (176座)
+三层东 = 60 (48座)    三层南 = 61 (112座)
+三层北 = 62           四层东 = 63
+四层南 = 64           四层西 = 65
+四层北 = 66           五层东 = 67
+    </pre>
+
+    <h3>座位状态码</h3>
+    <pre>
+"1" → 空闲    "2" → 已预约    "3" → 锁定
+"4" → 临时离开  "6" → 使用中
+    </pre>
+
+    <hr />
+
+    <h2>做这个工具的动机</h2>
+
+    <p>
+      图书馆的座位预约系统虽然能用，但需要手动刷新页面查看空位，热门时段经常一刷新就被抢走了。
+      这个工具的核心思路很简单：<strong>让机器替人盯着</strong>。0.5 秒的轮询间隔基本能保证在座位释放的第一时间发现并预约。
+    </p>
+    <p>
+      最大的技术难点是逆向 AES 加密参数。图书馆前端用的 CryptoJS，密钥由日期动态生成。通过分析前端 JS bundle 找到了加密函数和密钥生成规则，才让自动预约成为可能。
+    </p>
+
+    <hr />
+
+    <h2>更新计划</h2>
+    <ul>
+      <li>支持自定义预约时段（目前是全天 00:01-23:59）</li>
+      <li>支持多人协作（一个团队监控多个座位）</li>
+    </ul>
+
+  </div>
+
+  <!-- 固定返回按钮 -->
+    <div class="back-fixed"><a href="../tech-notes.html">← 返回技术笔记</a></div>
+
+</div>
 
 <canvas id="particle-canvas"></canvas>
 
@@ -733,79 +895,11 @@ const glow = document.getElementById('cursorGlow');
 document.addEventListener('mousemove', e => { glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px'; });
 </script>
 
-<script>
-// 文章数据（可作为 JSON 文件，这里先硬编码第一篇）
-const POSTS = [
-  {
-    date: "2026-07-27",
-    title: "一个轻量级实用工具 · gadget",
-    desc: "日常琐事自动化的小插件，让重复的操作一键完成。",
-    tags: ["Node.js", "自动化"],
-    url: "tech-notes/gadget.html"
-  }
-];
+<!-- 背景音乐（全局同步） -->
+<audio id="bgm" preload="auto" loop src="../../鎖那 - 彼女は旅に出る.mp3"></audio>
 
-(function() {
-  const list = document.getElementById('postList');
-  if (!POSTS.length) {
-    list.innerHTML = '<div class="post-empty">✦ 暂无内容 ✦</div>';
-    return;
-  }
-  list.innerHTML = POSTS.map((p, i) => `
-    <div class="post-item">
-      <div class="post-date">// ${p.date}</div>
-      <div class="post-title">${p.title}</div>
-      <div class="post-desc">${p.desc}</div>
-      <div>${(p.tags||[]).map(t => `<span class="post-tag tag-cyan">#${t}</span>`).join('')}</div>
-      <div class="post-link-wrap"><a class="post-link" href="${p.url}">阅读文章 →</a></div>
-    </div>
-  `).join('');
-
-  const _g = document.getElementById('_g');
-  const _v = document.getElementById('_v');
-  const _s = document.getElementById('_s');
-  const _r = document.getElementById('_r');
-
-  document.querySelectorAll('.post-link').forEach(el => {
-    el.addEventListener('click', function(e) {
-      e.preventDefault();
-      _v.value = ''; _r.textContent = ''; _r.classList.remove('g-e-g');
-      _g.classList.add('g-v');
-      _g._u = this.getAttribute('href');
-      setTimeout(() => _v.focus(), 100);
-    });
-  });
-
-  async function _t() {
-    const k = _v.value.trim();
-    if (!k) { _r.textContent = '\u2717'; _r.classList.add('g-e-g'); return; }
-    _r.textContent = '\u25CC'; _r.classList.remove('g-e-g');
-    try {
-      const _m = ['SHA','256'].join('-');
-      const _a = '05feacf47f16a7f1cbcbe6bab28d1df7275ab692cc';
-      const _b = '3475a97a8bc6d95819b4f6';
-      const _d = await crypto.subtle.digest(_m, new TextEncoder().encode(k));
-      const _h = Array.from(new Uint8Array(_d)).map(x => x.toString(16).padStart(2,'0')).join('');
-      if (_h === _a + _b) {
-        _g.classList.remove('g-v');
-        window.location.href = _g._u;
-      } else throw new Error();
-    } catch(e) {
-      _r.textContent = '\u2717'; _r.classList.add('g-e-g');
-      _v.value = ''; _v.focus();
-    }
-  }
-
-  _s.addEventListener('click', _t);
-  _v.addEventListener('keydown', function(e) { if (e.key === 'Enter') _t(); });
-  _g.addEventListener('click', function(e) {
-    if (e.target === this) { this.classList.remove('g-v'); _r.textContent = ''; _r.classList.remove('g-e-g'); }
-  });
-
-})();
-</script>
-
-<button class="music-btn" id="musicBtn">
+<!-- 胶片播放按钮 -->
+<button class="music-btn" id="musicBtn" title="背景音乐">
   <div class="reel-ring"></div>
   <div class="sprockets"></div>
   <div class="cover-wrap"><div class="cover-img"></div></div>
@@ -874,11 +968,5 @@ const POSTS = [
 })();
 </script>
 
-<div class="g" id="_g"><div class="g-w">
-  <div class="g-h">✦ /</div>
-  <input class="g-i" id="_v" type="password" placeholder="········" autocomplete="off" spellcheck="false">
-  <div><button class="g-b" id="_s">→</button></div>
-  <div class="g-e" id="_r"></div>
-</div></div>
 </body>
 </html>
