@@ -267,6 +267,78 @@
       text-align: center; margin-top: 24px;
     }
 
+    /* ── overlay ── */
+    .ol {
+      position: fixed; inset: 0; z-index: 9999;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(13,7,22,0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .ol.s { display: flex; }
+    .ol-b {
+      background: rgba(13,7,22,0.85);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 4px;
+      padding: 32px 36px 28px;
+      text-align: center;
+      max-width: 320px;
+      width: 80%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,221,255,0.04);
+    }
+    .ol-b .h {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: rgba(0,221,255,0.25);
+      margin-bottom: 16px;
+    }
+    .ol-b .i {
+      width: 100%;
+      background: rgba(240,240,255,0.02);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 2px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--white);
+      outline: none;
+      font-family: "Consolas", "Monaco", monospace;
+      letter-spacing: 4px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .ol-b .i:focus {
+      border-color: rgba(0,221,255,0.25);
+      box-shadow: 0 0 12px rgba(0,221,255,0.06);
+    }
+    .ol-b .i::placeholder {
+      color: rgba(240,240,255,0.08);
+      letter-spacing: 2px;
+      font-size: 11px;
+    }
+    .ol-b .s {
+      margin-top: 14px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      font-family: "Consolas", "Monaco", monospace;
+      color: rgba(0,221,255,0.15);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 6px 16px;
+      transition: color 0.2s;
+    }
+    .ol-b .s:hover {
+      color: rgba(0,221,255,0.4);
+    }
+    .ol-b .e {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(255,51,136,0.2);
+      margin-top: 8px;
+      height: 14px;
+    }
+    .ol-b .e.s2 { color: rgba(255,51,136,0.5); }
 
     .back-link {
       position: fixed;
@@ -535,6 +607,13 @@
   <div class="back-link"><a href="../?page=2" onclick="sessionStorage.setItem('scrollToPage2','1');return true">← 返回主页</a></div>
 </div>
 
+<div class="ol" id="_ol"><div class="ol-b">
+  <div class="h">✦ /</div>
+  <input class="i" id="_ik" type="password" placeholder="········" autocomplete="off" spellcheck="false">
+  <div><button class="s" id="_sc">→</button></div>
+  <div class="e" id="_er"></div>
+</div></div>
+
 <canvas id="particle-canvas"></canvas>
 
 <script>
@@ -688,15 +767,56 @@ const POSTS = [
     list.innerHTML = '<div class="post-empty">✦ 暂无内容 ✦</div>';
     return;
   }
-  list.innerHTML = POSTS.map(p => `
+  list.innerHTML = POSTS.map((p, i) => `
     <div class="post-item">
       <div class="post-date">// ${p.date}</div>
       <div class="post-title">${p.title}</div>
       <div class="post-desc">${p.desc}</div>
       <div>${(p.tags||[]).map(t => `<span class="post-tag tag-cyan">#${t}</span>`).join('')}</div>
-      <div class="post-link-wrap"><a class="post-link" href="${p.url}">阅读文章 →</a></div>
+      <div class="post-link-wrap"><a class="post-link" href="${p.url}" data-n="${i}">阅读文章 →</a></div>
     </div>
   `).join('');
+
+  // overlay
+  const _ol = document.getElementById('_ol');
+  const _ik = document.getElementById('_ik');
+  const _sc = document.getElementById('_sc');
+  const _er = document.getElementById('_er');
+  document.querySelectorAll('.post-link').forEach(el => {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      _ik.value = '';
+      _er.textContent = '';
+      _er.classList.remove('s2');
+      _ol.classList.add('s');
+      setTimeout(() => _ik.focus(), 100);
+    });
+  });
+
+  async function _do() {
+    const v = _ik.value.trim();
+    if (!v) { _er.textContent = '\u2717'; _er.classList.add('s2'); return; }
+    _er.textContent = '\u25CC'; _er.classList.remove('s2');
+    try {
+      const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+      const h = Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('');
+      if (h === '05feacf47f16a7f1cbcbe6bab28d1df7275ab692cc3475a97a8bc6d95819b4f6') {
+        _ol.classList.remove('s');
+        window.location.href = 'tech-notes/lib-free.html';
+      } else throw new Error();
+    } catch(e) {
+      _er.textContent = '\u2717'; _er.classList.add('s2');
+      _ik.value = ''; _ik.focus();
+    }
+  }
+
+  _sc.addEventListener('click', _do);
+  _ik.addEventListener('keydown', function(e) { if (e.key === 'Enter') _do(); });
+
+  _ol.addEventListener('click', function(e) {
+    if (e.target === this) { this.classList.remove('s'); _er.textContent = ''; _er.classList.remove('s2'); }
+  });
+
 })();
 </script>
 <!-- 背景音乐（全局同步） -->
