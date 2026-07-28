@@ -767,10 +767,10 @@ const POSTS = [
   const _v = document.getElementById('_v');
   const _s = document.getElementById('_s');
   const _r = document.getElementById('_r');
-  if (!_g || !_v) return;
 
   document.querySelectorAll('.post-link').forEach(el => {
     el.addEventListener('click', function(e) {
+      if (!_g || !_v) return;
       e.preventDefault();
       _v.value = ''; _r.textContent = ''; _r.classList.remove('g-e-g');
       _g.classList.add('g-v');
