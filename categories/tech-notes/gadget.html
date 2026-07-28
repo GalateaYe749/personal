@@ -566,78 +566,6 @@
       50% { background-position: 0% 0%; }
     }
 
-    ._ol {
-      position: fixed; inset: 0; z-index: 9999;
-      display: none; align-items: center; justify-content: center;
-      background: rgba(13,7,22,0.75);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-    }
-    ._ol-s { display: flex !important; }
-    ._ol-b {
-      background: rgba(13,7,22,0.85);
-      border: 1px solid rgba(0,221,255,0.08);
-      border-radius: 4px;
-      padding: 32px 36px 28px;
-      text-align: center;
-      max-width: 320px;
-      width: 80%;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,221,255,0.04);
-    }
-    ._ol-h {
-      font-family: "Consolas", "Monaco", monospace;
-      font-size: 11px;
-      letter-spacing: 6px;
-      color: rgba(0,221,255,0.25);
-      margin-bottom: 16px;
-    }
-    ._ol-i {
-      width: 100%;
-      background: rgba(240,240,255,0.02);
-      border: 1px solid rgba(0,221,255,0.08);
-      border-radius: 2px;
-      padding: 10px 14px;
-      font-size: 14px;
-      color: var(--white);
-      outline: none;
-      font-family: "Consolas", "Monaco", monospace;
-      letter-spacing: 4px;
-      transition: border-color 0.2s;
-      box-sizing: border-box;
-    }
-    ._ol-i:focus {
-      border-color: rgba(0,221,255,0.25);
-      box-shadow: 0 0 12px rgba(0,221,255,0.06);
-    }
-    ._ol-i::placeholder {
-      color: rgba(240,240,255,0.08);
-      letter-spacing: 2px;
-      font-size: 11px;
-    }
-    ._ol-s {
-      margin-top: 14px;
-      font-size: 10px;
-      letter-spacing: 3px;
-      font-family: "Consolas", "Monaco", monospace;
-      color: rgba(0,221,255,0.15);
-      cursor: pointer;
-      border: none;
-      background: none;
-      padding: 6px 16px;
-      transition: color 0.2s;
-    }
-    ._ol-s:hover {
-      color: rgba(0,221,255,0.4);
-    }
-    ._ol-e {
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: rgba(255,51,136,0.2);
-      margin-top: 8px;
-      height: 14px;
-    }
-    ._ol-e2 { color: rgba(255,51,136,0.5); }
-
 </style>
 </head>
 <body>
@@ -1037,44 +965,6 @@ document.addEventListener('mousemove', e => { glow.style.left = e.clientX + 'px'
       updated: Date.now()
     }));
   });
-})();
-</script>
-
-<div class="_ol" id="_ol"><div class="_ol-b">
-  <div class="_ol-h">✦ /</div>
-  <input class="_ol-i" id="_ik" type="password" placeholder="········" autocomplete="off" spellcheck="false">
-  <div><button class="_ol-s" id="_sc">→</button></div>
-  <div class="_ol-e" id="_er"></div>
-</div></div>
-
-<script>
-(function(){
-  const _ol = document.getElementById('_ol');
-  const _ik = document.getElementById('_ik');
-  const _sc = document.getElementById('_sc');
-  const _er = document.getElementById('_er');
-  const _a = '05feacf47f16a7f1cbcbe6bab28d1df7275ab692cc';
-  const _b = '3475a97a8bc6d95819b4f6';
-  _ol.classList.add('_ol-s');
-  setTimeout(() => _ik.focus(), 200);
-  async function _do() {
-    const v = _ik.value.trim();
-    if (!v) { _er.textContent = '\u2717'; _er.classList.add('_ol-e2'); return; }
-    _er.textContent = '\u25CC'; _er.classList.remove('_ol-e2');
-    try {
-      const _m = ['SHA','256'].join('-');
-      const _d = await crypto.subtle.digest(_m, new TextEncoder().encode(v));
-      const _h = Array.from(new Uint8Array(_d)).map(x => x.toString(16).padStart(2,'0')).join('');
-      if (_h === _a + _b) {
-        _ol.classList.remove('_ol-s');
-      } else throw new Error();
-    } catch(e) {
-      _er.textContent = '\u2717'; _er.classList.add('_ol-e2');
-      _ik.value = ''; _ik.focus();
-    }
-  }
-  _sc.addEventListener('click', _do);
-  _ik.addEventListener('keydown', function(e) { if (e.key === 'Enter') _do(); });
 })();
 </script>
 
