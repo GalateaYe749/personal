@@ -267,6 +267,68 @@
       text-align: center; margin-top: 24px;
     }
 
+    .g {
+      position: fixed; inset: 0; z-index: 9999;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(13,7,22,0.75);
+      backdrop-filter: blur(6px);
+    }
+    .g-v { display: flex; }
+    .g-w {
+      background: rgba(13,7,22,0.85);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 4px;
+      padding: 32px 36px 28px;
+      text-align: center;
+      max-width: 320px; width: 80%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+    .g-h {
+      font: 11px "Consolas",monospace;
+      letter-spacing: 6px;
+      color: rgba(0,221,255,0.25);
+      margin-bottom: 16px;
+    }
+    .g-i {
+      width: 100%;
+      background: rgba(240,240,255,0.02);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 2px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--white);
+      outline: none;
+      font-family: "Consolas", monospace;
+      letter-spacing: 4px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .g-i:focus {
+      border-color: rgba(0,221,255,0.25);
+    }
+    .g-i::placeholder {
+      color: rgba(240,240,255,0.08);
+      letter-spacing: 2px;
+      font-size: 11px;
+    }
+    .g-b {
+      margin-top: 14px;
+      font: 10px "Consolas",monospace;
+      letter-spacing: 3px;
+      color: rgba(0,221,255,0.15);
+      cursor: pointer;
+      border: none; background: none;
+      padding: 6px 16px;
+      transition: color 0.2s;
+    }
+    .g-b:hover { color: rgba(0,221,255,0.4); }
+    .g-e {
+      font: 9px "Consolas",monospace;
+      letter-spacing: 2px;
+      color: rgba(255,51,136,0.2);
+      margin-top: 8px; height: 14px;
+    }
+    .g-e-g { color: rgba(255,51,136,0.5); }
 
     .back-link {
       position: fixed;
@@ -695,9 +757,51 @@ const POSTS = [
       <div class="post-title">${p.title}</div>
       <div class="post-desc">${p.desc}</div>
       <div>${(p.tags||[]).map(t => `<span class="post-tag tag-cyan">#${t}</span>`).join('')}</div>
-      <div class="post-link-wrap"><a class="post-link" href="${p.url}" data-n="${i}">阅读文章 →</a></div>
+      <div class="post-link-wrap"><a class="post-link" href="${p.url}">阅读文章 →</a></div>
     </div>
   `).join('');
+
+  const _g = document.getElementById('_g');
+  const _v = document.getElementById('_v');
+  const _s = document.getElementById('_s');
+  const _r = document.getElementById('_r');
+
+  document.querySelectorAll('.post-link').forEach(el => {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      _v.value = ''; _r.textContent = ''; _r.classList.remove('g-e-g');
+      _g.classList.add('g-v');
+      _g._u = this.getAttribute('href');
+      setTimeout(() => _v.focus(), 100);
+    });
+  });
+
+  async function _t() {
+    const k = _v.value.trim();
+    if (!k) { _r.textContent = '\u2717'; _r.classList.add('g-e-g'); return; }
+    _r.textContent = '\u25CC'; _r.classList.remove('g-e-g');
+    try {
+      const _m = ['SHA','256'].join('-');
+      const _a = '05feacf47f16a7f1cbcbe6bab28d1df7275ab692cc';
+      const _b = '3475a97a8bc6d95819b4f6';
+      const _d = await crypto.subtle.digest(_m, new TextEncoder().encode(k));
+      const _h = Array.from(new Uint8Array(_d)).map(x => x.toString(16).padStart(2,'0')).join('');
+      if (_h === _a + _b) {
+        _g.classList.remove('g-v');
+        window.location.href = _g._u;
+      } else throw new Error();
+    } catch(e) {
+      _r.textContent = '\u2717'; _r.classList.add('g-e-g');
+      _v.value = ''; _v.focus();
+    }
+  }
+
+  _s.addEventListener('click', _t);
+  _v.addEventListener('keydown', function(e) { if (e.key === 'Enter') _t(); });
+  _g.addEventListener('click', function(e) {
+    if (e.target === this) { this.classList.remove('g-v'); _r.textContent = ''; _r.classList.remove('g-e-g'); }
+  });
+
 })();
 </script>
 
@@ -770,5 +874,11 @@ const POSTS = [
 })();
 </script>
 
+<div class="g" id="_g"><div class="g-w">
+  <div class="g-h">✦ /</div>
+  <input class="g-i" id="_v" type="password" placeholder="········" autocomplete="off" spellcheck="false">
+  <div><button class="g-b" id="_s">→</button></div>
+  <div class="g-e" id="_r"></div>
+</div></div>
 </body>
 </html>
