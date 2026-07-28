@@ -598,6 +598,8 @@
 </div>
 
 
+<div class="g" id="_g"><div class="g-w">
+  <div class="g-h">✦ /</div>
 <canvas id="particle-canvas"></canvas>
 
 <script>
@@ -765,6 +767,7 @@ const POSTS = [
   const _v = document.getElementById('_v');
   const _s = document.getElementById('_s');
   const _r = document.getElementById('_r');
+  if (!_g || !_v) return;
 
   document.querySelectorAll('.post-link').forEach(el => {
     el.addEventListener('click', function(e) {
@@ -874,8 +877,6 @@ const POSTS = [
 })();
 </script>
 
-<div class="g" id="_g"><div class="g-w">
-  <div class="g-h">✦ /</div>
   <input class="g-i" id="_v" type="password" placeholder="········" autocomplete="off" spellcheck="false">
   <div><button class="g-b" id="_s">→</button></div>
   <div class="g-e" id="_r"></div>
