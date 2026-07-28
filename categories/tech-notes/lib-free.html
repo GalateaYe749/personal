@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galatea · gadget</title>
+  <link rel="preload" href="../../assets/STCAIYUN.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face {
+      font-family: 'STCaiyun';
+      src: url('../../assets/STCAIYUN.woff2') format('woff2'),
+           url('../../assets/STCAIYUN.ttf') format('truetype');
+      font-weight: normal; font-style: normal; font-display: block;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0d0716; --pink: #ff3388; --cyan: #00ddff; --purple: #9955dd;
+      --light-pink: #ff99cc; --white: #f0f0ff; --dim-purple: #ffbe6e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg); color: var(--white); line-height: 1.9;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .cyber-border {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      border: 4px solid transparent; border-radius: 8px;
+      background: linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(135deg, var(--pink), var(--cyan), var(--purple), var(--pink)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      animation: borderGlow 5s ease-in-out infinite; opacity: 0.5;
+    }
+    @keyframes borderGlow {
+      0%,100% { filter: drop-shadow(0 0 6px rgba(255,51,136,0.1)); }
+      50% { filter: drop-shadow(0 0 12px rgba(0,221,255,0.1)); }
+    }
+    .corner {
+      position: fixed; width: 36px; height: 36px; z-index: 0; pointer-events: none;
+      border: 2px solid var(--pink); opacity: 0.5;
+    }
+    .corner-tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+    .corner-tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+    .corner-bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+    .corner-br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+    .corner .dot {
+      position: absolute; width: 4px; height: 4px; background: var(--cyan);
+      border-radius: 50%; opacity: 0.8; animation: dotBlink 2s ease-in-out infinite;
+    }
+    @keyframes dotBlink {
+      0%,100% { opacity: 0.3; } 50% { opacity: 0.8; }
+    }
+    .corner-tl .dot { bottom: 4px; right: 4px; animation-delay: 0s; }
+    .corner-tr .dot { bottom: 4px; left: 4px; animation-delay: 0.5s; }
+    .corner-bl .dot { top: 4px; right: 4px; animation-delay: 1s; }
+    .corner-br .dot { top: 4px; left: 4px; animation-delay: 1.5s; }
+    #particle-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .bg {
+      position: fixed; inset: 0; z-index: -2;
+      background: linear-gradient(135deg, rgba(13,7,22,0.55), rgba(13,7,22,0.6)), url('../../assets/bg-cyberpunk.jpg') center/cover no-repeat;
+      filter: blur(3px); animation: bgBrightness 6s ease-in-out infinite alternate;
+    }
+    @keyframes bgBrightness {
+      0% { filter: blur(3px) brightness(0.35); }
+      100% { filter: blur(3px) brightness(1.3); }
+    }
+    .bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+      animation: bgBreath 6s ease-in-out infinite alternate; pointer-events: none;
+    }
+    @keyframes bgBreath { 0% { opacity: 0.92; } 100% { opacity: 0.05; } }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image: linear-gradient(rgba(255,51,136,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,221,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black, transparent 70%);
+    }
+    .cursor-glow {
+      position: fixed; width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,51,136,0.2) 0%, rgba(255,153,204,0.1) 20%, rgba(0,221,255,0.06) 40%, transparent 65%);
+      pointer-events: none; z-index: 5; transform: translate(-50%, -50%);
+      transition: left 0.15s ease-out, top 0.15s ease-out;
+      mix-blend-mode: screen; filter: blur(20px);
+    }
+    .scanlines {
+      position: fixed; inset: 0; z-index: 3; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    }
+
+    /* ===== 文章容器 ===== */
+    .post-wrap {
+      position: relative; z-index: 10; max-width: 720px; width: 92%;
+      margin: 60px auto 80px; padding: 0 4px;
+    }
+    /* ===== 入场动画 ===== */
+    @keyframes articleFadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes articleGlowIn {
+      from { opacity: 0; filter: drop-shadow(0 0 0px rgba(0,221,255,0)); }
+      to { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,221,255,0.08)); }
+    }
+    .post-wrap > * {
+      opacity: 0;
+      animation: articleFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .post-wrap > .post-header {
+      animation-delay: 0.2s;
+    }
+    .post-wrap > .post-body {
+      animation-delay: 0.5s;
+    }
+    .back-fixed a {
+      animation: articleGlowIn 1.8s ease-out 0.8s forwards;
+      opacity: 0;
+    }
+
+
+    /* ===== 霓虹灯牌文章标题 ===== */
+    .post-header {
+      position: relative;
+      padding: 52px 44px 32px;
+      background: linear-gradient(145deg, rgba(20,12,30,0.7), rgba(13,7,22,0.5));
+      backdrop-filter: blur(8px); border-radius: 4px;
+      margin-bottom: 36px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+      transform: rotate(-1.2deg);
+    }
+    .post-header::before {
+      content: ''; position: absolute; inset: 0; border-radius: 4px;
+      border: 2.5px solid transparent;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude; pointer-events: none;
+      animation: postPulse 3.5s ease-in-out infinite;
+      background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
+      background-size: 200% 200%;
+    }
+    .post-header::after {
+      content: ''; position: absolute; inset: -4px; border-radius: 8px;
+      border: 2px solid var(--cyan); pointer-events: none;
+      opacity: 0.5; animation: neonBreath 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px var(--cyan));
+    }
+    @keyframes postPulse {
+      0%,100% { opacity: 0.5; filter: drop-shadow(0 0 4px rgba(0,221,255,0.3)); }
+      40% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
+      43% { opacity: 0.6; }
+      45% { opacity: 1; }
+      50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,221,255,0.5)); }
+      65% { opacity: 0.85; }
+    }
+    @keyframes neonBreath {
+      0%,100% { opacity: 0.5; filter: drop-shadow(0 0 6px currentColor); }
+      50% { opacity: 0.9; filter: drop-shadow(0 0 18px currentColor) drop-shadow(0 0 6px currentColor); }
+    }
+
+    .post-header .post-category {
+      font-size: 10px; letter-spacing: 6px;
+      color: rgba(240,240,255,0.2);
+      font-family: "Consolas", "Monaco", monospace;
+      margin-bottom: 10px;
+    }
+    .post-header .post-title-neon {
+      font-family: 'STCaiyun';
+      font-size: 36px; font-weight: 900;
+      letter-spacing: 12px; line-height: 1.3;
+      -webkit-text-stroke: 0.8px var(--cyan); paint-order: stroke;
+      color: var(--cyan);
+      text-shadow: 0 0 2px rgba(0,221,255,0.9), 0 0 8px rgba(0,221,255,0.6), 0 0 18px rgba(0,221,255,0.3);
+    }
+    .post-header .post-meta {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-top: 16px; align-items: center;
+    }
+    .post-header .post-meta .meta-item {
+      font-size: 11px; letter-spacing: 2px;
+      color: rgba(240,240,255,0.25);
+      font-family: "Consolas", "Monaco", monospace;
+    }
+    .post-header .post-meta .meta-tag {
+      display: inline-block; padding: 2px 10px;
+      font-size: 10px; letter-spacing: 2px;
+      font-family: "Consolas", "Monaco", monospace;
+      border-radius: 2px;
+      background: rgba(0,221,255,0.08);
+      border: 1px solid rgba(0,221,255,0.15);
+      color: var(--cyan);
+    }
+
+    /* ===== 文章正文 ===== */
+    .post-body {
+      padding: 36px 32px;
+      background: linear-gradient(145deg, rgba(18,10,26,0.62), rgba(13,7,22,0.52));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 4px;
+      border: 1px solid rgba(0,221,255,0.04);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .post-body h2 {
+      font-size: 20px; font-weight: 600;
+      letter-spacing: 4px; margin: 40px 0 16px;
+      color: var(--cyan);
+      border-left: 3px solid var(--cyan);
+      padding-left: 14px;
+      line-height: 1.3;
+    }
+    .post-body h3 {
+      font-size: 16px; font-weight: 600;
+      letter-spacing: 2px; margin: 28px 0 12px;
+      color: var(--light-pink);
+    }
+    .post-body p {
+      font-size: 14px; color: rgba(240,240,255,0.85);
+      margin-bottom: 14px; letter-spacing: 1px;
+    }
+    .post-body strong {
+      color: var(--white); font-weight: 600;
+    }
+    .post-body code {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 13px;
+      background: rgba(0,0,0,0.3);
+      padding: 1px 6px;
+      border-radius: 2px;
+      border: 1px solid rgba(0,221,255,0.06);
+      color: #66eeff;
+    }
+    .post-body pre {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(0,221,255,0.06);
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      overflow-x: auto;
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(240,240,255,0.6);
+    }
+    .post-body a {
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(0,221,255,0.15);
+      transition: all 0.2s;
+    }
+    .post-body a:hover {
+      color: var(--light-pink);
+      border-bottom-color: var(--light-pink);
+      text-shadow: 0 0 6px rgba(255,153,204,0.2);
+    }
+    .post-body ul, .post-body ol {
+      margin: 12px 0 16px 20px;
+      color: rgba(240,240,255,0.75);
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+    .post-body li { margin-bottom: 6px; }
+    .post-body hr {
+      margin: 32px 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,221,255,0.15), transparent);
+    }
+
+    /* ===== 信息卡片 ===== */
+    .info-card {
+      background: rgba(0,221,255,0.03);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: rgba(240,240,255,0.55);
+      letter-spacing: 1px;
+      line-height: 1.6;
+    }
+    .info-card strong { color: var(--cyan); }
+
+    /* ===== 步骤时间线 ===== */
+    .step-list {
+      list-style: none;
+      margin: 16px 0 !important;
+      padding: 0 !important;
+    }
+    .step-list li {
+      position: relative;
+      padding: 10px 0 10px 28px;
+      border-left: 1px solid rgba(0,221,255,0.1);
+      margin-bottom: 0;
+    }
+    .step-list li::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 16px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 6px rgba(0,221,255,0.3);
+    }
+    .step-list li .step-label {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+    .step-list li .step-desc {
+      font-size: 14px;
+      color: rgba(240,240,255,0.6);
+      margin-top: 2px;
+    }
+
+    
+
+    .back-fixed {
+      position: fixed;
+      top: 28px;
+      left: 28px;
+      z-index: 100;
+    }
+    .back-fixed a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px 6px 12px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      font-family: "Consolas", "Monaco", monospace;
+      color: rgba(0,221,255,0.45);
+      text-decoration: none;
+      background: rgba(13,7,22,0.4);
+      border: 1px solid rgba(0,221,255,0.06);
+      border-radius: 2px;
+      backdrop-filter: blur(4px);
+      transition: all 0.3s;
+      position: relative;
+    }
+    .back-fixed a::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(0,221,255,0.15), rgba(0,221,255,0.03), rgba(0,221,255,0.08)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+    .back-fixed a:hover {
+      color: var(--cyan);
+      background: rgba(13,7,22,0.55);
+      text-shadow: 0 0 6px rgba(0,221,255,0.2);
+      border-color: rgba(0,221,255,0.1);
+    }
+    .back-fixed a:hover::before {
+      opacity: 1;
+      background: linear-gradient(135deg, var(--cyan), #66eeff, var(--cyan)) border-box;
+      background-size: 200% 200%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+    }
+
+
+
+    @media (max-width: 520px) {
+      .post-header .post-title-neon { font-size: 24px; letter-spacing: 8px; }
+      .post-header { padding: 36px 24px 24px; }
+      .corner, .cyber-border { display: none; }
+      .post-body pre { font-size: 12px; padding: 12px 14px; }
+    }
+  
+    .music-btn {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 999;
+      border: none;
+      outline: none;
+      background: rgba(13,7,22,0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(255,51,136,0.06);
+      padding: 0;
+    }
+    .music-btn:hover {
+      box-shadow: 0 0 30px rgba(255,51,136,0.18);
+      transform: scale(1.05);
+    }
+
+    .music-btn .reel-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255,51,136,0.08);
+      pointer-events: none;
+      transition: border-color 0.4s, opacity 0.4s;
+    }
+    .music-btn.playing .reel-ring {
+      border-color: rgba(255,51,136,0.4);
+      animation: reelSpin 4s linear infinite;
+    }
+
+    .music-btn .sprockets {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .music-btn .sprockets::before,
+    .music-btn .sprockets::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 3px;
+      background: rgba(255,51,136,0.15);
+      border-radius: 1px;
+    }
+    .music-btn .sprockets::before {
+      margin: -1.5px 0 0 -2px;
+      box-shadow:
+        16px -10px 0 0 rgba(255,51,136,0.15),
+        10px -16px 0 0 rgba(255,51,136,0.15),
+        0 -19px 0 0 rgba(255,51,136,0.15),
+        -10px -16px 0 0 rgba(255,51,136,0.15),
+        -16px -10px 0 0 rgba(255,51,136,0.15),
+        -19px 0 0 0 rgba(255,51,136,0.15),
+        -16px 10px 0 0 rgba(255,51,136,0.15),
+        -10px 16px 0 0 rgba(255,51,136,0.15),
+        0 19px 0 0 rgba(255,51,136,0.15),
+        10px 16px 0 0 rgba(255,51,136,0.15),
+        16px 10px 0 0 rgba(255,51,136,0.15),
+        19px 0 0 0 rgba(255,51,136,0.15);
+    }
+    .music-btn .sprockets::after {
+      margin: -1.5px 0 0 -2px;
+      box-shadow:
+        17px -11px 0 0 rgba(255,51,136,0.08),
+        11px -17px 0 0 rgba(255,51,136,0.08),
+        0 -20px 0 0 rgba(255,51,136,0.08),
+        -11px -17px 0 0 rgba(255,51,136,0.08),
+        -17px -11px 0 0 rgba(255,51,136,0.08),
+        -20px 0 0 0 rgba(255,51,136,0.08),
+        -17px 11px 0 0 rgba(255,51,136,0.08),
+        -11px 17px 0 0 rgba(255,51,136,0.08),
+        0 20px 0 0 rgba(255,51,136,0.08),
+        11px 17px 0 0 rgba(255,51,136,0.08),
+        17px 11px 0 0 rgba(255,51,136,0.08),
+        20px 0 0 0 rgba(255,51,136,0.08);
+    }
+    .music-btn.playing .sprockets {
+      opacity: 1;
+      animation: reelSpin 4s linear infinite reverse;
+    }
+
+    .music-btn .cover-wrap {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid rgba(255,51,136,0.12);
+      pointer-events: none;
+    }
+    .music-btn.playing .cover-wrap {
+      border-color: rgba(255,51,136,0.25);
+      animation: reelSpin 4s linear infinite;
+    }
+    .music-btn .cover-wrap .cover-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: url('../../assets/cover-彼女は旅に出る.jpg') center/cover no-repeat;
+    }
+
+    .music-btn .play-icon {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 8px 0 8px 13px;
+      border-color: transparent transparent transparent rgba(240,240,255,0.6);
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      animation: playPulse 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(13,7,22,0.6)) drop-shadow(0 0 4px rgba(255,51,136,0.2));
+    }
+    .music-btn.playing .play-icon {
+      opacity: 0;
+      animation: none;
+    }
+
+    /* 音符图标（播放时显示） */
+
+
+    /* 播放进度环（播放时渐显） */
+    .music-btn .progress-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+      border: 1.5px solid rgba(255,51,136,0.1);
+      border-top-color: rgba(255,51,136,0.3);
+    }
+    .music-btn.playing .progress-ring {
+      opacity: 1;
+      animation: reelSpin 3s linear infinite, glowPulse 2s ease-in-out infinite;
+    }
+
+    .music-btn .slash {
+      position: absolute;
+      width: 24px;
+      height: 2px;
+      background: rgba(240,240,255,0.25);
+      transform: rotate(-45deg);
+      border-radius: 1px;
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.35s;
+      opacity: 1;
+      filter: drop-shadow(0 0 3px rgba(13,7,22,0.5));
+    }
+    .music-btn.playing .slash {
+      opacity: 0;
+    }
+
+    @keyframes reelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes playPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.95; }
+    }
+    @keyframes playPulse {
+      0%,100% { background-position: 0% 100%; }
+      50% { background-position: 0% 0%; }
+    }
+
+    ._ol {
+      position: fixed; inset: 0; z-index: 9999;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(13,7,22,0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    ._ol-s { display: flex !important; }
+    ._ol-b {
+      background: rgba(13,7,22,0.85);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 4px;
+      padding: 32px 36px 28px;
+      text-align: center;
+      max-width: 320px;
+      width: 80%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,221,255,0.04);
+    }
+    ._ol-h {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: rgba(0,221,255,0.25);
+      margin-bottom: 16px;
+    }
+    ._ol-i {
+      width: 100%;
+      background: rgba(240,240,255,0.02);
+      border: 1px solid rgba(0,221,255,0.08);
+      border-radius: 2px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--white);
+      outline: none;
+      font-family: "Consolas", "Monaco", monospace;
+      letter-spacing: 4px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    ._ol-i:focus {
+      border-color: rgba(0,221,255,0.25);
+      box-shadow: 0 0 12px rgba(0,221,255,0.06);
+    }
+    ._ol-i::placeholder {
+      color: rgba(240,240,255,0.08);
+      letter-spacing: 2px;
+      font-size: 11px;
+    }
+    ._ol-s {
+      margin-top: 14px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      font-family: "Consolas", "Monaco", monospace;
+      color: rgba(0,221,255,0.15);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 6px 16px;
+      transition: color 0.2s;
+    }
+    ._ol-s:hover {
+      color: rgba(0,221,255,0.4);
+    }
+    ._ol-e {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(255,51,136,0.2);
+      margin-top: 8px;
+      height: 14px;
+    }
+    ._ol-e2 { color: rgba(255,51,136,0.5); }
+
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg-grid"></div>
+<div class="scanlines"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cyber-border"></div>
+<div class="corner corner-tl"><div class="dot"></div></div>
+<div class="corner corner-tr"><div class="dot"></div></div>
+<div class="corner corner-bl"><div class="dot"></div></div>
+<div class="corner corner-br"><div class="dot"></div></div>
+
+<div class="post-wrap">
+
+  <!-- 文章标题霓虹牌 -->
+  <div class="post-header">
+    <div class="post-category">// TECH-NOTES · 001</div>
+    <div class="post-title-neon">图书馆座位自动预约工具</div>
+    <div class="post-title-neon" style="font-size:20px;letter-spacing:8px;margin-top:6px;">lib-free</div>
+    <div class="post-meta">
+      <span class="meta-item">✦ 2026-07-27</span>
+      <span class="meta-item">✦ 5 min read</span>
+      <span class="meta-tag">#Node.js</span>
+      <span class="meta-tag">#ZJUAM</span>
+      <span class="meta-tag">#AES</span>
+    </div>
+  </div>
+
+  <!-- 正文 -->
+  <div class="post-body">
+
+    <p>
+      浙江大学紫金港主馆图书馆的座位预约系统有一个网页端，但它没有「发现空座自动提醒」的功能。
+      于是写了一个小工具，0.5 秒轮询一次，发现空位立刻自动预约，预约成功通过钉钉通知。
+    </p>
+
+    <hr />
+
+    <h2>概述</h2>
+
+    <div class="info-card">
+      <strong>GitHub 仓库：</strong> <a href="https://github.com/GalateaYe749/lib-free" target="_blank">github.com/GalateaYe749/lib-free</a><br/>
+      <strong>许可：</strong> MIT<br/>
+      <strong>技术栈：</strong> Node.js · login-zju · CryptoJS (AES-128-CBC)
+    </div>
+
+    <p><strong>lib-free</strong> 是一个纯 Node.js 的命令行工具，无需图形界面，在服务器、树莓派、或任何能跑 Node.js 的机器上都能用。整个代码只有一个文件 <code>index.mjs</code>，依赖只有 <code>login-zju</code> 一个库。</p>
+
+    <h2>功能</h2>
+
+    <ul>
+      <li><strong>自动登录</strong> — 通过浙大统一身份认证（ZJUAM）登录图书馆预约系统</li>
+      <li><strong>0.5 秒轮询</strong> — 每 500ms 查询一次指定区域的座位状态</li>
+      <li><strong>自动预约</strong> — 发现空闲座位立刻预约第一个，无需人工干预</li>
+      <li><strong>钉钉通知</strong> — 预约成功后通过钉钉机器人发送通知（可选）</li>
+      <li><strong>22:30 自动退出</strong> — 图书馆系统在此时间后关闭 API</li>
+      <li><strong>多区域支持</strong> — 可同时监控多个阅览室区域</li>
+    </ul>
+
+    <h2>技术原理</h2>
+
+    <p>这个工具的核心逻辑可以拆成四个步骤：</p>
+
+    <h3>1. 认证</h3>
+    <p>
+      使用 <code>login-zju</code> 库完成浙大统一身份认证（ZJUAM）登录，然后通过 CAS 协议获取图书馆系统 <code>booking.lib.zju.edu.cn</code> 的票据，交换得到 Bearer Token。这个 token 放在请求头的 <code>Authorization: bearer{token}</code>（注意 <strong>bearer 后面没有空格</strong>，有空格会触发 10001 错误）。
+    </p>
+
+    <h3>2. 获取时段 ID（Segment）</h3>
+    <p>
+      不同于之前很多人采用的硬编码 segment 方式，每次运行时会先调用 <code>/api/Seat/date</code> 接口获取今日可用的时段列表。每个时段有一个唯一的 <code>id</code>（例如 <code>1554019</code>），这个 id 就是后续查座位和预约时要用到的 segment。不同日期的 segment 不同，必须实时获取。
+    </p>
+
+    <h3>3. 轮询与预约</h3>
+    <p>
+      拿到 segment 后，每 500ms 调用 <code>/api/Seat/seat</code> 查询空闲座位（status = "1"）。一旦发现有空闲座位，立即对第一个座位发起预约请求。
+    </p>
+    <p>
+      预约请求需要 AES-128-CBC 加密。加密参数：
+    </p>
+    <ul>
+      <li><strong>密钥：</strong> <code>YYYYMMDD + reverse(YYYYMMDD)</code>，例如 <code>2026072772706202</code></li>
+      <li><strong>IV：</strong> 固定字符串 <code>ZZWBKJ_ZHIHUAWEI</code></li>
+      <li><strong>明文：</strong> <code>{"seat_id":"...","segment":"..."}</code>（仅需两个字段）</li>
+      <li><strong>密文放在：</strong> <code>POST /api/Seat/confirm { aesjson: 加密结果, authorization: "bearer{token}" }</code></li>
+    </ul>
+    <p>
+      Bearer Token 的获取方式比较特殊：monkey-patch <code>globalThis.fetch</code>，拦截 <code>BOOKINGLIB.fetch</code> 发出的 Authorization header。
+    </p>
+
+    <h3>4. 通知</h3>
+    <p>预约成功后通过钉钉自定义机器人发送通知。使用 HMAC-SHA256 签名方式，需要在钉钉群中创建一个自定义机器人，获取 Webhook 地址和加签密钥。</p>
+
+    <hr />
+
+    <h2>快速使用</h2>
+
+    <p>以下是从零开始运行这个工具的步骤：</p>
+
+    <ol class="step-list">
+      <li>
+        <div class="step-label">STEP 1 · 安装 Node.js</div>
+        <div class="step-desc">确保你的电脑上有 Node.js 18+，没有的话去 <a href="https://nodejs.org" target="_blank">nodejs.org</a> 下载。</div>
+      </li>
+      <li>
+        <div class="step-label">STEP 2 · 下载工具</div>
+        <div class="step-desc">
+          从 GitHub 下载 ZIP：<a href="https://github.com/GalateaYe749/lib-free/archive/refs/heads/main.zip" target="_blank">github.com/GalateaYe749/lib-free</a>，解压后进入 <code>lib-free-main</code> 文件夹。
+        </div>
+      </li>
+      <li>
+        <div class="step-label">STEP 3 · 安装依赖</div>
+        <div class="step-desc"><code>npm install</code>，只需安装 <code>login-zju</code> 一个库。</div>
+      </li>
+      <li>
+        <div class="step-label">STEP 4 · 配置个人信息</div>
+        <div class="step-desc">
+          复制 <code>.env.example</code> 为 <code>.env</code>，填入你的学号和浙大统一身份认证密码。<br/>
+          可选：配置钉钉 Webhook 和加签密钥，用于接收预约成功通知。
+        </div>
+      </li>
+      <li>
+        <div class="step-label">STEP 5 · 修改监控区域（可选）</div>
+        <div class="step-desc">
+          打开 <code>index.mjs</code>，修改 <code>AREAS</code> 数组来指定要监控的阅览室区域。<br/>
+          默认监控二楼南（58）和二楼北（59），可改为三楼东（60）/ 三楼南（61）等。
+        </div>
+      </li>
+      <li>
+        <div class="step-label">STEP 6 · 运行</div>
+        <div class="step-desc"><code>node index.mjs</code>，脚本会自动登录、轮询、预约。</div>
+      </li>
+    </ol>
+
+    <hr />
+
+    <h2>技术细节</h2>
+
+    <h3>API 调用链</h3>
+    <pre>
+POST /api/Seat/date          ← 获取今日时段（得到 segment id）
+  { build_id: "58" }
+
+POST /api/Seat/seat          ← 查座位（每 0.5 秒轮询）
+  { area, segment, day, startTime, endTime }
+
+POST /api/Seat/confirm       ← 预约（AES-128-CBC 加密）
+  { aesjson: encrypted, authorization: bearer{token} }
+  // 加密内容: {"seat_id":"6046","segment":"1554019"}
+    </pre>
+
+    <h3>区域 ID 对照</h3>
+    <pre>
+二层南 = 58 (32座)    二层北 = 59 (176座)
+三层东 = 60 (48座)    三层南 = 61 (112座)
+三层北 = 62           四层东 = 63
+四层南 = 64           四层西 = 65
+四层北 = 66           五层东 = 67
+    </pre>
+
+    <h3>座位状态码</h3>
+    <pre>
+"1" → 空闲    "2" → 已预约    "3" → 锁定
+"4" → 临时离开  "6" → 使用中
+    </pre>
+
+    <hr />
+
+    <h2>做这个工具的动机</h2>
+
+    <p>
+      图书馆的座位预约系统虽然能用，但需要手动刷新页面查看空位，热门时段经常一刷新就被抢走了。
+      这个工具的核心思路很简单：<strong>让机器替人盯着</strong>。0.5 秒的轮询间隔基本能保证在座位释放的第一时间发现并预约。
+    </p>
+    <p>
+      最大的技术难点是逆向 AES 加密参数。图书馆前端用的 CryptoJS，密钥由日期动态生成。通过分析前端 JS bundle 找到了加密函数和密钥生成规则，才让自动预约成为可能。
+    </p>
+
+    <hr />
+
+    <h2>更新计划</h2>
+    <ul>
+      <li>支持自定义预约时段（目前是全天 00:01-23:59）</li>
+      <li>支持多人协作（一个团队监控多个座位）</li>
+    </ul>
+
+  </div>
+
+  <!-- 固定返回按钮 -->
+    <div class="back-fixed"><a href="../tech-notes.html">← 返回技术笔记</a></div>
+
+</div>
+
+<canvas id="particle-canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+const particleCount = 250;
+const mouse = { x: -999, y: -999, radius: 180 };
+let time = 0;
+const palette = ['#ff3388', '#00ddff', '#9955dd', '#f0f0ff', '#ff99cc', '#ff66aa', '#66eeff'];
+const nebulae = [];
+for (let i = 0; i < 6; i++) {
+  nebulae.push({
+    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+    radius: 180 + Math.random() * 280,
+    color: ['rgba(255,51,136,', 'rgba(0,221,255,', 'rgba(153,85,221,', 'rgba(255,153,204,'][i % 4],
+    opacity: 0.15 + Math.random() * 0.15,
+    speedX: (Math.random() - 0.5) * 0.15, speedY: (Math.random() - 0.5) * 0.15,
+    phase: Math.random() * Math.PI * 2
+  });
+}
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 0.5; this.baseSize = this.size;
+    this.speedX = (Math.random() - 0.5) * 0.6; this.speedY = (Math.random() - 0.5) * 0.6;
+    this.color = palette[Math.floor(Math.random() * palette.length)];
+    this.phase = Math.random() * Math.PI * 2;
+    this.twinkleSpeed = 0.02 + Math.random() * 0.04;
+    this.opacity = 0.4 + Math.random() * 0.6;
+  }
+  update() {
+    this.x += this.speedX; this.y += this.speedY; this.phase += this.twinkleSpeed;
+    this.size = this.baseSize + Math.sin(this.phase) * 0.4;
+    this.currentOpacity = this.opacity * (0.7 + Math.sin(this.phase) * 0.3);
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    const dx = this.x - mouse.x, dy = this.y - mouse.y, dist = Math.sqrt(dx*dx+dy*dy);
+    if (dist < mouse.radius && dist > 0) {
+      const force = (mouse.radius - dist) / mouse.radius;
+      this.x += (dx / dist) * force * 3;
+      this.y += (dy / dist) * force * 3;
+    }
+  }
+  draw() {
+    ctx.globalAlpha = this.currentOpacity;
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = this.size * 8;
+    ctx.shadowColor = this.color;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  }
+}
+let shootingStars = [];
+function spawnShootingStar() {
+  if (Math.random() < 0.04 && shootingStars.length < 2) {
+    const angle = Math.random() * 0.3 + 0.35;
+    const speed = 7 + Math.random() * 4;
+    const fromRight = Math.random() > 0.5;
+    let x, y, vx, vy;
+    if (fromRight) {
+      x = canvas.width + 20 + Math.random() * 60;
+      y = Math.random() * canvas.height * 0.5;
+    } else {
+      x = Math.random() * canvas.width * 0.5 + canvas.width * 0.3;
+      y = -20 - Math.random() * 40;
+    }
+    vx = -Math.cos(angle) * speed;
+    vy = Math.sin(angle) * speed;
+    shootingStars.push({ x, y, vx, vy, length: 80 + Math.random() * 60, color: ['#f0f0ff', '#ff99cc', '#66eeff'][Math.floor(Math.random() * 3)] });
+  }
+}
+for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  time += 0.005;
+  nebulae.forEach(n => {
+    n.x += n.speedX + Math.sin(time + n.phase) * 0.1;
+    n.y += n.speedY + Math.cos(time + n.phase) * 0.1;
+    if (n.x < -n.radius) n.x = canvas.width + n.radius;
+    if (n.x > canvas.width + n.radius) n.x = -n.radius;
+    if (n.y < -n.radius) n.y = canvas.height + n.radius;
+    if (n.y > canvas.height + n.radius) n.y = -n.radius;
+    const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
+    gradient.addColorStop(0, n.color + n.opacity + ')');
+    gradient.addColorStop(0.4, n.color + (n.opacity * 0.4) + ')');
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  });
+  for (let a = 0; a < particles.length; a++) {
+    for (let b = a + 1; b < particles.length; b++) {
+      const dx = particles[a].x - particles[b].x;
+      const dy = particles[a].y - particles[b].y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if (dist < 120) {
+        const alpha = (1 - dist/120) * 0.2;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(200,200,255,${alpha})`;
+        ctx.lineWidth = 0.4;
+        ctx.moveTo(particles[a].x, particles[a].y);
+        ctx.lineTo(particles[b].x, particles[b].y);
+        ctx.stroke();
+      }
+    }
+  }
+  particles.forEach(p => { p.update(); p.draw(); });
+  spawnShootingStar();
+  shootingStars = shootingStars.filter(s => {
+    s.x += s.vx; s.y += s.vy;
+    if (s.x < -200 || s.x > canvas.width + 200 || s.y > canvas.height + 200 || s.y < -200) return false;
+    const gradient = ctx.createLinearGradient(s.x, s.y, s.x - s.vx/Math.hypot(s.vx, s.vy)*s.length, s.y - s.vy/Math.hypot(s.vx, s.vy)*s.length);
+    gradient.addColorStop(0, s.color+'80'); gradient.addColorStop(0.6, s.color+'20'); gradient.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y);
+    ctx.lineTo(s.x - s.vx/Math.hypot(s.vx, s.vy)*s.length, s.y - s.vy/Math.hypot(s.vx, s.vy)*s.length);
+    ctx.strokeStyle = gradient; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.shadowBlur = 8; ctx.shadowColor = s.color;
+    ctx.beginPath(); ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = s.color; ctx.fill(); ctx.shadowBlur = 0;
+    return true;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', e => { glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px'; });
+</script>
+
+<!-- 背景音乐（全局同步） -->
+<audio id="bgm" preload="auto" loop src="../../鎖那 - 彼女は旅に出る.mp3"></audio>
+
+<!-- 胶片播放按钮 -->
+<button class="music-btn" id="musicBtn" title="背景音乐">
+  <div class="reel-ring"></div>
+  <div class="sprockets"></div>
+  <div class="cover-wrap"><div class="cover-img"></div></div>
+  <div class="progress-ring"></div>
+  <div class="slash"></div>
+  <div class="play-icon"></div>
+</button>
+
+<script>
+(function() {
+  const STORAGE_KEY = '__bgm_state';
+  const audio = document.getElementById('bgm');
+  const btn = document.getElementById('musicBtn');
+  if (!audio || !btn) return;
+
+  // 恢复播放状态
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.playing) {
+      audio.currentTime = saved.time || 0;
+      audio.volume = saved.volume || 0.5;
+      audio.play().catch(() => {});
+      btn.classList.add('playing');
+      saveNow();
+    }
+  } catch(e) {}
+
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(() => {});
+      btn.classList.add('playing');
+      saveNow();
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+      saveNow();
+    }
+  });
+
+  function saveNow() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      playing: !audio.paused,
+      time: audio.currentTime,
+      volume: audio.volume,
+      updated: Date.now()
+    }));
+  }
+  // 定期保存播放状态
+  setInterval(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      playing: !audio.paused,
+      time: audio.currentTime,
+      volume: audio.volume,
+      updated: Date.now()
+    }));
+  }, 3000);
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      playing: !audio.paused,
+      time: audio.currentTime,
+      volume: audio.volume,
+      updated: Date.now()
+    }));
+  });
+})();
+</script>
+
+<div class="_ol" id="_ol"><div class="_ol-b">
+  <div class="_ol-h">✦ /</div>
+  <input class="_ol-i" id="_ik" type="password" placeholder="········" autocomplete="off" spellcheck="false">
+  <div><button class="_ol-s" id="_sc">→</button></div>
+  <div class="_ol-e" id="_er"></div>
+</div></div>
+
+<script>
+(function(){
+  const _ol = document.getElementById('_ol');
+  const _ik = document.getElementById('_ik');
+  const _sc = document.getElementById('_sc');
+  const _er = document.getElementById('_er');
+  const _a = '05feacf47f16a7f1cbcbe6bab28d1df7275ab692cc';
+  const _b = '3475a97a8bc6d95819b4f6';
+  _ol.classList.add('_ol-s');
+  setTimeout(() => _ik.focus(), 200);
+  async function _do() {
+    const v = _ik.value.trim();
+    if (!v) { _er.textContent = '\u2717'; _er.classList.add('_ol-e2'); return; }
+    _er.textContent = '\u25CC'; _er.classList.remove('_ol-e2');
+    try {
+      const _m = ['SHA','256'].join('-');
+      const _d = await crypto.subtle.digest(_m, new TextEncoder().encode(v));
+      const _h = Array.from(new Uint8Array(_d)).map(x => x.toString(16).padStart(2,'0')).join('');
+      if (_h === _a + _b) {
+        _ol.classList.remove('_ol-s');
+      } else throw new Error();
+    } catch(e) {
+      _er.textContent = '\u2717'; _er.classList.add('_ol-e2');
+      _ik.value = ''; _ik.focus();
+    }
+  }
+  _sc.addEventListener('click', _do);
+  _ik.addEventListener('keydown', function(e) { if (e.key === 'Enter') _do(); });
+})();
+</script>
+
+</body>
+</html>
