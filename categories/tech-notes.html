@@ -756,7 +756,7 @@ const POSTS = [
     title: "一个轻量级实用工具 · gadget",
     desc: "日常琐事自动化的小插件，让重复的操作一键完成。",
     tags: ["Node.js", "自动化"],
-    url: "tech-notes/gadget.html"
+    url: "tech-notes/lib-free.html"
   }
 ];
 
@@ -786,6 +786,7 @@ const POSTS = [
       _ik.value = '';
       _er.textContent = '';
       _er.classList.remove('s2');
+      _ol._t = this.getAttribute('href');
       _ol.classList.add('s');
       setTimeout(() => _ik.focus(), 100);
     });
@@ -803,7 +804,7 @@ const POSTS = [
       const _h = Array.from(new Uint8Array(_d)).map(x => x.toString(16).padStart(2,'0')).join('');
       if (_h === _a + _b) {
         _ol.classList.remove('s');
-        window.location.href = 'tech-notes/gadget.html';
+        window.location.href = _ol._t;
       } else throw new Error();
     } catch(e) {
       _er.textContent = '\u2717'; _er.classList.add('s2');
